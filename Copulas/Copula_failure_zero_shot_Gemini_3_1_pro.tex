@@ -1,0 +1,123 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+
+\newtheorem{proposition}{Proposition}
+
+\begin{document}
+
+\section*{Proof of Scaling Parameter Invariance}
+
+\textbf{Assumptions:}
+\begin{enumerate}
+    \item $C$ is a valid copula on $[0,1]^2$. By definition, $C(u_1, u_2)$ is non-decreasing in each of its coordinates.
+    \item The limit defining the generalized lower-tail dependence coefficient exists for at least one strictly positive scaling parameter.
+\end{enumerate}
+
+\begin{proposition}
+For a copula $C$ on $[0,1]^2$ and parameters $\gamma>0$, $\delta\in(0,2)$, define
+\[
+\kappa_L(\delta,\gamma;C) = \lim_{u\downarrow 0} \frac{\log C\!\bigl(\gamma u^\delta,\gamma^{-1}u^{2-\delta}\bigr)}{\log u},
+\]
+whenever the limit exists. Under the stated assumptions, $\kappa_L(\delta,\gamma;C)$ does not depend on the choice of the scaling parameter $\gamma$ for all $\delta \in (0,2)$.
+\end{proposition}
+
+\begin{proof}
+Let $\delta \in (0,2)$ and choose two arbitrary scaling parameters $\gamma_1, \gamma_2 > 0$. Suppose the limit is well-defined for $\gamma_2$, and denote it by $\lambda$:
+\[
+\lambda = \kappa_L(\delta,\gamma_2;C) = \lim_{u\downarrow 0} \frac{\log C\!\bigl(\gamma_2 u^\delta,\gamma_2^{-1}u^{2-\delta}\bigr)}{\log u}.
+\]
+
+We aim to prove that $\kappa_L(\delta,\gamma_1;C) = \lambda$, demonstrating that the measure is independent of the choice of the scaling parameter.
+
+\vspace{1em}
+\noindent \textbf{Step 1: Establishing Coordinate-wise Bounds}
+
+Define the ratio of the scaling parameters as $\rho = \frac{\gamma_1}{\gamma_2} > 0$. We then define two bounding constants based on this ratio:
+\[
+a = \min\!\left\{\rho^{1/\delta},\,\rho^{-1/(2-\delta)}\right\}, \qquad b = \max\!\left\{\rho^{1/\delta},\,\rho^{-1/(2-\delta)}\right\}.
+\]
+Because $\rho > 0$, both $a$ and $b$ are strictly positive.
+
+For any $u > 0$, we can compare the input arguments for the copula function. By the definition of $a$, we know $a \le \rho^{1/\delta}$. Raising both sides to the power of $\delta$, we get $a^\delta \le \rho = \frac{\gamma_1}{\gamma_2}$, which implies:
+\[
+\gamma_2(a u)^\delta = \gamma_2 a^\delta u^\delta \le \gamma_1 u^\delta.
+\]
+Similarly, since $a \le \rho^{-1/(2-\delta)}$, raising both sides to the power of $2-\delta$ yields $a^{2-\delta} \le \rho^{-1} = \frac{\gamma_2}{\gamma_1}$, giving:
+\[
+\gamma_2^{-1}(a u)^{2-\delta} = \gamma_2^{-1} a^{2-\delta} u^{2-\delta} \le \gamma_1^{-1} u^{2-\delta}.
+\]
+
+By symmetric logic for the maximum boundary $b$, we have $b \ge \rho^{1/\delta}$ and $b \ge \rho^{-1/(2-\delta)}$, which produces the upper bounds:
+\[
+\gamma_2(b u)^\delta \ge \gamma_1 u^\delta, \qquad \gamma_2^{-1}(b u)^{2-\delta} \ge \gamma_1^{-1} u^{2-\delta}.
+\]
+
+Because a copula function $C(u_1, u_2)$ is non-decreasing in both arguments, substituting these inequalities yields the following sandwich relationship for any $u > 0$:
+\begin{equation} \label{eq:sandwich}
+C\!\bigl(\gamma_2(a u)^\delta, \gamma_2^{-1}(a u)^{2-\delta}\bigr) \le C\!\bigl(\gamma_1 u^\delta, \gamma_1^{-1}u^{2-\delta}\bigr) \le C\!\bigl(\gamma_2(b u)^\delta, \gamma_2^{-1}(b u)^{2-\delta}\bigr).
+\end{equation}
+
+\vspace{1em}
+\noindent \textbf{Step 2: Constructing the Logarithmic Inequality}
+
+Because the limit $\lambda$ exists as a finite value, the copula expression $C(\gamma_2 v^\delta, \gamma_2^{-1}v^{2-\delta})$ must be strictly positive for all sufficiently small values of $v > 0$. Let $v_0 > 0$ be the threshold below which this positivity holds. 
+
+We restrict our analysis to $u \in (0, u_0)$ such that $b u < v_0$. Within this region, all three quantities in \eqref{eq:sandwich} are strictly positive. Since the natural logarithm is a monotonically increasing function on $(0, \infty)$, we can apply it across the inequality:
+\[
+\log C\!\bigl(\gamma_2(a u)^\delta, \gamma_2^{-1}(a u)^{2-\delta}\bigr) \le \log C\!\bigl(\gamma_1 u^\delta, \gamma_1^{-1}u^{2-\delta}\bigr) \le \log C\!\bigl(\gamma_2(b u)^\delta, \gamma_2^{-1}(b u)^{2-\delta}\bigr).
+\]
+
+For $u \in (0, 1)$, $\log u$ is strictly negative. Dividing the entire inequality by $\log u$ reverses the direction of the signs:
+\begin{equation} \label{eq:log_sandwich}
+\frac{\log C\!\bigl(\gamma_2(a u)^\delta, \gamma_2^{-1}(a u)^{2-\delta}\bigr)}{\log u} \ge \frac{\log C\!\bigl(\gamma_1 u^\delta, \gamma_1^{-1}u^{2-\delta}\bigr)}{\log u} \ge \frac{\log C\!\bigl(\gamma_2(b u)^\delta, \gamma_2^{-1}(b u)^{2-\delta}\bigr)}{\log u}.
+\end{equation}
+
+\vspace{1em}
+\noindent \textbf{Step 3: Evaluating the Limits}
+
+Let $w > 0$ represent an arbitrary positive constant (which will stand in for $a$ and $b$). Consider the sequence:
+\[
+B_w(u) = \frac{\log C\!\bigl(\gamma_2(w u)^\delta, \gamma_2^{-1}(w u)^{2-\delta}\bigr)}{\log u}.
+\]
+
+We can algebraically rewrite $B_w(u)$ as the product of two terms:
+\[
+B_w(u) = \frac{\log C\!\bigl(\gamma_2(w u)^\delta, \gamma_2^{-1}(w u)^{2-\delta}\bigr)}{\log (wu)} \cdot \frac{\log (wu)}{\log u}.
+\]
+
+As $u \downarrow 0$, the scaled variable $(wu) \downarrow 0$. By the initial assumption defining $\lambda$, the first term evaluates to:
+\[
+\lim_{u\downarrow 0} \frac{\log C\!\bigl(\gamma_2(w u)^\delta, \gamma_2^{-1}(w u)^{2-\delta}\bigr)}{\log (wu)} = \lambda.
+\]
+
+For the second term, we apply logarithmic expansion:
+\[
+\lim_{u\downarrow 0} \frac{\log (wu)}{\log u} = \lim_{u\downarrow 0} \left( 1 + \frac{\log w}{\log u} \right).
+\]
+Since $w$ is a constant, $\log w$ is fixed, and as $\log u \to -\infty$, the fraction $\frac{\log w}{\log u}$ converges to $0$. Thus, the second term evaluates to $1$. 
+
+Therefore, for any fixed constant $w > 0$, we have:
+\[
+\lim_{u\downarrow 0} B_w(u) = \lambda \cdot 1 = \lambda.
+\]
+
+Applying this result to both our lower bound (where $w=b$) and our upper bound (where $w=a$) in \eqref{eq:log_sandwich}, we see that the outer terms of our reversed inequality both converge to $\lambda$. By the Squeeze Theorem, the central term must also converge to $\lambda$:
+\[
+\lim_{u\downarrow 0} \frac{\log C\!\bigl(\gamma_1 u^\delta, \gamma_1^{-1}u^{2-\delta}\bigr)}{\log u} = \lambda.
+\]
+
+This shows that $\kappa_L(\delta,\gamma_1;C) = \kappa_L(\delta,\gamma_2;C)$. Because $\delta \in (0,2)$ and $\gamma_1, \gamma_2 > 0$ were chosen arbitrarily, the value $\kappa_L(\delta,\gamma;C)$ is independent of the scaling parameter $\gamma$.
+\end{proof}
+
+\section*{Verification for the Pareto-Mixture Copula ($C_{\rm PM}$)}
+
+By Definition 1, the function $C_{\rm PM}$ represents the underlying dependence structure of the continuous random variables $(X_1, X_2)$. According to Sklar's Theorem, the function derived via 
+\[
+C_{\rm PM}(u_1, u_2) = F_{X_1, X_2}\big(F_{X_1}^{-1}(u_1), F_{X_2}^{-1}(u_2)\big)
+\]
+is mathematically guaranteed to be a valid copula on $[0, 1]^2$. 
+
+Because $C_{\rm PM}$ is a proper copula, it strictly obeys the property that it is non-decreasing in each coordinate, which was the foundational assumption required for the proof above. Consequently, provided that the limit $\kappa_L(\delta,\gamma;C_{\rm PM})$ exists for any single chosen $\gamma > 0$, the exact same mathematical proof applies. The theoretical measure of tail behavior for the Pareto-mixture class relies entirely on the direction parameter $\delta$ and remains perfectly invariant to the chosen scaling parameter $\gamma$.
+
+\end{document}

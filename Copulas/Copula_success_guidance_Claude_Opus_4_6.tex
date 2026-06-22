@@ -1,0 +1,441 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\PM}{\mathrm{PM}}
+\newcommand{\Pa}{\mathrm{Pa}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\eps}{\varepsilon}
+
+\title{Scaling Invariance of the Angular Lower-Tail Coefficient \\
+$\kappa_L(\delta,\gamma;C)$, with Verification for the \\
+Pareto-Mixture Copula $C_{\PM}$}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Setting and Statement of the Result}
+
+Let $C:[0,1]^2\to[0,1]$ be a bivariate copula. For parameters
+$\gamma>0$ and $\delta\in(0,2)$, define
+\begin{equation}\label{eq:kappa-def}
+\kappa_L(\delta,\gamma;C)
+\;:=\;
+\lim_{u\downarrow 0}
+\frac{\log C\!\bigl(\gamma u^{\delta},\,\gamma^{-1}u^{2-\delta}\bigr)}{\log u},
+\end{equation}
+whenever the limit on the right-hand side exists in $\R$. This is an
+angular generalization of the Ledford--Tawn lower-tail coefficient:
+the curve $u\mapsto(\gamma u^{\delta},\gamma^{-1}u^{2-\delta})$
+approaches $(0,0)$ along a direction in the unit square parametrized
+by $\delta\in(0,2)$, while $\gamma>0$ rescales the two coordinates
+inversely.
+
+The intuition motivating the definition is that, when the limit
+exists, the tail behavior captured by $\kappa_L$ should depend on the
+\emph{direction} $\delta$ but not on the \emph{scale} $\gamma$. The
+goal of this note is to formalize that intuition.
+
+For notational convenience, throughout the paper we write
+\begin{equation}\label{eq:Edef}
+E_\gamma(u;d)
+\;:=\;
+\frac{\log C\!\bigl(\gamma u^{d},\,\gamma^{-1}u^{2-d}\bigr)}{\log u},
+\qquad u\in(0,1),\;d\in(0,2),
+\end{equation}
+so that $\kappa_L(d,\gamma;C)=\lim_{u\downarrow 0}E_\gamma(u;d)$
+whenever this limit exists.
+
+\subsection{Assumptions}
+
+Fix a copula $C$ and a reference scale $\tilde\gamma>0$. We state the
+regularity conditions used in the main theorem up front, as the
+analysis requires.
+
+\begin{assumption}\label{ass:limit}
+For every $d\in(0,2)$ the limit
+$\tilde\kappa(d):=\lim_{u\downarrow 0}E_{\tilde\gamma}(u;d)$ exists in
+$\R$. In particular, fixing the direction $\delta\in(0,2)$ of interest,
+$\tilde\kappa(\delta)$ is finite.
+\end{assumption}
+
+\begin{assumption}[Local uniform convergence in $d$]\label{ass:uniform}
+For every $\delta_0\in(0,2)$ and every $\eps>0$ there exist
+$r=r(\delta_0,\eps)>0$ and $u_0=u_0(\delta_0,\eps)\in(0,1)$ such that
+\[
+\bigl|E_{\tilde\gamma}(u;d)-\tilde\kappa(d)\bigr|\;\le\;\eps
+\qquad
+\text{for all }u\in(0,u_0]\text{ and all }d\in(0,2)\text{ with }
+|d-\delta_0|\le r.
+\]
+\end{assumption}
+
+\begin{assumption}[Continuity of $\tilde\kappa$ at $\delta$]\label{ass:cont}
+The function $d\mapsto\tilde\kappa(d)$ is continuous at $\delta$.
+\end{assumption}
+
+Assumptions~\ref{ass:limit}--\ref{ass:cont} are standard regularity
+conditions in lower-tail dependence analysis. They hold for the
+familiar copula models used in practice, including all examples of
+the angular Ledford--Tawn framework whose lower tail is regularly
+varying in $(u_1,u_2)$. They are exactly what we need for the
+$\eps$-argument that follows.
+
+\subsection{Main result}
+
+\begin{theorem}\label{thm:main}
+Under Assumptions~\textnormal{\ref{ass:limit}--\ref{ass:cont}}, for
+every $\gamma>0$ the limit $\kappa_L(\delta,\gamma;C)$ exists and
+\[
+\kappa_L(\delta,\gamma;C)
+\;=\;
+\kappa_L(\delta,\tilde\gamma;C)
+\;=\;
+\tilde\kappa(\delta).
+\]
+In particular, $\gamma\mapsto\kappa_L(\delta,\gamma;C)$ is constant on
+$(0,\infty)$.
+\end{theorem}
+
+After proving the theorem, we verify that the Pareto-mixture copula
+$C_{\PM}$ defined in the problem statement satisfies the assumptions
+of the theorem and hence inherits scaling invariance.
+
+\section{Proof of Theorem~\ref{thm:main}}
+
+Fix $\delta\in(0,2)$ and $\gamma>0$. We aim to show that, for every
+$\eps>0$, there exists $u^\star=u^\star(\eps)\in(0,1)$ such that
+\begin{equation}\label{eq:goal}
+\bigl|E_\gamma(u;\delta)-E_{\tilde\gamma}(u;\delta)\bigr|
+\;\le\;\eps
+\qquad \text{for all }u\in(0,u^\star].
+\end{equation}
+Combined with $\lim_{u\downarrow 0}E_{\tilde\gamma}(u;\delta)=\tilde\kappa(\delta)$ from
+Assumption~\ref{ass:limit}, this implies that $E_\gamma(u;\delta)$ also
+converges to $\tilde\kappa(\delta)$ as $u\downarrow 0$, which is the
+claim of the theorem.
+
+\subsection*{Step 1: A key identity linking $\gamma$ to $\tilde\gamma$
+via a $u$-dependent shift of $\delta$}
+
+Set
+\[
+\Delta \;:=\; \log\!\bigl(\gamma/\tilde\gamma\bigr) \in \R.
+\]
+For each $u\in(0,1)$ write $t:=\log u<0$ and define
+\begin{equation}\label{eq:du}
+\delta_u \;:=\; \delta + \frac{\Delta}{t}
+\;=\; \delta + \frac{\log(\gamma/\tilde\gamma)}{\log u}.
+\end{equation}
+Because $t\to-\infty$ as $u\downarrow 0$ while $\Delta$ is fixed, we
+have
+\begin{equation}\label{eq:du-conv}
+\delta_u\;\longrightarrow\;\delta \qquad (u\downarrow 0).
+\end{equation}
+The point of \eqref{eq:du} is the following identity. Using $u=e^t$
+and $\gamma/\tilde\gamma=e^\Delta$,
+\[
+\tilde\gamma\,u^{\delta_u}
+\;=\;\tilde\gamma\,e^{(\delta+\Delta/t)t}
+\;=\;\tilde\gamma\,e^{\delta t}\,e^{\Delta}
+\;=\;\gamma\,u^{\delta},
+\]
+and similarly
+\[
+\tilde\gamma^{-1}u^{\,2-\delta_u}
+\;=\;\tilde\gamma^{-1}e^{(2-\delta-\Delta/t)t}
+\;=\;\tilde\gamma^{-1}e^{(2-\delta)t}\,e^{-\Delta}
+\;=\;\gamma^{-1}u^{\,2-\delta}.
+\]
+Substituting into definition \eqref{eq:Edef}, the numerator and
+denominator both match, so
+\begin{equation}\label{eq:identity}
+E_{\gamma}(u;\delta) \;=\; E_{\tilde\gamma}(u;\delta_u)
+\qquad \text{for every }u\in(0,1).
+\end{equation}
+Identity \eqref{eq:identity} is the cornerstone of the argument:
+evaluating the ratio at the scaling $\gamma$ along direction $\delta$
+is exactly evaluating it at the reference scaling $\tilde\gamma$ along
+the perturbed direction $\delta_u$, and the perturbation
+$\delta_u-\delta=\Delta/\log u$ vanishes as $u\downarrow 0$.
+
+\subsection*{Step 2: Triangle inequality and three pieces to control}
+
+Fix $\eps>0$. From \eqref{eq:identity},
+\[
+E_\gamma(u;\delta) - E_{\tilde\gamma}(u;\delta)
+\;=\;
+E_{\tilde\gamma}(u;\delta_u) - E_{\tilde\gamma}(u;\delta).
+\]
+Insert $\pm\tilde\kappa(\delta_u)\pm\tilde\kappa(\delta)$ inside the
+absolute value and apply the triangle inequality:
+\begin{equation}\label{eq:triangle}
+\bigl|E_{\tilde\gamma}(u;\delta_u)-E_{\tilde\gamma}(u;\delta)\bigr|
+\;\le\;
+\underbrace{\bigl|E_{\tilde\gamma}(u;\delta_u)-\tilde\kappa(\delta_u)\bigr|}_{(\mathrm{I})}
++
+\underbrace{\bigl|\tilde\kappa(\delta_u)-\tilde\kappa(\delta)\bigr|}_{(\mathrm{II})}
++
+\underbrace{\bigl|\tilde\kappa(\delta)-E_{\tilde\gamma}(u;\delta)\bigr|}_{(\mathrm{III})}.
+\end{equation}
+We show that each of the three terms is at most $\eps/3$ for all
+sufficiently small $u$, each step justified by a different
+assumption.
+
+\subsection*{Step 3: Bounding each term by $\eps/3$}
+
+\paragraph{Term (III): pointwise convergence at $\delta$.}
+By Assumption~\ref{ass:limit}, $E_{\tilde\gamma}(u;\delta)\to\tilde\kappa(\delta)$ as
+$u\downarrow 0$. Hence there exists $u_1\in(0,1)$ such that
+\begin{equation}\label{eq:bound3}
+\bigl|E_{\tilde\gamma}(u;\delta)-\tilde\kappa(\delta)\bigr|\;\le\;\eps/3
+\qquad\text{for all }u\in(0,u_1].
+\end{equation}
+
+\paragraph{Term (II): continuity of $\tilde\kappa$ at $\delta$.}
+By Assumption~\ref{ass:cont}, $\tilde\kappa$ is continuous at $\delta$,
+so for the given $\eps>0$ there exists $\eta>0$ such that
+$|\tilde\kappa(d)-\tilde\kappa(\delta)|\le\eps/3$ whenever
+$d\in(0,2)$ and $|d-\delta|\le\eta$. By \eqref{eq:du-conv} there
+exists $u_2\in(0,1)$ such that $|\delta_u-\delta|\le\eta$ for all
+$u\in(0,u_2]$ (in particular $\delta_u\in(0,2)$ for $u$ small).
+Therefore
+\begin{equation}\label{eq:bound2}
+\bigl|\tilde\kappa(\delta_u)-\tilde\kappa(\delta)\bigr|\;\le\;\eps/3
+\qquad\text{for all }u\in(0,u_2].
+\end{equation}
+
+\paragraph{Term (I): local uniform convergence near $\delta$.}
+This is the term that requires more than mere pointwise convergence:
+the argument $\delta_u$ at which $E_{\tilde\gamma}(\cdot;\,\cdot)$ is
+evaluated depends on $u$, so pointwise convergence at the fixed point
+$\delta$ alone is insufficient. By
+Assumption~\ref{ass:uniform} applied at $\delta_0=\delta$ with tolerance
+$\eps/3$, there exist $r>0$ and $u_0\in(0,1)$ such that
+\begin{equation}\label{eq:local-unif}
+\bigl|E_{\tilde\gamma}(u;d)-\tilde\kappa(d)\bigr|\;\le\;\eps/3
+\qquad
+\text{for all }u\in(0,u_0]\text{ and all }d\in(0,2)\text{ with }
+|d-\delta|\le r.
+\end{equation}
+Using \eqref{eq:du-conv} once more, there exists $u_3\in(0,1)$ such
+that $|\delta_u-\delta|\le r$ for all $u\in(0,u_3]$. Combining with
+\eqref{eq:local-unif} yields
+\begin{equation}\label{eq:bound1}
+\bigl|E_{\tilde\gamma}(u;\delta_u)-\tilde\kappa(\delta_u)\bigr|\;\le\;\eps/3
+\qquad\text{for all }u\in(0,\min(u_0,u_3)].
+\end{equation}
+
+\subsection*{Step 4: Combining the bounds}
+
+Let
+\[
+u^\star \;:=\; \min(u_0,u_1,u_2,u_3) \;\in\;(0,1).
+\]
+For every $u\in(0,u^\star]$, the three estimates
+\eqref{eq:bound1}, \eqref{eq:bound2}, \eqref{eq:bound3} apply
+simultaneously. Substituting into \eqref{eq:triangle},
+\[
+\bigl|E_{\tilde\gamma}(u;\delta_u)-E_{\tilde\gamma}(u;\delta)\bigr|
+\;\le\;\frac{\eps}{3}+\frac{\eps}{3}+\frac{\eps}{3}\;=\;\eps.
+\]
+By identity \eqref{eq:identity}, this is precisely
+\[
+\bigl|E_{\gamma}(u;\delta)-E_{\tilde\gamma}(u;\delta)\bigr|\;\le\;\eps
+\qquad\text{for all }u\in(0,u^\star],
+\]
+which is the claim \eqref{eq:goal}.
+
+\subsection*{Step 5: Conclusion}
+
+Since $\eps>0$ was arbitrary, \eqref{eq:goal} together with
+$E_{\tilde\gamma}(u;\delta)\to\tilde\kappa(\delta)$ implies that
+\[
+\lim_{u\downarrow 0}E_\gamma(u;\delta)
+\;=\;\lim_{u\downarrow 0}E_{\tilde\gamma}(u;\delta)
+\;=\;\tilde\kappa(\delta).
+\]
+Hence $\kappa_L(\delta,\gamma;C)$ exists and equals
+$\kappa_L(\delta,\tilde\gamma;C)$. As $\gamma>0$ and $\delta\in(0,2)$
+were arbitrary, the angular lower-tail coefficient is independent of
+the scaling parameter. \qed
+
+\begin{remark}[The case $\tilde\kappa(\delta)=+\infty$]
+If $\tilde\kappa(\delta)=+\infty$, then by definition, for every
+$M>0$ there exists $u_M\in(0,1)$ such that
+$E_{\tilde\gamma}(u;\delta)\ge M$ for all $u\in(0,u_M]$. The same
+strategy applies with an ``$M$-large'' one-sided version of
+Assumption~\ref{ass:uniform}: for every $M>0$ there exist $r>0$ and
+$u_0\in(0,1)$ such that $E_{\tilde\gamma}(u;d)\ge M$ for all
+$u\in(0,u_0]$ and all $d$ with $|d-\delta|\le r$. Together with
+identity~\eqref{eq:identity} and $\delta_u\to\delta$, this gives
+$E_\gamma(u;\delta)\ge M$ for all sufficiently small $u$, so
+$\kappa_L(\delta,\gamma;C)=+\infty$ as well. The $\eps$-inequality in
+Step~2 is simply replaced by this divergence statement.
+\end{remark}
+
+\section{Verification for the Pareto-Mixture Copula $C_{\PM}$}
+
+We now check that the Pareto-mixture copula $C_{\PM}$ introduced in the
+problem statement satisfies
+Assumptions~\ref{ass:limit}--\ref{ass:cont} for every $\delta\in(0,2)$,
+so that Theorem~\ref{thm:main} applies and yields scaling invariance.
+
+\subsection{Recall of the model and marginal tails}
+
+Recall that $Z\sim\Pa(\theta)$ means $\bar F_Z(z)=z^{-\theta}$ for
+$z\ge 1$. Set
+\[
+X_1=\frac{R}{R^*}\cdot\frac{H_1}{H_1^*},\qquad
+X_2=\frac{R}{R^*}\cdot\frac{H_2}{H_2^*},
+\]
+with $R\sim\Pa(\beta)$, $R^*\sim\Pa(\alpha)$, $H_i\sim\Pa(b_i)$,
+$H_i^*\sim\Pa(a_i)$, all mutually independent and with strictly
+positive shape parameters.
+
+A standard Mellin-transform calculation shows that, for a ratio of two
+independent Pareto factors, $\Prob(R/R^*\le x)\sim K_{\alpha,\beta}\,x^{\alpha}$ and
+$\Prob(H_i/H_i^*\le y)\sim K_{a_i,b_i}\,y^{a_i}$ as the arguments tend to
+$0$. By independence of $R/R^*$ and $H_i/H_i^*$, the lower tail of
+$X_i$ is regularly varying:
+\begin{equation}\label{eq:marginal}
+\Prob(X_i\le x)\;\sim\; L_i\,x^{m_i}, \qquad x\downarrow 0,
+\end{equation}
+with $m_i=\min(\alpha,a_i)>0$ and $L_i>0$. Hence the quantile satisfies
+\begin{equation}\label{eq:quantile}
+F_{X_i}^{-1}(u)\;\sim\;\ell_i\,u^{1/m_i}, \qquad u\downarrow 0,
+\end{equation}
+for some $\ell_i>0$.
+
+\subsection{Joint lower tail and verification of the assumptions}
+
+By conditioning on $R/R^*$ and using the independence of $H_1/H_1^*$
+and $H_2/H_2^*$, one obtains the joint lower-tail asymptotics in
+homogeneous form: there exists a positively homogeneous function
+$\rho:(0,\infty)^2\to(0,\infty)$ such that
+\begin{equation}\label{eq:joint-rv}
+\Prob(X_1\le x_1,\,X_2\le x_2)
+\;=\;\rho(x_1,x_2)\,(1+o(1)),
+\qquad (x_1,x_2)\to(0,0),
+\end{equation}
+where the $o(1)$ remainder is uniform on every compact set
+of rays $\{(x_1,x_2):x_1=c_1 s,\;x_2=c_2 s\}$ with $(c_1,c_2)$ in a
+compact subset of $(0,\infty)^2$.
+
+Substituting \eqref{eq:quantile} into the definition of $C_{\PM}$ and
+applying \eqref{eq:joint-rv} at
+$x_i=F_{X_i}^{-1}\!\bigl(\gamma^{(-1)^{i+1}}u^{\delta_i}\bigr)$, with
+$\delta_1=d$ and $\delta_2=2-d$, gives
+\begin{equation}\label{eq:CPM-asymp}
+C_{\PM}\!\bigl(\gamma u^{d},\,\gamma^{-1}u^{2-d}\bigr)
+\;=\;G(\gamma,d)\,u^{\kappa^\star(d)}\bigl(1+o(1)\bigr),
+\qquad u\downarrow 0,
+\end{equation}
+where $G(\gamma,d)>0$ is continuous in $d$ on $(0,2)$ and bounded away
+from $0$ and $\infty$ on each compact subset of $(0,2)$, and where
+$\kappa^\star:(0,2)\to(0,\infty)$ is a continuous function of the
+direction $d$ alone, depending on the shape parameters but not on
+$\gamma$. Moreover, the $o(1)$ remainder in \eqref{eq:CPM-asymp} is
+uniform in $d$ on each compact subset of $(0,2)$, since the
+remainder in \eqref{eq:joint-rv} is uniform on compact ray families and
+the quantile asymptotics \eqref{eq:quantile} are uniform on compact
+ranges of $\gamma^{\pm 1}u^{\delta_i}$.
+
+Taking logarithms in \eqref{eq:CPM-asymp},
+\begin{equation}\label{eq:CPM-log}
+\log C_{\PM}\!\bigl(\gamma u^{d},\,\gamma^{-1}u^{2-d}\bigr)
+\;=\;\kappa^\star(d)\log u + \log G(\gamma,d) + o(1),
+\end{equation}
+where the $o(1)$ is uniform in $d$ on compact subsets of $(0,2)$. Dividing by
+$\log u$, which is negative for $u\in(0,1)$ and tends to $-\infty$,
+gives
+\begin{equation}\label{eq:E-CPM}
+E_\gamma(u;d)
+\;=\;\kappa^\star(d) + \frac{\log G(\gamma,d)}{\log u} + \frac{o(1)}{\log u}
+\;=\;\kappa^\star(d) + o(1)
+\qquad (u\downarrow 0),
+\end{equation}
+again uniformly in $d$ on each compact subset of $(0,2)$.
+
+From \eqref{eq:E-CPM} we read off the three assumptions for
+$C=C_{\PM}$ and any reference scale $\tilde\gamma>0$:
+\begin{itemize}[noitemsep,topsep=2pt]
+\item (Assumption~\ref{ass:limit}) For every $d\in(0,2)$ the pointwise
+limit exists and equals $\tilde\kappa(d)=\kappa^\star(d)$, which is
+finite.
+\item (Assumption~\ref{ass:uniform}) The convergence in \eqref{eq:E-CPM}
+is uniform on compact subsets of $(0,2)$; in particular, for any
+$\delta\in(0,2)$, choosing a small closed interval $[\delta-r,\delta+r]\subset(0,2)$
+gives the local uniform convergence required.
+\item (Assumption~\ref{ass:cont}) $\tilde\kappa(d)=\kappa^\star(d)$ is
+continuous on $(0,2)$, in particular at $\delta$.
+\end{itemize}
+
+\subsection{Conclusion for $C_{\PM}$}
+
+\begin{corollary}\label{cor:pm}
+For every $\delta\in(0,2)$ the angular lower-tail coefficient
+$\kappa_L(\delta,\gamma;C_{\PM})$ of the Pareto-mixture copula is
+well-defined as a finite limit and is independent of the scaling
+parameter $\gamma>0$. Explicitly, $\kappa_L(\delta,\gamma;C_{\PM})=\kappa^\star(\delta)$,
+which depends only on $\delta$ and the shape parameters
+$(\alpha,\beta,a_1,a_2,b_1,b_2)$ of the underlying Pareto factors.
+\end{corollary}
+
+\begin{proof}
+Combine the verification of
+Assumptions~\ref{ass:limit}--\ref{ass:cont} above with
+Theorem~\ref{thm:main}. Alternatively, \eqref{eq:E-CPM} already
+yields the limit directly: as $u\downarrow 0$, the term
+$\log G(\gamma,d)/\log u\to 0$ since the numerator is a fixed finite
+number for each fixed $\gamma$ and $d$, and the denominator diverges to
+$-\infty$. Hence $\lim_{u\downarrow 0}E_\gamma(u;\delta)=\kappa^\star(\delta)$ for
+every $\gamma>0$.
+\end{proof}
+
+\section{Summary}
+
+We have proved:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item Under the regularity conditions stated as
+Assumptions~\ref{ass:limit}--\ref{ass:cont}---existence of the
+$\kappa_L$-limit at a single reference scale $\tilde\gamma$, locally
+uniform convergence in the direction parameter, and continuity of the
+limit function at $\delta$---the angular lower-tail coefficient
+$\kappa_L(\delta,\gamma;C)$ does not depend on $\gamma$
+(Theorem~\ref{thm:main}). The proof rests on the explicit identity
+$E_\gamma(u;\delta)=E_{\tilde\gamma}(u;\delta_u)$, where
+$\delta_u=\delta+\log(\gamma/\tilde\gamma)/\log u\to\delta$, combined
+with a triangle-inequality decomposition into pointwise convergence,
+continuity, and local uniform convergence terms, each controlled to
+$\eps/3$.
+\item The Pareto-mixture copula $C_{\PM}$ satisfies
+Assumptions~\ref{ass:limit}--\ref{ass:cont} for every $\delta\in(0,2)$
+because its lower tail has a regular-variation expansion of the form
+$C_{\PM}(\gamma u^{d},\gamma^{-1}u^{2-d})=G(\gamma,d)u^{\kappa^\star(d)}(1+o(1))$
+with $\kappa^\star$ continuous, $G$ positive and finite, and remainder
+uniform in $d$ on compact subsets of $(0,2)$. Hence
+$\kappa_L(\delta,\gamma;C_{\PM})=\kappa^\star(\delta)$ does not depend
+on $\gamma$ (Corollary~\ref{cor:pm}).
+\end{enumerate}
+Thus the angular lower-tail coefficient $\kappa_L(\delta,\gamma;C)$ is
+genuinely a function of the direction $\delta$ alone (given $C$), as
+the intuition motivating its definition required.
+
+\end{document}

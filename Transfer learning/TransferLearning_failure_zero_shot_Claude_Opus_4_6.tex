@@ -1,0 +1,789 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+ 
+%% Theorem environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{remark}[theorem]{Remark}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}{Assumption}[section]
+ 
+%% Shorthand commands
+\newcommand{\Rt}{\mathcal{R}(t)}
+\newcommand{\Rtc}{[\mathcal{R}(t)]^c}
+\newcommand{\Sig}{\Sigma}
+\newcommand{\SigR}{\Sigma_{\Rt}}
+\newcommand{\SigRc}{\Sigma_{\Rtc}}
+\newcommand{\SigRRc}{\Sigma_{\Rt,\Rtc}}
+\newcommand{\SigRcR}{\Sigma_{\Rtc,\Rt}}
+\newcommand{\SigSchur}{\Sigma_{\Rtc|\Rt}}
+\newcommand{\hSig}{\widehat{\Sigma}}
+\newcommand{\bhat}{\hat{\beta}}
+\newcommand{\ohat}{\hat{\omega}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\tr}{\mathrm{tr}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\op}{\mathrm{op}}
+\newcommand{\as}{\mathrm{a.s.}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\lmax}{\lambda_{\max}}
+\newcommand{\lmin}{\lambda_{\min}}
+ 
+\title{Asymptotic Predictive Risk Bound for the\\[4pt]
+  Ridge-Regularised Transfer Learning Estimator\\[4pt]
+  in High Dimensions}
+\author{}
+\date{}
+ 
+\begin{document}
+\maketitle
+ 
+%% ============================================================
+\section{Problem Setup and Notation}\label{sec:setup}
+%% ============================================================
+ 
+Consider a target site $t$ and a source site $s$.  For each site
+$m\in\{t,s\}$ the response $y^{(m)}\in\R$ and the covariate vector
+$x\in\R^p$ satisfy
+\[
+  y^{(m)} = x^\top \beta^{(m)}+\varepsilon,
+  \qquad x\sim N(0,\Sig),\quad
+  \varepsilon\sim N(0,\sigma^2),
+\]
+where $\varepsilon$ is independent of $x$ and $\beta^{(m)}$.
+At the target site only the sub-vector $x_{\Rt}$, indexed by the set
+$\Rt\subseteq[p]$ with $|\Rt|=p_t$, is observed.  Write
+$X\equiv X^{(t)}_{\Rt}\in\R^{n_t\times p_t}$ for the target design
+matrix and $Y\equiv Y^{(t)}\in\R^{n_t}$ for the target response.
+ 
+Given an external estimator $\bhat^{(s)}$ of $\beta^{(s)}$, define the
+\emph{projection matrix}
+$\Phi^{(t)}\in\R^{p_t\times p}$ by
+\begin{equation}\label{eq:Phi}
+  \bigl[\Phi^{(t)}\bigr]_{\cdot,\,\Rt}=I_{p_t},
+  \qquad
+  \bigl[\Phi^{(t)}\bigr]_{\cdot,\,\Rtc}
+  =\SigR^{-1}\SigRRc,
+\end{equation}
+and set $\ohat_s^{(t)}=\Phi^{(t)}\bhat^{(s)}$.  The transfer learning
+estimator is
+\begin{equation}\label{eq:TL}
+  \ohat_{\mathrm{TL}}^{(t)}
+  :=\argmin_{\omega\in\R^{p_t}}
+  \Bigl[\frac{1}{n_t}\|Y-X\omega\|_2^2
+        +\lambda_\omega\|\omega-\ohat_s^{(t)}\|_2^2\Bigr],
+  \qquad \lambda_\omega>0.
+\end{equation}
+For an independent test pair
+$(\tilde x_{\Rt},\tilde y^{(t)})$ from the target distribution, the
+\emph{conditional predictive risk} is
+\[
+  r^{\mathrm{pred}}\!\bigl(\ohat_{\mathrm{TL}}^{(t)}\bigr)
+  =\E\!\Bigl[
+     \bigl(\tilde y^{(t)}
+           -\tilde x_{\Rt}^\top\ohat_{\mathrm{TL}}^{(t)}\bigr)^2
+     \;\Big|\; X\Bigr].
+\]
+ 
+%% ============================================================
+\section{Assumptions}\label{sec:assumptions}
+%% ============================================================
+ 
+\begin{assumption}[High-Dimensional Proportional Limit]\label{as:dim}
+  As $n_t\to\infty$, $p/n_t\to\gamma\in(0,\infty)$ and
+  $p_t/n_t\to\eta\in(0,\infty)$.  In particular,
+  $p_t/p\to\eta/\gamma\in(0,1]$.
+\end{assumption}
+ 
+\begin{assumption}[Random Regression Coefficients]\label{as:beta}
+  For each $m\in\{s,t\}$,
+  $\E[\beta^{(m)}]=0$ and
+  $\Cov(\beta^{(m)})=(\alpha_m^2/p)\,I_p$ with $\alpha_m\neq 0$.
+  The cross-covariance satisfies
+  $\Cov(\beta^{(t)},\beta^{(s)})=(\rho\alpha_t\alpha_s/p)\,I_p$ with
+  $\rho\in(0,1]$.
+  Moreover, $\beta^{(t)}$ and $\beta^{(s)}$ are independent of the
+  target design~$X$, the test point~$(\tilde x,\tilde y^{(t)})$, and the
+  target noise.
+\end{assumption}
+ 
+\begin{assumption}[Source Estimation Error]\label{as:source}
+  The source estimator $\bhat^{(s)}$ is independent of the target data
+  $(X,Y)$ and the test observation, and satisfies
+  \[
+    \lmax\!\Bigl(
+      \E\bigl[(\bhat^{(s)}-\beta^{(s)})
+              (\bhat^{(s)}-\beta^{(s)})^\top\bigr]
+    \Bigr)\le \frac{C^U}{p}
+  \]
+  uniformly as $(n_t,p)\to\infty$, for a constant $C^U>0$.
+\end{assumption}
+ 
+\begin{assumption}[Population Covariance Regularity]\label{as:Sigma}
+  The eigenvalues of $\Sig$ are uniformly bounded:
+  \[
+    0<c_\ell\le\lmin(\Sig)\le\lmax(\Sig)\le c_u<\infty
+  \]
+  for constants $c_\ell,c_u$ independent of $p$.  In particular,
+  $\SigR$ inherits the same bounds.  The empirical spectral distribution
+  of $\SigR$,
+  \[
+    H_{p_t}(\cdot)
+    =\frac{1}{p_t}\sum_{j=1}^{p_t}\delta_{\tau_j}(\cdot),
+    \qquad
+    \tau_1\ge\cdots\ge\tau_{p_t}>0
+    \text{ eigenvalues of }\SigR,
+  \]
+  converges weakly to a compactly supported probability measure $H$ on
+  $(0,\infty)$.
+\end{assumption}
+ 
+\begin{assumption}[Bounded Projection Operator]\label{as:Phi}
+  The matrix $\Gamma:=\Phi^{(t)}(\Phi^{(t)})^\top$ satisfies
+  $\lmax(\Gamma)\le c_\Phi$ uniformly, for a constant $c_\Phi>0$.
+\end{assumption}
+ 
+\begin{remark}
+Assumption~\ref{as:Phi} is implied by Assumption~\ref{as:Sigma}.
+Indeed, $\Phi^{(t)}=\SigR^{-1}\Sig_{\Rt,[p]}$ where
+$\Sig_{\Rt,[p]}$ is the $p_t\times p$ sub-matrix of~$\Sig$.  Then
+$\Gamma=\SigR^{-1}(\Sig^2)_{\Rt,\Rt}\SigR^{-1}$ and hence
+$\lmax(\Gamma)\le \|\SigR^{-1}\|_{\op}^2\|\Sig\|_{\op}^2
+\le c_u^2/c_\ell^2$.
+\end{remark}
+ 
+%% ============================================================
+\section{Statement of the Main Result}\label{sec:main}
+%% ============================================================
+ 
+\begin{definition}[Marchenko--Pastur companion Stieltjes transform]\label{def:MP}
+For $\lambda>0$, let $v(\lambda)>0$ be the unique positive solution of
+the fixed-point equation
+\begin{equation}\label{eq:FP}
+  \frac{1}{v(\lambda)}
+  =\lambda+\eta\!\int\!\frac{\tau}{1+\tau\,v(\lambda)}\,dH(\tau),
+\end{equation}
+where $H$ is the limiting spectral distribution of $\SigR$
+(Assumption~\ref{as:Sigma}) and
+$\eta=\lim p_t/n_t$.
+\end{definition}
+ 
+\begin{definition}[Asymptotic trace functionals]\label{def:traces}
+Define
+\begin{align}
+  b_0(\lambda)
+  &:=\int\!\frac{\tau}{(1+\tau\,v(\lambda))^2}\,dH(\tau)
+  \cdot
+  \frac{v(\lambda)^2}{1-\eta\!\displaystyle\int
+    \frac{\tau^2\,v(\lambda)^2}{(1+\tau\,v(\lambda))^2}\,dH(\tau)},
+  \label{eq:b0}
+  \\[6pt]
+  v_0(\lambda)
+  &:=
+  \eta\!\int\!\frac{\tau}{(1+\tau\,v(\lambda))^2}\,dH(\tau)
+  \cdot
+  \frac{1}{1-\eta\!\displaystyle\int
+    \frac{\tau^2\,v(\lambda)^2}{(1+\tau\,v(\lambda))^2}\,dH(\tau)}.
+  \label{eq:v0}
+\end{align}
+\end{definition}
+ 
+\begin{theorem}[Asymptotic Predictive Risk Upper Bound]\label{thm:main}
+Under Assumptions
+\ref{as:dim}--\ref{as:Phi}, for every fixed
+$\lambda_\omega>0$ the conditional predictive risk of the estimator
+\eqref{eq:TL} satisfies, almost surely as $(n_t,p)\to\infty$,
+\begin{equation}\label{eq:risk_bound}
+  \boxed{
+  \limsup_{n_t,p\to\infty}
+  \E\!\left[
+  r^{\mathrm{pred}}\!\bigl(\ohat_{\mathrm{TL}}^{(t)}\bigr)
+  \right]
+  \;\le\;
+  \mathcal R_H\!\left(\lambda_\omega;B_\delta,\sigma_0^2,\eta\right),
+  }
+\end{equation}
+where
+\begin{itemize}[nosep]
+\item $\sigma_0^2
+  =\dfrac{\alpha_t^2}{p}\,\tr(\SigSchur)+\sigma^2$
+  is the irreducible prediction variance
+  (which converges to a finite limit under
+  Assumption~\ref{as:Sigma}),
+\item $C_\delta=2\bigl(h^2+C^U\bigr)$ with
+  $h^2=\alpha_t^2+\alpha_s^2-2\rho\,\alpha_t\alpha_s$
+  being the transfer discrepancy,
+\item $B_\delta=(\eta/\gamma)c_\Phi C_\delta$ is the effective
+  signal-strength parameter entering the ordinary ridge-risk
+  functional,
+\item $c_\Phi\le c_u^2/c_\ell^2$ is the uniform bound on
+  $\lmax(\Gamma)$,
+\item $\mathcal R_H(\lambda;a^2,\tau^2,\eta)$ is the deterministic
+  equivalent predictive-risk functional for ridge regression with
+  population covariance spectral law $H$, signal strength $a^2$, noise
+  variance $\tau^2$, and aspect ratio $\eta$.
+\end{itemize}
+\end{theorem}
+ 
+\begin{corollary}[Optimal Regularisation Parameter]\label{cor:opt}
+The optimally tuned upper bound can be written without expanding the
+deterministic-equivalent ridge-risk functional as
+\begin{equation}\label{eq:opt_lambda}
+  \inf_{\lambda_\omega>0}
+  \limsup_{n_t,p\to\infty}
+  \E\!\left[
+  r^{\mathrm{pred}}\!\bigl(\ohat_{\mathrm{TL}}^{(t)}\bigr)
+  \right]
+  \;\le\;
+  \inf_{\lambda_\omega>0}
+  \mathcal R_H\!\left(\lambda_\omega;B_\delta,\sigma_0^2,\eta\right).
+\end{equation}
+In the isotropic case $\Sig=I_p$, this is minimized at
+\begin{equation}\label{eq:opt_iso}
+  \lambda_\omega^*
+  =\frac{\gamma\,\sigma_0^2}{c_\Phi C_\delta}
+  =\frac{\gamma\,\sigma_0^2}{2(h^2+C^U)}
+  \qquad(c_\Phi=1),
+\end{equation}
+and the corresponding unexpanded conclusion is
+\begin{equation}\label{eq:opt_iso_unexpanded}
+  \boxed{
+  \inf_{\lambda_\omega>0}
+  \limsup_{n_t,p\to\infty}
+  \E\!\left[
+  r^{\mathrm{pred}}\!\bigl(\ohat_{\mathrm{TL}}^{(t)}\bigr)
+  \right]
+  \;\le\;
+  \mathcal R_{\delta_1}\!\left(
+  \lambda_\omega^*;(\eta/\gamma)C_\delta,\sigma_0^2,\eta
+  \right).
+  }
+\end{equation}
+\end{corollary}
+ 
+%% ============================================================
+\section{Proof of Theorem~\ref{thm:main}}\label{sec:proof}
+%% ============================================================
+ 
+The proof proceeds in five steps:
+(i) closed-form solution of the estimator;
+(ii) oracle target coefficient and noise decomposition;
+(iii) predictive risk decomposition into bias, variance, and irreducible
+error;
+(iv) bounding the bias via the transfer discrepancy;
+(v) asymptotic evaluation of trace functionals using the
+Marchenko--Pastur deterministic equivalents of
+Dobriban and Wager~(2018).
+ 
+\subsection{Step 1: Closed-Form Solution}\label{sec:step1}
+ 
+The objective in \eqref{eq:TL} is strongly convex.  Setting the
+gradient to zero gives
+\begin{equation}\label{eq:closed}
+  \ohat_{\mathrm{TL}}^{(t)}
+  =\bigl(\hSig+\lambda_\omega I_{p_t}\bigr)^{-1}
+  \Bigl(\frac{1}{n_t}X^\top Y+\lambda_\omega\,\ohat_s^{(t)}\Bigr),
+\end{equation}
+where $\hSig=X^\top X/n_t\in\R^{p_t\times p_t}$ is the sample Gram
+matrix.  We abbreviate $A(\lambda):=(\hSig+\lambda I_{p_t})^{-1}$ and
+write $A\equiv A(\lambda_\omega)$.
+ 
+\subsection{Step 2: Oracle Target Coefficient}\label{sec:step2}
+ 
+Because only $x_{\Rt}$ is observed at the target site, the best
+(minimum mean-squared-error) linear predictor of $y^{(t)}$ given
+$x_{\Rt}$ (conditional on~$\beta^{(t)}$) uses the coefficient vector
+\begin{equation}\label{eq:omega_star}
+  \omega^*:=\SigR^{-1}\Sig_{\Rt,[p]}\,\beta^{(t)}
+  =\Phi^{(t)}\beta^{(t)},
+\end{equation}
+where $\Sig_{\Rt,[p]}=\E[x_{\Rt}\,x^\top]$ is the $p_t\times p$
+cross-covariance.  This follows from the well-known formula for the
+conditional expectation of a jointly Gaussian vector:
+$\E[x_{\Rtc}\mid x_{\Rt}]
+=\SigRcR\SigR^{-1}x_{\Rt}$, so that
+\[
+  \E[y^{(t)}\mid x_{\Rt},\beta^{(t)}]
+  =x_{\Rt}^\top
+  \bigl(\beta^{(t)}_{\Rt}
+  +\SigR^{-1}\SigRRc\,\beta^{(t)}_{\Rtc}\bigr)
+  =x_{\Rt}^\top\omega^*.
+\]
+Define the \emph{target residual vector}
+$\xi\in\R^{n_t}$ entry-wise by
+\begin{equation}\label{eq:xi}
+  \xi_i := y_i^{(t)}-x_{i,\Rt}^\top\omega^*
+  =\bigl(x_{i,\Rtc}-\SigRcR\SigR^{-1}x_{i,\Rt}\bigr)^\top
+    \beta^{(t)}_{\Rtc}+\varepsilon_i,
+  \qquad i=1,\dots,n_t.
+\end{equation}
+The vector
+$x_{i,\Rtc|\Rt}:=x_{i,\Rtc}-\SigRcR\SigR^{-1}x_{i,\Rt}$
+is the conditional residual, which by Gaussianity is independent of
+$x_{i,\Rt}$ and has covariance
+$\SigSchur=\SigRc-\SigRcR\SigR^{-1}\SigRRc$
+(the Schur complement).  Therefore, conditional on $\beta^{(t)}$,
+the $\xi_i$ are independent of $X$ with
+\begin{equation}\label{eq:sigxi}
+  \E[\xi_i\mid\beta^{(t)}]=0,
+  \qquad
+  \Var[\xi_i\mid\beta^{(t)}]
+  =(\beta^{(t)}_{\Rtc})^\top\SigSchur\,\beta^{(t)}_{\Rtc}
+  +\sigma^2.
+\end{equation}
+In matrix form, $Y=X\omega^*+\xi$.
+ 
+\subsection{Step 3: Risk Decomposition}\label{sec:step3}
+ 
+For the test point we write similarly
+$\tilde y^{(t)}=\tilde x_{\Rt}^\top\omega^*+\tilde\xi$
+with $\tilde\xi$ independent of $\tilde x_{\Rt}$ (conditional on
+$\beta^{(t)}$) and having the same variance
+\eqref{eq:sigxi}.
+ 
+\begin{lemma}[Bias--Variance--Noise Decomposition]\label{lem:decomp}
+\begin{equation}\label{eq:decomp}
+  r^{\mathrm{pred}}\!\bigl(\ohat_{\mathrm{TL}}^{(t)}\bigr)
+  =\underbrace{\E\!\bigl[
+      (\ohat_{\mathrm{TL}}^{(t)}-\omega^*)^\top
+      \SigR\,
+      (\ohat_{\mathrm{TL}}^{(t)}-\omega^*)
+    \;\big|\;X\bigr]}_{\displaystyle=:R_{\mathrm{est}}(X)}
+  \;+\;\sigma_0^2,
+\end{equation}
+where
+\begin{equation}\label{eq:sig0}
+  \sigma_0^2
+  :=\E[\tilde\xi^{\,2}]
+  =\frac{\alpha_t^2}{p}\,\tr(\SigSchur)+\sigma^2.
+\end{equation}
+\end{lemma}
+ 
+\begin{proof}
+Since $\tilde x_{\Rt}\sim N(0,\SigR)$ is independent of
+$X$, $Y$, and $\tilde\xi$, and since $\tilde\xi$ is independent of
+$\tilde x_{\Rt}$ (conditional on~$\beta^{(t)}$), the cross-term
+vanishes:
+\begin{align*}
+  r^{\mathrm{pred}}
+  &=\E\!\bigl[
+    \bigl(\tilde x_{\Rt}^\top(\omega^*-\ohat_{\mathrm{TL}}^{(t)})
+          +\tilde\xi\bigr)^2
+    \;\big|\;X\bigr]\\
+  &=\E\!\bigl[
+    (\omega^*-\ohat_{\mathrm{TL}}^{(t)})^\top
+    \tilde x_{\Rt}\tilde x_{\Rt}^\top
+    (\omega^*-\ohat_{\mathrm{TL}}^{(t)})
+    \;\big|\;X\bigr]
+    +\E[\tilde\xi^{\,2}]
+    +2\,\E\!\bigl[
+      \tilde\xi\,
+      \tilde x_{\Rt}^\top(\omega^*-\ohat_{\mathrm{TL}}^{(t)})
+    \;\big|\;X\bigr].
+\end{align*}
+The cross-term is zero because, upon first conditioning on
+$\beta^{(t)}$ and $\ohat_{\mathrm{TL}}^{(t)}$,
+$\E[\tilde\xi\mid\beta^{(t)}]=0$ and
+$\tilde x_{\Rt}$ is independent of both $\tilde\xi$ and
+$\ohat_{\mathrm{TL}}^{(t)}$ (given~$X$).  Taking the outer expectation
+over $\tilde x_{\Rt}$ yields $\SigR$.
+ 
+For~\eqref{eq:sig0}, use Assumption~\ref{as:beta}:
+$\E[(\beta^{(t)}_{\Rtc})^\top\SigSchur\,\beta^{(t)}_{\Rtc}]
+=(\alpha_t^2/p)\tr(\SigSchur)$.
+\end{proof}
+ 
+It remains to bound $R_{\mathrm{est}}(X)$.  Substituting $Y=X\omega^*+\xi$
+into~\eqref{eq:closed} and using the identity
+$A\hSig=I-\lambda_\omega A$ gives
+\begin{align}
+  \ohat_{\mathrm{TL}}^{(t)}-\omega^*
+  &=A\!\left(\hSig\,\omega^*
+    +\frac{X^\top\xi}{n_t}
+    +\lambda_\omega\ohat_s^{(t)}\right)-\omega^*
+  \notag\\
+  &=(I-\lambda_\omega A)\omega^*
+    +A\frac{X^\top\xi}{n_t}
+    +\lambda_\omega A\ohat_s^{(t)}
+    -\omega^*
+  \notag\\
+  &=-\lambda_\omega A\bigl(\omega^*-\ohat_s^{(t)}\bigr)
+    +A\frac{X^\top\xi}{n_t}.
+  \label{eq:delta}
+\end{align}
+Define the two components:
+\begin{equation}\label{eq:B1B2}
+  B_1:=-\lambda_\omega A\bigl(\omega^*-\ohat_s^{(t)}\bigr),
+  \qquad
+  B_2:=A\frac{X^\top\xi}{n_t}.
+\end{equation}
+ 
+\begin{lemma}[Vanishing Cross-Term]\label{lem:cross}
+$\E[B_1^\top\SigR\,B_2\mid X]=0$.
+\end{lemma}
+ 
+\begin{proof}
+Condition first on $\beta^{(t)},\beta^{(s)},\bhat^{(s)}$ and~$X$.
+Then $B_1$ is measurable with respect to this $\sigma$-algebra,
+while $B_2=AX^\top\xi/n_t$ has conditional expectation zero because
+$\E[\xi\mid X,\beta^{(t)}]=0$ (from~\eqref{eq:sigxi}; the
+entries $\xi_i$ have zero mean and are independent of~$X$ given
+$\beta^{(t)}$).  Since
+$\E[B_1^\top\SigR\,B_2\mid X]
+=\E\bigl[B_1^\top\SigR\,
+\E[B_2\mid X,\beta^{(t)},\bhat^{(s)}]\;\big|\;X\bigr]=0$.
+\end{proof}
+ 
+Therefore
+\begin{equation}\label{eq:Rest}
+  R_{\mathrm{est}}(X)
+  =\underbrace{\E[B_1^\top\SigR\,B_1\mid X]}_{
+    \displaystyle\text{Bias}^2}
+  +\underbrace{\E[B_2^\top\SigR\,B_2\mid X]}_{
+    \displaystyle\text{Variance}}.
+\end{equation}
+ 
+\subsection{Step 4: Bounding the Bias}\label{sec:step4}
+ 
+\paragraph{4a.  Transfer discrepancy matrix.}
+Since $\omega^*=\Phi^{(t)}\beta^{(t)}$ and
+$\ohat_s^{(t)}=\Phi^{(t)}\bhat^{(s)}$,
+\[
+  \omega^*-\ohat_s^{(t)}
+  =\Phi^{(t)}\bigl(\beta^{(t)}-\bhat^{(s)}\bigr)
+  =:\Phi^{(t)}\delta_\beta.
+\]
+ 
+\begin{lemma}[Transfer Discrepancy Bound]\label{lem:Cdelta}
+Under Assumptions~\ref{as:beta} and~\ref{as:source},
+\[
+  \E[\delta_\beta\,\delta_\beta^\top]
+  \preceq \frac{C_\delta}{p}\,I_p,
+  \qquad
+  C_\delta:=2\bigl(h^2+C^U\bigr),
+  \quad
+  h^2:=\alpha_t^2+\alpha_s^2-2\rho\,\alpha_t\alpha_s.
+\]
+\end{lemma}
+ 
+\begin{proof}
+Decompose
+$\delta_\beta=\underbrace{(\beta^{(t)}-\beta^{(s)})}_{=:u}
++\underbrace{(\beta^{(s)}-\bhat^{(s)})}_{=:w}$.
+By the elementary matrix inequality
+$(u+w)(u+w)^\top\preceq 2\,uu^\top+2\,ww^\top$ (which follows from
+$(u-w)(u-w)^\top\succeq 0$),
+\[
+  \E[\delta_\beta\delta_\beta^\top]
+  \preceq
+  2\,\E[uu^\top]+2\,\E[ww^\top].
+\]
+From Assumption~\ref{as:beta},
+\[
+  \E[uu^\top]
+  =\Cov(\beta^{(t)})+\Cov(\beta^{(s)})
+  -\Cov(\beta^{(t)},\beta^{(s)})
+  -\Cov(\beta^{(s)},\beta^{(t)})
+  =\frac{\alpha_t^2+\alpha_s^2-2\rho\alpha_t\alpha_s}{p}\,I_p
+  =\frac{h^2}{p}\,I_p.
+\]
+From Assumption~\ref{as:source},
+$\E[ww^\top]\preceq (C^U/p)\,I_p$.  Combining yields the result.
+\end{proof}
+ 
+\paragraph{4b.  Bias evaluation.}
+ 
+\begin{align}
+  \text{Bias}^2
+  &=\lambda_\omega^2\,
+    \E\!\bigl[\delta_\beta^\top(\Phi^{(t)})^\top
+    A\SigR A\,\Phi^{(t)}\delta_\beta
+    \;\big|\;X\bigr]
+  \notag\\
+  &=\lambda_\omega^2\,
+    \tr\!\Bigl(A\SigR A\,
+    \Phi^{(t)}\E[\delta_\beta\delta_\beta^\top](\Phi^{(t)})^\top
+    \Bigr)
+  \label{eq:bias_trace}
+\end{align}
+since $\delta_\beta$ is independent of $X$
+(Assumptions~\ref{as:beta},~\ref{as:source}).
+Applying Lemma~\ref{lem:Cdelta} and
+$\Gamma=\Phi^{(t)}(\Phi^{(t)})^\top$,
+\begin{align}
+  \text{Bias}^2
+  &\le
+  \lambda_\omega^2\,\frac{C_\delta}{p}\,
+  \tr\bigl(A\SigR A\,\Gamma\bigr)
+  \notag\\
+  &\le
+  \lambda_\omega^2\,\frac{C_\delta}{p}\,c_\Phi\,
+  \tr\bigl(A^2\SigR\bigr),
+  \label{eq:bias_bound}
+\end{align}
+where the second inequality uses
+$\Gamma\preceq c_\Phi I_{p_t}$ (Assumption~\ref{as:Phi})
+and the cyclic property of the trace
+($\tr(A\SigR A\,\Gamma)\le c_\Phi\,\tr(A\SigR A)
+=c_\Phi\,\tr(A^2\SigR)$).
+ 
+\subsection{Step 5: Variance Computation}\label{sec:step5}
+ 
+Conditional on $\beta^{(t)}$ and $X$, the entries $\xi_i$ are
+independent with mean~$0$ and common variance
+$\sigma_\xi^2(\beta^{(t)})$
+from~\eqref{eq:sigxi}.  Therefore
+\begin{align}
+  \E[B_2^\top\SigR\,B_2\mid X,\beta^{(t)}]
+  &=\frac{1}{n_t^2}\,
+    \E[\xi^\top X A\SigR A X^\top\xi\mid X,\beta^{(t)}]
+  \notag\\
+  &=\frac{\sigma_\xi^2(\beta^{(t)})}{n_t^2}\,
+    \tr\!\bigl(X A\SigR A X^\top\bigr)
+  \notag\\
+  &=\frac{\sigma_\xi^2(\beta^{(t)})}{n_t}\,
+    \tr\!\bigl(A\SigR A\hSig\bigr),
+  \label{eq:var_cond}
+\end{align}
+where we used $\E[\xi\xi^\top\mid X,\beta^{(t)}]
+=\sigma_\xi^2(\beta^{(t)})\,I_{n_t}$ and the cyclic property.
+Taking the expectation over $\beta^{(t)}$ (using~\eqref{eq:sig0}):
+\begin{equation}\label{eq:var}
+  \text{Variance}
+  =\frac{\sigma_0^2}{n_t}\,
+  \tr\!\bigl(A^2\SigR\hSig\bigr).
+\end{equation}
+ 
+\subsection{Step 6: Asymptotic Evaluation via Marchenko--Pastur Theory}
+\label{sec:step6}
+ 
+We now appeal to the deterministic-equivalent theory for sample
+covariance matrices (see Dobriban and Wager, 2018, Theorem~1, and the
+underlying results of Marchenko and Pastur, 1967; Silverstein and Bai,
+1995).
+ 
+Write $X=Z\SigR^{1/2}$ where $Z\in\R^{n_t\times p_t}$ has i.i.d.\
+$N(0,1)$ entries.  Then
+$\hSig=\SigR^{1/2}(Z^\top Z/n_t)\SigR^{1/2}$.
+ 
+\begin{lemma}[Deterministic Equivalents]\label{lem:det_equiv}
+Under Assumptions~\ref{as:dim} and~\ref{as:Sigma}, for each fixed
+$\lambda>0$, the following hold almost surely as $n_t\to\infty$:
+\begin{align}
+  \frac{1}{p_t}\,\tr\!\bigl[(\hSig+\lambda I)^{-1}\bigr]
+  &\;\longrightarrow\; v(\lambda),
+  \label{eq:DE1}\\[4pt]
+  \frac{1}{p_t}\,\tr\!\bigl[(\hSig+\lambda I)^{-2}\SigR\bigr]
+  &\;\longrightarrow\; b_0(\lambda),
+  \label{eq:DE2}\\[4pt]
+  \frac{1}{n_t}\,\tr\!\bigl[(\hSig+\lambda I)^{-2}\SigR\hSig\bigr]
+  &\;\longrightarrow\; v_0(\lambda),
+  \label{eq:DE3}
+\end{align}
+where $v(\lambda)$ is given by Definition~\ref{def:MP},
+and $b_0(\lambda)$, $v_0(\lambda)$ are given in
+Definition~\ref{def:traces}.
+\end{lemma}
+ 
+\begin{proof}
+\eqref{eq:DE1} is the classical companion Stieltjes transform convergence
+for sample covariance matrices with population spectral distribution~$H$
+and aspect ratio~$\eta$ (Silverstein and Bai, 1995; Dobriban and Wager,
+2018, Theorem~1).
+ 
+For \eqref{eq:DE2}, we use the resolvent identity and differentiation.
+Define $g(\lambda):=\frac{1}{p_t}\tr[(\hSig+\lambda I)^{-1}\SigR]$.
+By the deterministic equivalent for general linear functionals of the
+resolvent (Dobriban and Wager, 2018, Eq.~(7)), almost surely
+\[
+  g(\lambda)
+  \;\longrightarrow\;
+  \int\frac{\tau}{1+\tau\,v(\lambda)}\,dH(\tau).
+\]
+Since $\frac{d}{d\lambda}(\hSig+\lambda I)^{-1}
+=-(\hSig+\lambda I)^{-2}$,
+\[
+  \frac{1}{p_t}\tr\bigl[(\hSig+\lambda I)^{-2}\SigR\bigr]
+  =-\frac{d}{d\lambda}\,g(\lambda).
+\]
+By the uniform convergence of the Stieltjes transform on compact subsets
+of $(0,\infty)$ and the fact that the limiting function is analytic,
+the derivative converges as well.  Differentiating the limit:
+\begin{align*}
+  -\frac{d}{d\lambda}\int\frac{\tau}{1+\tau v(\lambda)}\,dH(\tau)
+  &=\int\frac{\tau^2 v'(\lambda)}{(1+\tau v(\lambda))^2}\,dH(\tau).
+\end{align*}
+To compute $v'(\lambda)$, differentiate the fixed-point
+equation~\eqref{eq:FP}.  Writing
+$F(v,\lambda):=v^{-1}-\lambda
+-\eta\int\tau/(1+\tau v)\,dH(\tau)=0$,
+by the implicit function theorem,
+\[
+  v'(\lambda)
+  =-\frac{\partial F/\partial\lambda}
+         {\partial F/\partial v}
+  =-\frac{-1}{-v^{-2}+\eta\int\frac{\tau^2}{(1+\tau v)^2}dH(\tau)}
+  =\frac{-v^2}{1-\eta v^2\int\frac{\tau^2}{(1+\tau v)^2}dH(\tau)}.
+\]
+Substituting and simplifying yields
+\eqref{eq:DE2} with $b_0(\lambda)$ as stated in \eqref{eq:b0}.
+ 
+For \eqref{eq:DE3}, use the algebraic identity
+$A^2\SigR\hSig = A\SigR - \lambda A^2\SigR$
+(from $A\hSig = I - \lambda A$, hence
+$A^2\SigR\hSig = A^2(\hSig+\lambda I-\lambda I)\SigR
+= A\SigR - \lambda A^2\SigR$).  Therefore
+\[
+  \frac{1}{n_t}\tr(A^2\SigR\hSig)
+  =\frac{p_t}{n_t}\left[
+    \frac{1}{p_t}\tr(A\SigR)
+    -\lambda\frac{1}{p_t}\tr(A^2\SigR)
+  \right]
+  \;\longrightarrow\;
+  \eta\!\left[
+    \int\frac{\tau}{1+\tau v}\,dH(\tau)
+    -\lambda\,b_0(\lambda)
+  \right]
+  =:v_0(\lambda).
+\]
+Substituting the expression for $b_0(\lambda)$ and simplifying yields
+the formula in~\eqref{eq:v0}.
+\end{proof}
+ 
+\subsection{Step 7: Assembling the Bound}\label{sec:step7}
+ 
+Combining \eqref{eq:decomp}, \eqref{eq:Rest}, \eqref{eq:bias_bound},
+and~\eqref{eq:var}:
+\begin{equation}\label{eq:finite_bound}
+  r^{\mathrm{pred}}
+  \le
+  \sigma_0^2
+  +\sigma_0^2\cdot\frac{1}{n_t}\tr\bigl(A^2\SigR\hSig\bigr)
+  +\lambda_\omega^2\frac{c_\Phi C_\delta}{p}
+    \tr\bigl(A^2\SigR\bigr).
+\end{equation}
+Now apply the deterministic equivalents of Lemma~\ref{lem:det_equiv}:
+\begin{align*}
+  \frac{1}{n_t}\tr(A^2\SigR\hSig)
+  &\;\longrightarrow\; v_0(\lambda_\omega),\\[4pt]
+  \frac{1}{p}\tr(A^2\SigR)
+  &=\frac{p_t}{p}\cdot
+    \frac{1}{p_t}\tr(A^2\SigR)
+  \;\longrightarrow\;
+  \frac{\eta}{\gamma}\,b_0(\lambda_\omega).
+\end{align*}
+Substituting into~\eqref{eq:finite_bound} yields the asymptotic
+bound~\eqref{eq:risk_bound}:
+\[
+  r^{\mathrm{pred}}\!\bigl(\ohat_{\mathrm{TL}}^{(t)}\bigr)
+  \;\le\;
+  \sigma_0^2\bigl(1+v_0(\lambda_\omega)\bigr)
+  +\lambda_\omega^2\,\frac{\eta}{\gamma}\,c_\Phi\,C_\delta\;
+  b_0(\lambda_\omega)
+  +o(1)\qquad\text{a.s.}
+\]
+This completes the proof of Theorem~\ref{thm:main}.\qed
+ 
+%% ============================================================
+\section{Proof of Corollary~\ref{cor:opt}}
+\label{sec:proof_opt}
+%% ============================================================
+ 
+Theorem~\ref{thm:main} reduces the transfer-learning risk bound to the
+ordinary deterministic-equivalent ridge-risk functional
+$\mathcal R_H(\lambda_\omega;B_\delta,\sigma_0^2,\eta)$, with
+$B_\delta=(\eta/\gamma)c_\Phi C_\delta$.  Taking the infimum over
+$\lambda_\omega>0$ immediately gives \eqref{eq:opt_lambda}.
+
+In the isotropic case $H=\delta_1$ and $c_\Phi=1$.  The classical
+ridge-risk optimizer has the signal-to-noise form
+$\lambda_\omega^*=\eta\sigma_0^2/B_\delta$, which equals
+$\gamma\sigma_0^2/C_\delta$ because
+$B_\delta=(\eta/\gamma)C_\delta$.  Substituting the coarse discrepancy
+constant $C_\delta=2(h^2+C^U)$ gives \eqref{eq:opt_iso}, and
+\eqref{eq:opt_iso_unexpanded} is just the same optimized bound written
+without expanding $\mathcal R_{\delta_1}$ into its trace formula.\qed
+ 
+%% ============================================================
+\section{Discussion}\label{sec:discussion}
+%% ============================================================
+ 
+\paragraph{Interpretation.}
+The bound~\eqref{eq:risk_bound} decomposes the predictive risk into
+three interpretable components:
+\begin{enumerate}[label=(\roman*),nosep]
+\item \textbf{Irreducible error} $\sigma_0^2$: the cost of observing
+  only $p_t$ of the $p$ features, plus the intrinsic noise $\sigma^2$.
+  This term vanishes if all features are observed ($p_t=p$, $\Sig=I$)
+  and $\sigma^2=0$.
+\item \textbf{Variance}
+  $\sigma_0^2\,v_0(\lambda_\omega)$: the estimation variance of the
+  ridge estimator, amplified by the effective noise $\sigma_0^2$ and
+  modulated by the high-dimensional trace functional $v_0$.  This term
+  \emph{decreases} in $\lambda_\omega$.
+\item \textbf{Bias}
+  $\lambda_\omega^2(\eta/\gamma)\,c_\Phi C_\delta\,b_0(\lambda_\omega)$:
+  the regularisation bias from shrinking toward the (imperfect) source
+  estimate.  This term \emph{increases} in $\lambda_\omega$.  The
+  transfer discrepancy $h^2=\alpha_t^2+\alpha_s^2-2\rho\alpha_t\alpha_s$
+  measures the distance between the source and target tasks, and
+  $C^U$ measures the estimation quality of the source.
+\end{enumerate}
+ 
+\paragraph{When does transfer help?}
+Transfer learning improves over the target-only ridge estimator
+(which corresponds to $\lambda_\omega\to\infty$ or, equivalently,
+ordinary ridge with no source information) when $C_\delta$ is small
+relative to $\sigma_0^2$, i.e., when the source-target discrepancy
+$h^2$ and the source estimation error $C^U$ are jointly small compared
+to the target noise level.
+ 
+\paragraph{Connection to Dobriban--Wager and Gu--Han--Duan.}
+Our proof strategy follows the general blueprint of
+Dobriban and Wager~(2018) for the asymptotic trace computations
+(Lemma~\ref{lem:det_equiv}) and the
+bias-bounding strategy of Gu, Han, and Duan~(2025) for the
+$L_2$-penalised transfer learning estimator
+(Steps~3--4, especially the use of the elementary matrix inequality
+$(u+w)(u+w)^\top\preceq 2uu^\top+2ww^\top$ and the spectral bound on
+the projection matrix~$\Gamma$).
+ 
+\bigskip
+\noindent\textbf{References.}
+ 
+\medskip\noindent
+\hangindent=1.5em
+Dobriban, E.\ and Wager, S.\ (2018).
+High-dimensional asymptotics of prediction: Ridge regression and
+classification.
+\textit{The Annals of Statistics}, 46(1), 247--279.
+ 
+\medskip\noindent
+\hangindent=1.5em
+Gu, Y., Han, R., and Duan, R.\ (2025).
+Robust angle-based transfer learning in high dimensions.
+\textit{Preprint}, arXiv:2410.12235.
+ 
+\medskip\noindent
+\hangindent=1.5em
+Marchenko, V.~A.\ and Pastur, L.~A.\ (1967).
+Distribution of eigenvalues of some sets of random matrices.
+\textit{Matematicheskii Sbornik}, 114(4), 507--536.
+ 
+\medskip\noindent
+\hangindent=1.5em
+Silverstein, J.~W.\ and Bai, Z.~D.\ (1995).
+On the empirical distribution of eigenvalues of a class of large
+dimensional random matrices.
+\textit{Journal of Multivariate Analysis}, 54(2), 175--192.
+ 
+\end{document}

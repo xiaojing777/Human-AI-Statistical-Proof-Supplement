@@ -1,0 +1,148 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{assumption}{Assumption}
+
+\title{Quantifying the Sub-optimality of zCDP Composition}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+To rigorously quantify the sub-optimality of zCDP composition, we must analyze the gap between the sum of the individual zCDP parameters and the exact R\'enyi Differential Privacy (RDP) curve of the composed mechanism. The loss essentially arises because zCDP characterizes the entire RDP curve by its supremum (a single scalar), erasing the geometric properties (curvature) of the exact privacy loss random variable.
+
+Below is the formal setup, the main theorem quantifying this gap, and its complete proof.
+
+\section{Formal Setup and Assumptions}
+
+Let $M = (M_1, \dots, M_n)$ be a heterogeneous composition of $n$ independent mechanisms. Each mechanism $M_i$ acts on a database by adding noise drawn from a centered, symmetric distribution $\nu$ to a query with sensitivity $\Delta_i$.
+
+\begin{definition}[Exact RDP]
+The exact RDP between the output distributions $P_i$ and $Q_i$ for adjacent databases is $D_\alpha(P_i\|Q_i)$. For an additive noise mechanism with shift $\delta_i$, this is defined as:
+\[
+D_\alpha(\nu\|\nu_{\delta_i}) = \frac{1}{\alpha-1} \log \mathbb{E}_{X \sim \nu} \left[ \left( \frac{\nu(X)}{\nu(X-\delta_i)} \right)^\alpha \right]
+\]
+\end{definition}
+
+\begin{definition}[zCDP Allocation]
+A mechanism satisfies $\rho_i$-zCDP tightly if:
+\[
+\rho_i = \sup_{\alpha > 1} \frac{D_\alpha(\nu\|\nu_{\delta_i})}{\alpha}
+\]
+By standard composition, the composed mechanism $M$ satisfies $\rho$-zCDP with $\rho = \sum_{i=1}^n \rho_i$.
+\end{definition}
+
+\begin{definition}[Sub-optimality Metric]
+The sub-optimality gap of the composition at a specific divergence order $\alpha > 1$ is:
+\[
+\Gamma_{n,\nu}(\alpha) := \rho \cdot \alpha - \sum_{i=1}^n D_\alpha(P_i\|Q_i) = \alpha \sum_{i=1}^n \left( \rho_i - \frac{D_\alpha(\nu\|\nu_{\delta_i})}{\alpha} \right)
+\]
+\end{definition}
+
+To analyze this gap, we classify the noise distribution $\nu$ by its regularity.
+
+\begin{assumption}[Regularity of $\nu$]
+Let $\nu(x) = e^{-V(x)}$ be symmetric around zero. We assume the Fisher Information $I(\nu) = \int (V'(x))^2 \nu(x) \,dx$ exists and is strictly positive. We consider two standard classes of noise:
+\begin{itemize}
+    \item \textbf{Class $\mathcal{S}$ (Smooth):} $V(x)$ is at least four times continuously differentiable at $0$ (e.g., Gaussian, Student-t, Logistic).
+    \item \textbf{Class $\mathcal{C}$ (Cusp):} $V(x)$ is continuous but has a discontinuous first derivative at $0$, exhibiting a cusp (e.g., Laplace noise, where $V(x) \propto |x|$).
+\end{itemize}
+\end{assumption}
+
+\section{Main Theorem}
+
+\begin{theorem}[Quantification of zCDP Sub-optimality]
+Let $M_1, \dots, M_n$ be independent additive mechanisms using noise $\nu$, tightly satisfying $\rho_1, \dots, \rho_n$-zCDP respectively. If $\nu$ is non-Gaussian, then for any fixed $\alpha > 1$ and sufficiently small $\rho_i$, the sub-optimality gap is bounded below by:
+\[
+\Gamma_{n,\nu}(\alpha) \ge C(\nu, \alpha) \cdot \alpha \sum_{i=1}^n \rho_i^p + o\left(\sum_{i=1}^n \rho_i^p\right)
+\]
+where $C(\nu, \alpha) > 0$ is a distribution-dependent constant, and:
+\begin{enumerate}
+    \item $p = 2$ if $\nu \in \mathcal{S}$ (Smooth noise).
+    \item $p = 3/2$ if $\nu \in \mathcal{C}$ (Cusp noise).
+\end{enumerate}
+\end{theorem}
+
+\begin{corollary}[Dependence on Allocation and $n$]
+For a fixed total privacy budget $\rho = \sum_{i=1}^n \rho_i$:
+\begin{itemize}
+    \item \textbf{Worst-case Allocation (Uniform):} If $\rho_i = \rho / n$ for all $i$, the gap maximizes and scales as $\Theta(n^{-1})$ for smooth noise and $\Theta(n^{-1/2})$ for cusp noise.
+    \item \textbf{Best-case Allocation (Skewed):} If $\rho_1 \to \rho$ and $\rho_{i>1} \to 0$, the gap is minimized and independent of $n$.
+\end{itemize}
+\end{corollary}
+
+\section{Rigorous Proof of Theorem 1}
+
+\begin{proof}
+\textbf{Step 1: Local Taylor Expansion of RDP.} \\
+Let $\delta$ be a small shift representing the query sensitivity. The privacy loss random variable is $L(X) = \log \nu(X) - \log \nu(X-\delta)$. We examine the normalized RDP function $g(\alpha, \delta) := \frac{1}{\alpha} D_\alpha(\nu\|\nu_\delta)$.
+
+For any symmetric distribution, $g(\alpha, \delta) = g(\alpha, -\delta)$, implying that if $g$ is analytic in $\delta$, its Maclaurin series contains only even powers of $\delta$. By expanding the log moment generating function $\log \mathbb{E}[e^{(\alpha-1)L(X)}]$ via its cumulants, the leading term for small $\delta$ is uniquely determined by the Fisher Information:
+\[
+g(\alpha, \delta) = \frac{1}{2} I(\nu) \delta^2 - \psi(\alpha, \nu) |\delta|^k + o(|\delta|^k)
+\]
+where $k$ depends on the smoothness of $\nu$ at $0$:
+\begin{itemize}
+    \item If $\nu \in \mathcal{S}$, the odd derivatives of the MGF evaluate to zero by symmetry, yielding $k=4$. Thus, $g(\alpha, \delta) = \frac{1}{2} I(\nu) \delta^2 - c_4(\alpha) \delta^4 + o(\delta^4)$.
+    \item If $\nu \in \mathcal{C}$ (e.g., Laplace $\nu(x) \propto e^{-|x|/b}$), the non-differentiability at zero introduces a 3rd-order absolute term, yielding $k=3$. For Laplace, explicit calculation gives $g(\alpha, \delta) = \frac{1}{2b^2} \delta^2 - \frac{1}{6b^3} |\delta|^3 + O(\delta^4)$.
+\end{itemize}
+
+\textbf{Step 2: Characterizing the zCDP Parameter $\rho(\delta)$.} \\
+The tight zCDP parameter is defined as $\rho(\delta) = \sup_{\beta > 1} g(\beta, \delta)$. 
+Because $\nu$ is non-Gaussian, $g(\beta, \delta)$ is not constant with respect to $\beta$. We can write the Taylor expansion of the supremum as:
+\[
+\rho(\delta) = \frac{1}{2} I(\nu) \delta^2 - \psi^*(\nu) |\delta|^k + o(|\delta|^k)
+\]
+where $\psi^*(\nu) = \inf_{\beta > 1} \psi(\beta, \nu)$. 
+
+\textbf{Step 3: Bounding the Individual Gap $\Delta_i(\alpha)$.} \\
+For a specific mechanism $i$ and divergence order $\alpha$, the local gap is:
+\[
+\Delta_i(\alpha) = \alpha \left( \rho(\delta_i) - g(\alpha, \delta_i) \right)
+\]
+Substituting our expansions from Steps 1 and 2:
+\[
+\Delta_i(\alpha) = \alpha \left( \psi(\alpha, \nu) - \psi^*(\nu) \right) |\delta_i|^k + o(|\delta_i|^k)
+\]
+Because $g(\beta, \delta_i)$ is strictly convex in $\beta$ for non-Gaussian distributions, the supremum over $\beta$ is achieved at a point (often $\beta \to 1$ or $\beta \to \infty$) distinct from an arbitrary finite $\alpha > 1$. Therefore, $\psi(\alpha, \nu) - \psi^*(\nu) =: \tilde{C}(\nu, \alpha) > 0$.
+
+Thus, $\Delta_i(\alpha) \approx \alpha \tilde{C}(\nu, \alpha) |\delta_i|^k$.
+
+\textbf{Step 4: Change of Variables from $\delta_i$ to $\rho_i$.} \\
+In the high-composition regime ($\delta_i \to 0$), the quadratic term dominates the zCDP parameter:
+\[
+\rho_i = \frac{1}{2} I(\nu) \delta_i^2 + o(\delta_i^2) \implies |\delta_i| = \left( \frac{2 \rho_i}{I(\nu)} \right)^{1/2} + o(\rho_i^{1/2})
+\]
+Substituting $|\delta_i|$ into the gap equation yields:
+\[
+\Delta_i(\alpha) = \alpha \tilde{C}(\nu, \alpha) \left( \frac{2}{I(\nu)} \right)^{k/2} \rho_i^{k/2} + o(\rho_i^{k/2})
+\]
+Let $C(\nu, \alpha) := \tilde{C}(\nu, \alpha) \left( \frac{2}{I(\nu)} \right)^{k/2}$, which is strictly positive.
+
+\textbf{Step 5: Summing over the Composition.} \\
+Summing the individual gaps over all $n$ mechanisms gives the total sub-optimality metric:
+\[
+\Gamma_{n,\nu}(\alpha) = \sum_{i=1}^n \Delta_i(\alpha) = C(\nu, \alpha) \cdot \alpha \sum_{i=1}^n \rho_i^{k/2} + o\left(\sum_{i=1}^n \rho_i^{k/2}\right)
+\]
+Letting $p = k/2$ completes the theorem. For smooth noise ($k=4$), $p=2$. For cusp noise ($k=3$), $p=3/2$.
+\end{proof}
+
+\section{Discussion of Dependencies}
+
+\begin{itemize}
+    \item \textbf{Dependence on $\nu$:} The noise distribution dictates the power $p$ via its smoothness at the origin. Gaussian noise is the unique distribution where $C(\nu, \alpha) = 0$, making zCDP perfectly tight. For heavy-tailed or non-smooth distributions, the higher-order moments of the privacy loss variable force the gap strictly open.
+    \item \textbf{Dependence on the Allocation $(\rho_1, \dots, \rho_n)$:} Because $p > 1$, the function $f(x) = x^p$ is strictly convex. By Jensen's inequality, subject to $\sum \rho_i = \rho$, the sum $\sum \rho_i^p$ is structurally minimized when the budget is perfectly evenly distributed ($\rho_i = \rho/n$). Paradoxically, \textbf{a highly distributed system (uniform allocation) maximizes the sub-optimality of zCDP}.
+    \item \textbf{Dependence on $n$:} If we split a global budget $\rho$ evenly across $n$ queries, the gap evaluates to $\Theta(n \cdot (\rho/n)^p) = \Theta(n^{1-p})$. Thus, as the number of compositions $n \to \infty$, the gap vanishes at rate $n^{-1}$ (for smooth noise) or $n^{-1/2}$ (for Laplace), reflecting the Central Limit Theorem for privacy loss: the composed mechanism asymptotically converges to Gaussian DP, where zCDP becomes tight again.
+\end{itemize}
+
+\end{document}

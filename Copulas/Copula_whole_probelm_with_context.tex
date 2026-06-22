@@ -1,0 +1,51 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\begin{document}
+
+You are an expert in statistical methodology and mathematical reasoning. Your task is to produce a full formal proof for a problem in an ongoing research project.
+
+\textbf{Problem:} Prove that for a copula $C$ on $[0,1]^2$ and parameters $\gamma>0$, $\delta\in(0,2)$, define
+\[
+\kappa_L(\delta,\gamma;C)
+=
+\lim_{u\downarrow 0}
+\frac{\log C\!\bigl(\gamma u^\delta,\gamma^{-1}u^{2-\delta}\bigr)}{\log u},
+\]
+whenever the limit exists.
+The claim to be proved is that 
+under suitable regularity conditions, $\kappa_L(\delta,\gamma;C)$ does not depend on the choice of scaling parameter $\gamma$ for all $\delta \in (0,2)$. In addition, verify that the proposed copula $C_{\rm PM}$ described in Context also satisfies this claim.
+
+\textbf{Context:} We propose a new class of copulas that can account for {angular full-range tail dependence}, capturing not only asymmetry but also non-exchangeability.
+Our proposed copula, denoted by $C_{\rm PM}$, is defined as following.
+Consider a random pair:
+\begin{align}
+    X_1=\frac{R}{R^*}\times \frac{H_1}{H_1^*},
+    \qquad
+    X_2=\frac{R}{R^*}\times \frac{H_2}{H_2^*},
+    \label{eqn:pareto-mixture}
+\end{align}
+where $\rm Pa$ denotes Pareto distribution, $R\sim{\rm Pa}(\beta)$, \(R^*\sim {\rm Pa}(\alpha)\), \(H_1\sim{\rm Pa}(b_1)\), \(H_1^*\sim{\rm Pa}(a_1)\), \(H_2\sim{\rm Pa}(b_2)\), \(H_2^*\sim{\rm Pa}(a_2)\), with all shape parameters $\alpha,\, \beta,\, a_1,\, a_2,\, b_1,\, b_2>0$. Moreover, these factor RVs $R$, $R^*$, $H_1$, $H_2$, $H_1^*$, $H_2^*$, are mutually independent. 
+The copula underlying the random pair $(X_1,X_2)$, which we term the Pareto-mixture copula, is denoted by $C_{\rm PM}$ and can be computed via 
+\begin{align}
+\label{eqn:copula-pa}
+    C_{\rm PM}(u_1,u_2)=F_{X_1,X_2}\big(F_{X_1}^{-1}(u_1), F_{X_2}^{-1}(u_2)\big), \qquad u_1,u_2\in [0,1],
+\end{align}
+where $F^{-1}$ denote the inversion of a CDF $F$. 
+To theoretically analyze this new model class, we first need a principled measure of tail behavior that can vary with the {direction} (angle) of approach to the tail.
+That is the motivation of how we define $\kappa_L(\delta,\gamma;C)$.
+This quantity is a generalized lower-tail dependence coefficient (Anthony W Ledford and Jonathan A Tawn. Statistics for near independence in multivariate extreme values. Biometrika, 83(1):169--187, 1996.).
+Our intuition is that, when the limit exists, the resulting angular tail behavior should primarily be governed by the {direction parameter} $\delta$, and should not depend on the {scaling parameter} $\gamma$.
+We therefore seek (i) regularity conditions under which such scaling invariance holds and (ii) a rigorous proof under those conditions.
+
+Given the problem and context above, give a full formal proof for the problem.
+State any assumptions that are needed.
+Justify each step and give the complete proof in \LaTeX.
+
+\end{document}

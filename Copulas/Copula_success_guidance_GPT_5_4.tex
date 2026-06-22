@@ -1,0 +1,327 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,mathtools,enumitem}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{remark}[theorem]{Remark}
+
+\begin{document}
+
+\title{Scaling invariance of the angular lower-tail coefficient}
+\author{}
+\date{}
+\maketitle
+
+\section*{Statement of the problem}
+
+Let \(C\) be a copula on \([0,1]^2\). For \(\gamma>0\) and \(\delta\in(0,2)\), define
+\[
+\kappa_L(\delta,\gamma;C)
+=
+\lim_{u\downarrow 0}
+\frac{\log C\!\bigl(\gamma u^\delta,\gamma^{-1}u^{2-\delta}\bigr)}{\log u},
+\]
+whenever the limit exists.
+
+We prove that, under suitable regularity conditions, \(\kappa_L(\delta,\gamma;C)\) does not depend on the choice of the scaling parameter \(\gamma\). We then verify that the same conclusion applies to the proposed copula \(C_{\rm PM}\).
+
+\section*{Assumptions}
+
+Fix \(\delta\in(0,2)\). Let \(\tilde\gamma>0\) be an arbitrary reference scaling parameter. We assume:
+
+\begin{enumerate}[label=\textnormal{(A\arabic*)}]
+\item \label{A1}
+The quantity
+\[
+\tilde{\kappa}(d):=\kappa_L(d,\tilde\gamma;C)
+=
+\lim_{u\downarrow 0}
+\frac{\log C\!\bigl(\tilde\gamma u^d,\tilde\gamma^{-1}u^{2-d}\bigr)}{\log u}
+\]
+exists for \(d\) in a neighborhood of the fixed point \(\delta\), and in particular
+\(\tilde{\kappa}(\delta)\) is finite.
+
+\item \label{A2}
+The convergence above is locally uniform in \(d\) near \(\delta\): for every \(\varepsilon>0\), there exist \(r=r(\varepsilon)>0\) and \(u_0=u_0(\varepsilon)\in(0,1)\) such that
+\[
+\left|
+\frac{\log C\!\bigl(\tilde\gamma u^d,\tilde\gamma^{-1}u^{2-d}\bigr)}{\log u}
+-
+\tilde{\kappa}(d)
+\right|
+\le \varepsilon
+\]
+for all \(u\in(0,u_0]\) and all \(d\in(0,2)\) satisfying \(|d-\delta|\le r\).
+
+\item \label{A3}
+The map \(d\mapsto \tilde{\kappa}(d)\) is continuous at \(d=\delta\).
+\end{enumerate}
+
+These are the regularity conditions needed for the \(\varepsilon\)-argument below.
+
+\section*{Notation}
+
+For \(\gamma>0\), \(d\in(0,2)\), and \(u\in(0,1)\), define
+\[
+E_\gamma(u;d)
+:=
+\frac{\log C\!\bigl(\gamma u^d,\gamma^{-1}u^{2-d}\bigr)}{\log u}.
+\]
+Then, by assumption,
+\[
+\lim_{u\downarrow 0} E_{\tilde\gamma}(u;d)=\tilde{\kappa}(d)
+\]
+for all \(d\) in a neighborhood of \(\delta\).
+
+\section*{Main theorem}
+
+\begin{theorem}\label{thm:gamma-invariance}
+Assume \ref{A1}--\ref{A3}. Then, for every \(\gamma>0\),
+\[
+\kappa_L(\delta,\gamma;C)=\kappa_L(\delta,\tilde\gamma;C)=\tilde{\kappa}(\delta).
+\]
+Hence, for the fixed \(\delta\in(0,2)\), the value of \(\kappa_L(\delta,\gamma;C)\) is independent of \(\gamma\).
+\end{theorem}
+
+\begin{proof}
+Fix \(\gamma>0\), and set
+\[
+\Delta:=\log\!\left(\frac{\gamma}{\tilde\gamma}\right).
+\]
+For each \(u\in(0,1)\), let
+\[
+t:=\log u<0,
+\qquad
+\delta_u:=\delta+\frac{\Delta}{t}.
+\]
+We first prove the key identity
+\[
+E_\gamma(u;\delta)=E_{\tilde\gamma}(u;\delta_u).
+\]
+
+Indeed, since \(u=e^t\) and \(e^\Delta=\gamma/\tilde\gamma\),
+\[
+\tilde\gamma u^{\delta_u}
+=
+\tilde\gamma e^{(\delta+\Delta/t)t}
+=
+\tilde\gamma e^{\delta t}e^\Delta
+=
+\gamma u^\delta,
+\]
+and similarly
+\[
+\tilde\gamma^{-1}u^{2-\delta_u}
+=
+\tilde\gamma^{-1}e^{(2-\delta-\Delta/t)t}
+=
+\tilde\gamma^{-1}e^{(2-\delta)t}e^{-\Delta}
+=
+\gamma^{-1}u^{2-\delta}.
+\]
+Substituting these identities into the definition of \(E_{\tilde\gamma}\) yields
+\[
+E_{\tilde\gamma}(u;\delta_u)
+=
+\frac{\log C\!\bigl(\tilde\gamma u^{\delta_u},\tilde\gamma^{-1}u^{2-\delta_u}\bigr)}{\log u}
+=
+\frac{\log C\!\bigl(\gamma u^\delta,\gamma^{-1}u^{2-\delta}\bigr)}{\log u}
+=
+E_\gamma(u;\delta).
+\]
+
+We now prove that
+\[
+\lim_{u\downarrow 0}E_\gamma(u;\delta)=\tilde{\kappa}(\delta).
+\]
+Let \(\varepsilon>0\) be arbitrary. We must show that there exists \(u^*\in(0,1)\) such that
+\[
+\bigl|E_\gamma(u;\delta)-\tilde{\kappa}(\delta)\bigr|\le \varepsilon
+\qquad\text{for all }u\in(0,u^*].
+\]
+Using the identity just established, it is enough to control
+\[
+\bigl|E_{\tilde\gamma}(u;\delta_u)-\tilde{\kappa}(\delta)\bigr|.
+\]
+Add and subtract \(\tilde{\kappa}(\delta_u)\), and apply the triangle inequality:
+\begin{equation}\label{eq:triangle}
+\bigl|E_{\tilde\gamma}(u;\delta_u)-\tilde{\kappa}(\delta)\bigr|
+\le
+\bigl|E_{\tilde\gamma}(u;\delta_u)-\tilde{\kappa}(\delta_u)\bigr|
++
+\bigl|\tilde{\kappa}(\delta_u)-\tilde{\kappa}(\delta)\bigr|.
+\end{equation}
+Alternatively, if one wishes to compare directly with \(E_{\tilde\gamma}(u;\delta)\), then one may write
+\begin{align}
+\bigl|E_{\tilde\gamma}(u;\delta_u)-E_{\tilde\gamma}(u;\delta)\bigr|
+&\le
+\bigl|E_{\tilde\gamma}(u;\delta_u)-\tilde{\kappa}(\delta_u)\bigr|
++
+\bigl|\tilde{\kappa}(\delta_u)-\tilde{\kappa}(\delta)\bigr|
++
+\bigl|\tilde{\kappa}(\delta)-E_{\tilde\gamma}(u;\delta)\bigr|.
+\label{eq:full-triangle}
+\end{align}
+We now control the relevant terms.
+
+\medskip
+\noindent
+\textbf{Step 1: control of \(\delta_u-\delta\).}
+Since \(\Delta\) is fixed and \(t=\log u\to-\infty\) as \(u\downarrow 0\),
+\[
+\delta_u-\delta=\frac{\Delta}{\log u}\longrightarrow 0.
+\]
+Therefore, for every \(r>0\), there exists \(u_1\in(0,1)\) such that
+\[
+|\delta_u-\delta|\le r
+\qquad\text{for all }u\in(0,u_1].
+\]
+
+\medskip
+\noindent
+\textbf{Step 2: control of \(\bigl|\tilde{\kappa}(\delta_u)-\tilde{\kappa}(\delta)\bigr|\).}
+By continuity of \(\tilde{\kappa}\) at \(\delta\), there exists \(r=r(\varepsilon)>0\) such that
+\[
+|d-\delta|\le r
+\quad\Longrightarrow\quad
+|\tilde{\kappa}(d)-\tilde{\kappa}(\delta)|\le \frac{\varepsilon}{2}.
+\]
+By Step 1, there exists \(u_2\in(0,1)\) such that
+\[
+|\delta_u-\delta|\le r
+\qquad\text{for all }u\in(0,u_2].
+\]
+Hence,
+\begin{equation}\label{eq:kappa-cont}
+|\tilde{\kappa}(\delta_u)-\tilde{\kappa}(\delta)|\le \frac{\varepsilon}{2}
+\qquad\text{for all }u\in(0,u_2].
+\end{equation}
+
+\medskip
+\noindent
+\textbf{Step 3: control of \(\bigl|E_{\tilde\gamma}(u;\delta_u)-\tilde{\kappa}(\delta_u)\bigr|\).}
+By local uniform convergence, there exist \(r'=r'(\varepsilon)>0\) and \(u_3=u_3(\varepsilon)\in(0,1)\) such that
+\[
+\left|
+E_{\tilde\gamma}(u;d)-\tilde{\kappa}(d)
+\right|
+\le \frac{\varepsilon}{2}
+\]
+for all \(u\in(0,u_3]\) and all \(d\) satisfying \(|d-\delta|\le r'\). Again by Step 1, there exists \(u_4\in(0,1)\) such that
+\[
+|\delta_u-\delta|\le r'
+\qquad\text{for all }u\in(0,u_4].
+\]
+Therefore,
+\begin{equation}\label{eq:uniform}
+\left|
+E_{\tilde\gamma}(u;\delta_u)-\tilde{\kappa}(\delta_u)
+\right|
+\le \frac{\varepsilon}{2}
+\qquad\text{for all }u\in(0,\min\{u_3,u_4\}].
+\end{equation}
+
+\medskip
+\noindent
+\textbf{Step 4: conclusion.}
+Let
+\[
+u^*:=\min\{u_2,u_3,u_4\}.
+\]
+Then for all \(u\in(0,u^*]\), combining \eqref{eq:triangle}, \eqref{eq:kappa-cont}, and \eqref{eq:uniform}, we obtain
+\[
+\bigl|E_{\tilde\gamma}(u;\delta_u)-\tilde{\kappa}(\delta)\bigr|
+\le
+\frac{\varepsilon}{2}+\frac{\varepsilon}{2}
+=
+\varepsilon.
+\]
+Since \(E_\gamma(u;\delta)=E_{\tilde\gamma}(u;\delta_u)\), it follows that
+\[
+\bigl|E_\gamma(u;\delta)-\tilde{\kappa}(\delta)\bigr|
+\le \varepsilon
+\qquad\text{for all }u\in(0,u^*].
+\]
+This proves that
+\[
+\lim_{u\downarrow 0}E_\gamma(u;\delta)=\tilde{\kappa}(\delta).
+\]
+Equivalently,
+\[
+\kappa_L(\delta,\gamma;C)=\tilde{\kappa}(\delta)=\kappa_L(\delta,\tilde\gamma;C).
+\]
+The proof is complete.
+\end{proof}
+
+\begin{remark}
+If one prefers to prove directly that
+\[
+\lim_{u\downarrow 0}\bigl(E_\gamma(u;\delta)-E_{\tilde\gamma}(u;\delta)\bigr)=0,
+\]
+then one may use \eqref{eq:full-triangle} instead of \eqref{eq:triangle}. The three terms on the right-hand side are handled respectively by local uniform convergence, continuity of \(\tilde{\kappa}\), and ordinary convergence of \(E_{\tilde\gamma}(u;\delta)\to \tilde{\kappa}(\delta)\).
+\end{remark}
+
+\section*{Application to the Pareto-mixture copula}
+
+We now state the corresponding conclusion for the proposed copula \(C_{\rm PM}\).
+
+\begin{theorem}\label{thm:pm}
+Suppose that for the copula \(C_{\rm PM}\), the limit
+\[
+\kappa_L(\delta,\tilde\gamma;C_{\rm PM})
+=
+\lim_{u\downarrow 0}
+\frac{\log C_{\rm PM}\!\bigl(\tilde\gamma u^\delta,\tilde\gamma^{-1}u^{2-\delta}\bigr)}{\log u}
+\]
+exists for \(d\) in a neighborhood of \(\delta\), that the convergence is locally uniform in \(d\), and that the resulting function \(d\mapsto \kappa_L(d,\tilde\gamma;C_{\rm PM})\) is continuous at \(d=\delta\). Then, for every \(\gamma>0\),
+\[
+\kappa_L(\delta,\gamma;C_{\rm PM})
+=
+\kappa_L(\delta,\tilde\gamma;C_{\rm PM}).
+\]
+Hence \(\kappa_L(\delta,\gamma;C_{\rm PM})\) is independent of \(\gamma\).
+\end{theorem}
+
+\begin{proof}
+The proof is exactly the same as that of Theorem \ref{thm:gamma-invariance}, with \(C\) replaced everywhere by \(C_{\rm PM}\). Indeed, define
+\[
+E_\gamma^{\rm PM}(u;d)
+:=
+\frac{\log C_{\rm PM}\!\bigl(\gamma u^d,\gamma^{-1}u^{2-d}\bigr)}{\log u}.
+\]
+For fixed \(\gamma>0\), let
+\[
+\Delta=\log\!\left(\frac{\gamma}{\tilde\gamma}\right),
+\qquad
+\delta_u=\delta+\frac{\Delta}{\log u}.
+\]
+Then the same algebra gives
+\[
+E_\gamma^{\rm PM}(u;\delta)=E_{\tilde\gamma}^{\rm PM}(u;\delta_u).
+\]
+The same triangle inequality argument, together with local uniform convergence and continuity, yields
+\[
+\lim_{u\downarrow 0}E_\gamma^{\rm PM}(u;\delta)
+=
+\kappa_L(\delta,\tilde\gamma;C_{\rm PM}).
+\]
+Therefore,
+\[
+\kappa_L(\delta,\gamma;C_{\rm PM})
+=
+\kappa_L(\delta,\tilde\gamma;C_{\rm PM}),
+\]
+as claimed.
+\end{proof}
+
+\section*{Conclusion}
+
+Under the stated regularity conditions, the angular lower-tail coefficient
+\[
+\kappa_L(\delta,\gamma;C)
+=
+\lim_{u\downarrow 0}
+\frac{\log C\!\bigl(\gamma u^\delta,\gamma^{-1}u^{2-\delta}\bigr)}{\log u}
+\]
+does not depend on the scaling parameter \(\gamma\). The same conclusion holds for the proposed Pareto-mixture copula \(C_{\rm PM}\), provided the same existence, local uniformity, and continuity assumptions are satisfied.
+
+\end{document}

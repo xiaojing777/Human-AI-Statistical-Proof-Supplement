@@ -1,0 +1,581 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{mathrsfs}
+\usepackage{enumitem}
+\usepackage{microtype}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{definition}
+\newtheorem{remark}{Remark}
+\newtheorem{assumption}{Assumption}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\op}{\mathrm{op}}
+\newcommand{\TV}{\mathrm{TV}}
+\newcommand{\1}{\mathbf{1}}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\ip}[2]{\left\langle #1,#2\right\rangle}
+\newcommand{\pto}{\overset{\mathbb{P}}{\longrightarrow}}
+\newcommand{\dto}{\Longrightarrow}
+
+\title{Asymptotic Normality of a Centered LDSC Estimator under Fixed Genetic Effects}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Model, estimator, and target parameter}
+
+Let $X\in\R^{n\times p}$ be the genotype matrix in the GWAS cohort, let $y\in\R^n$ be the outcome vector, and let $Z\in\R^{n_r\times p}$ be an independent reference panel. We assume throughout that the rows
+\[
+ x_1,\dots,x_n\in\R^p,
+ \qquad
+ z_1,\dots,z_{n_r}\in\R^p,
+\]
+are independent and identically distributed Gaussian vectors with mean zero and common covariance matrix $\Sigma\in\R^{p\times p}$. The GWAS cohort and the reference panel are independent. The outcome obeys the linear model
+\[
+ y=X\alpha+\varepsilon,
+\]
+where $\alpha=(\alpha_1,\dots,\alpha_p)^\top\in\R^p$ is an unknown but \emph{fixed} vector of genetic effects, and
+\[
+ \varepsilon=(\varepsilon_1,\dots,\varepsilon_n)^\top\sim N(0,\sigma_\varepsilon^2 I_n)
+\]
+is independent of $X$ and $Z$. We stress that no random-effects assumption is imposed on $\alpha$.
+
+For definiteness, we define the reference-panel covariance estimator by
+\[
+ \widehat\Sigma:=\frac1{n_r}Z^\top Z.
+\]
+(The same proof goes through for the centered unbiased sample covariance, with only $O_p(n_r^{-1})$ changes in lower-order terms.) For $j\in\{1,\dots,p\}$ define
+\[
+ \widehat\ell_j:=\sum_{i=1}^p \widehat\Sigma_{ji}^2=(\widehat\Sigma^2)_{jj},
+ \qquad
+ \widehat a_j:=\frac1n X_j^\top y,
+ \qquad
+ \widehat w_j:=\widehat a_j^2,
+\]
+where $X_j$ denotes the $j$th column of $X$. Put
+\[
+ \widehat\ell=(\widehat\ell_1,\dots,\widehat\ell_p)^\top,
+ \qquad
+ \widehat w=(\widehat w_1,\dots,\widehat w_p)^\top,
+\]
+and let
+\[
+ \mu_{\widehat\ell}:=\frac1p\1^\top\widehat\ell,
+ \qquad
+ \widehat\mu_w:=\frac1p\1^\top\widehat w,
+ \qquad
+ P:=I_p-\frac1p\1\1^\top.
+\]
+Then the centered LDSC slope estimator is
+\[
+ \widehat\sigma_\alpha^2
+ :=\frac{(\widehat\ell-\mu_{\widehat\ell}\1)^\top(\widehat w-\widehat\mu_w\1)}{(\widehat\ell-\mu_{\widehat\ell}\1)^\top(\widehat\ell-\mu_{\widehat\ell}\1)}
+ =\frac{(P\widehat\ell)^\top(P\widehat w)}{\norm{P\widehat\ell}_2^2}.
+\]
+
+We now define the deterministic population target. Let
+\[
+ \ell:=\bigl((\Sigma^2)_{11},\dots,(\Sigma^2)_{pp}\bigr)^\top,
+ \qquad
+ b:=\Sigma\alpha,
+ \qquad
+ m:=b^{\circ 2}=(b_1^2,\dots,b_p^2)^\top,
+\]
+and set
+\[
+ c:=P\ell,
+ \qquad
+ Q:=\norm{c}_2^2.
+\]
+Whenever $Q>0$, define
+\begin{equation}\label{eq:population-target}
+ \sigma_\alpha^2:=\frac{c^\top m}{Q}=\frac{c^\top Pm}{Q}.
+\end{equation}
+Thus $\sigma_\alpha^2$ is the coefficient of the orthogonal projection of the centered vector $m-P^\perp m$ onto the centered LD-score vector $c$. This is the natural fixed-effect target corresponding to the centered LDSC regression.
+
+\section*{Assumptions}
+
+We impose the following high-dimensional conditions.
+
+\begin{assumption}[Block-diagonal Gaussian design]\label{ass:block}
+For each $p$, the covariance matrix $\Sigma=\Sigma_p$ is block diagonal,
+\[
+ \Sigma=\diag\bigl(\Sigma^{(1)},\dots,\Sigma^{(B_p)}\bigr),
+\]
+with block sizes bounded uniformly in $p$:
+\[
+ \max_{1\le b\le B_p}\dim\bigl(\Sigma^{(b)}\bigr)\le D
+\]
+for some finite constant $D$ not depending on $p$.
+\end{assumption}
+
+\begin{assumption}[Uniform spectral bounds and standardization]\label{ass:spectral}
+The diagonal entries of $\Sigma$ satisfy $\Sigma_{jj}=1$ for all $j$, and there exist constants $0<\lambda_-\le \lambda_+<\infty$ such that, for every block $\Sigma^{(b)}$,
+\[
+ \lambda_-\le \lambda_{\min}(\Sigma^{(b)})\le \lambda_{\max}(\Sigma^{(b)})\le \lambda_+.
+\]
+\end{assumption}
+
+\begin{assumption}[Fixed-effect bounded signal]\label{ass:alpha}
+The vector $\alpha=\alpha_p\in\R^p$ is deterministic and satisfies
+\[
+ \alpha^\top\Sigma\alpha\le M
+\]
+for some finite constant $M$ independent of $p$.
+\end{assumption}
+
+\begin{assumption}[Joint high-dimensional regime]\label{ass:asymptotics}
+As $n,p,n_r\to\infty$,
+\[
+ \frac{p}{n}\to \gamma\in(0,\infty),
+ \qquad
+ \frac{p}{n_r}\to \gamma_r\in(0,\infty).
+\]
+\end{assumption}
+
+\begin{assumption}[Nondegenerate LD-score variation]\label{ass:Q}
+There exists $q_\ell\in(0,\infty)$ such that
+\[
+ \frac{Q}{p}=\frac1p\norm{P\ell}_2^2\longrightarrow q_\ell.
+\]
+\end{assumption}
+
+To state the last assumption, define
+\[
+ d:=Pm-2\sigma_\alpha^2 c.
+\]
+Further, define the linearized statistic
+\begin{equation}\label{eq:Lp-def}
+ L_p:=\frac1Q\,c^\top P\bigl(\widehat w-\E\widehat w\bigr)
+ +\frac1Q\,\bigl(P(\widehat\ell-\E\widehat\ell)\bigr)^\top d.
+\end{equation}
+
+\begin{assumption}[Nondegenerate first-order variance]\label{ass:variance}
+There exist constants $0<v_-\le v_+<\infty$ such that
+\[
+ v_-\le p\,\Var(L_p)\le v_+
+\]
+for all sufficiently large $p$.
+\end{assumption}
+
+\begin{remark}
+Assumption~\ref{ass:variance} is the only nondegeneracy hypothesis not implied directly by the design assumptions. It is the natural requirement that the first-order fluctuation of the centered LDSC slope be genuinely of order $p^{-1/2}$. In concrete block models it can be checked by explicit moment calculations, using the same Wishart identities employed below.
+\end{remark}
+
+\section*{Main theorem}
+
+\begin{theorem}[Asymptotic normality of the centered LDSC estimator]\label{thm:main}
+Under Assumptions~\ref{ass:block}--\ref{ass:variance}, the following statements hold.
+
+\begin{enumerate}[label=(\roman*)]
+\item The estimator is asymptotically unbiased for the fixed-effect target \eqref{eq:population-target} up to order $p^{-1}$:
+\[
+ \E\widehat\sigma_\alpha^2=\sigma_\alpha^2+O\!\left(\frac1n+\frac1{n_r}\right)=\sigma_\alpha^2+O\!\left(\frac1p\right).
+\]
+
+\item The centered and variance-normalized estimator is asymptotically standard normal:
+\[
+ \frac{\widehat\sigma_\alpha^2-\E\widehat\sigma_\alpha^2}{\sqrt{\Var(\widehat\sigma_\alpha^2)}}\dto N(0,1).
+\]
+
+\item If, in addition, $p\Var(L_p)\to v^2\in(0,\infty)$, then
+\[
+ \sqrt p\,\bigl(\widehat\sigma_\alpha^2-\sigma_\alpha^2\bigr)\dto N(0,v^2).
+\]
+\end{enumerate}
+\end{theorem}
+
+\section*{Proof of Theorem~\ref{thm:main}}
+
+The proof is organized into several steps.
+
+\subsection*{Step 1: deterministic target and exact mean formulas}
+
+Let
+\[
+ \tau^2:=\alpha^\top\Sigma\alpha+\sigma_\varepsilon^2.
+\]
+Since $y_i=x_i^\top\alpha+\varepsilon_i$, each pair $(X_{ij},y_i)$ is jointly centered Gaussian with
+\[
+ \E(X_{ij}y_i)=e_j^\top\Sigma\alpha=b_j,
+ \qquad
+ \Var(X_{ij})=1,
+ \qquad
+ \Var(y_i)=\tau^2.
+\]
+By Isserlis' formula,
+\[
+ \E(X_{ij}^2y_i^2)=\Var(X_{ij})\Var(y_i)+2\Cov(X_{ij},y_i)^2
+ =\tau^2+2b_j^2.
+\]
+Therefore
+\begin{align*}
+ \E(\widehat a_j^2)
+ &=\E\Biggl[\frac1{n^2}\sum_{r=1}^n\sum_{s=1}^n X_{rj}y_rX_{sj}y_s\Biggr] \\
+ &=\frac1{n^2}\Bigl[n\,\E(X_{1j}^2y_1^2)+n(n-1)\,\E(X_{1j}y_1)^2\Bigr] \\
+ &=\frac1{n^2}\Bigl[n(\tau^2+2b_j^2)+n(n-1)b_j^2\Bigr] \\
+ &=\left(1+\frac1n\right)b_j^2+\frac{\tau^2}{n}.
+\end{align*}
+Hence
+\begin{equation}\label{eq:Ew}
+ \E\widehat w=\left(1+\frac1n\right)m+\frac{\tau^2}{n}\1,
+ \qquad
+ P\E\widehat w=\left(1+\frac1n\right)Pm.
+\end{equation}
+
+Next we compute $\E\widehat\ell$. Let $W_r:=Z^\top Z$, so that $W_r\sim \mathrm{Wishart}(n_r,\Sigma)$ and
+\[
+ \widehat\Sigma=\frac1{n_r}W_r,
+ \qquad
+ \widehat\ell_j=\frac1{n_r^2}e_j^\top W_r^2e_j.
+\]
+For a Wishart matrix $W\sim\mathrm{Wishart}(m,\Sigma)$ and a deterministic vector $u$, Proposition~S1 of Dicker's supplement gives the identity
+\[
+ \E(u^\top W^2u)=m\,\tr(\Sigma)\,u^\top\Sigma u+m(m+1)u^\top\Sigma^2u.
+\]
+Applying this with $m=n_r$ and $u=e_j$, and using $\tr(\Sigma)=p$ and $\Sigma_{jj}=1$, we obtain
+\[
+ \E(e_j^\top W_r^2e_j)=n_rp+n_r(n_r+1)(\Sigma^2)_{jj}=n_rp+n_r(n_r+1)\ell_j.
+\]
+Therefore
+\begin{equation}\label{eq:El}
+ \E\widehat\ell_j=\frac{p}{n_r}+\left(1+\frac1{n_r}\right)\ell_j,
+ \qquad
+ P\E\widehat\ell=\left(1+\frac1{n_r}\right)c.
+\end{equation}
+
+Consequently,
+\begin{equation}\label{eq:theta-p}
+ \theta_p:=\frac{(P\E\widehat\ell)^\top(P\E\widehat w)}{\norm{P\E\widehat\ell}_2^2}
+ =\frac{1+n^{-1}}{1+n_r^{-1}}\,\sigma_\alpha^2
+ =\sigma_\alpha^2+O\!\left(\frac1n+\frac1{n_r}\right).
+\end{equation}
+This already yields the correct first-order centering.
+
+\subsection*{Step 2: first-order expansion of the ratio}
+
+Define centered fluctuations
+\[
+ \delta_w:=P\bigl(\widehat w-\E\widehat w\bigr),
+ \qquad
+ \delta_\ell:=P\bigl(\widehat\ell-\E\widehat\ell\bigr).
+\]
+By \eqref{eq:Ew}--\eqref{eq:El},
+\begin{equation}\label{eq:basic-decomp}
+ P\widehat w=\left(1+\frac1n\right)Pm+\delta_w,
+ \qquad
+ P\widehat\ell=\left(1+\frac1{n_r}\right)c+\delta_\ell.
+\end{equation}
+Let
+\[
+ \bar c:=\left(1+\frac1{n_r}\right)c,
+ \qquad
+ \bar m:=\left(1+\frac1n\right)Pm,
+ \qquad
+ \bar Q:=\norm{\bar c}_2^2.
+\]
+Then
+\[
+ \widehat\sigma_\alpha^2=\frac{(\bar c+\delta_\ell)^\top(\bar m+\delta_w)}{\norm{\bar c+\delta_\ell}_2^2}.
+\]
+Consider the map
+\[
+ F(u,v):=\frac{u}{v},
+ \qquad v\neq 0.
+\]
+A Taylor expansion of $F$ at
+\[
+ u_0:=\bar c^\top\bar m,
+ \qquad
+ v_0:=\bar Q
+\]
+shows that
+\begin{equation}\label{eq:taylor-ratio}
+ \widehat\sigma_\alpha^2-\theta_p
+ =\frac1{\bar Q}\,\bar c^\top\delta_w
+ +\frac1{\bar Q}\,\delta_\ell^\top(\bar m-2\theta_p\bar c)
+ +r_p,
+\end{equation}
+where
+\begin{equation}\label{eq:remainder-bound}
+ \abs{r_p}
+ \le C\left(\frac{\norm{\delta_\ell}_2\norm{\delta_w}_2}{\bar Q}
+ +\frac{\norm{\delta_\ell}_2^2}{\bar Q}\right)
+\end{equation}
+for a deterministic constant $C$.
+
+We now show that $r_p$ is negligible. Because the block size is uniformly bounded and all eigenvalues of the blocks are uniformly bounded, every entry of $x_i$ and $z_i$ belongs to a finite-dimensional Gaussian system with moments bounded uniformly in $p$. Since Assumption~\ref{ass:alpha} implies $\alpha^\top\Sigma\alpha\le M$, all moments of $y_i$ are uniformly bounded as well. Hence there is a constant $C$ such that
+\[
+ \sup_{j\le p}\Var(\widehat a_j^2)\le \frac{C}{n}.
+\]
+Similarly, the same Wishart moment identities as in Proposition~S1 imply
+\[
+ \sup_{j\le p}\Var(\widehat\ell_j)\le \frac{C}{n_r}.
+\]
+The block-diagonal structure implies that each coordinate $\widehat a_j^2$ is correlated with only $O(1)$ other coordinates, and the same holds for $\widehat\ell_j$; therefore
+\begin{equation}\label{eq:norm-delta-bounds}
+ \E\norm{\delta_w}_2^2\le C\frac{p}{n}=O(1),
+ \qquad
+ \E\norm{\delta_\ell}_2^2\le C\frac{p}{n_r}=O(1).
+\end{equation}
+By Assumption~\ref{ass:Q},
+\[
+ \bar Q=\left(1+\frac1{n_r}\right)^2Q\asymp p.
+\]
+Combining this with \eqref{eq:remainder-bound} and \eqref{eq:norm-delta-bounds}, we obtain
+\begin{equation}\label{eq:rp-small}
+ r_p=O_p(p^{-1}).
+\end{equation}
+Since
+\[
+ \bar c-c=O(p^{-1})\quad\text{coordinatewise},
+ \qquad
+ \bar m-2\theta_p\bar c-d=O(p^{-1})\quad\text{coordinatewise},
+\]
+and $\norm{\delta_w}_2+\norm{\delta_\ell}_2=O_p(1)$ by \eqref{eq:norm-delta-bounds}, equation \eqref{eq:taylor-ratio} yields
+\begin{equation}\label{eq:main-linearization}
+ \widehat\sigma_\alpha^2-\sigma_\alpha^2
+ =L_p+b_p+o_p(p^{-1/2}),
+\end{equation}
+where
+\begin{equation}\label{eq:bias-term}
+ b_p:=\theta_p-\sigma_\alpha^2=O\!\left(\frac1n+\frac1{n_r}\right)=O(p^{-1}).
+\end{equation}
+In particular,
+\[
+ \E\widehat\sigma_\alpha^2=\sigma_\alpha^2+O\!\left(\frac1n+\frac1{n_r}\right),
+\]
+which proves part~(i) of the theorem.
+
+\subsection*{Step 3: representation of the linear term as a smooth Gaussian functional}
+
+We next prove asymptotic normality of $L_p$. Write
+\[
+ C_p:=\frac1Q\diag(c),
+ \qquad
+ D_p:=\frac1Q\diag(d).
+\]
+Then
+\begin{equation}\label{eq:Lp-gwas}
+ \frac1Q\,c^\top\delta_w
+ =\frac1{n^2}y^\top X C_p X^\top y
+ -\E\left[\frac1{n^2}y^\top X C_p X^\top y\right],
+\end{equation}
+because
+\[
+ c^\top P\widehat w=c^\top\widehat w
+ =\sum_{j=1}^p c_j\widehat a_j^2
+ =\frac1{n^2}y^\top X\diag(c)X^\top y.
+\]
+Likewise,
+\begin{equation}\label{eq:Lp-ref}
+ \frac1Q\,\delta_\ell^\top d
+ =\frac1{n_r^2}\tr(D_pW_r^2)
+ -\E\left[\frac1{n_r^2}\tr(D_pW_r^2)\right].
+\end{equation}
+Therefore
+\begin{equation}\label{eq:Lp-split}
+ L_p=g_{1,p}(X,\varepsilon)+g_{2,p}(Z),
+\end{equation}
+where
+\[
+ g_{1,p}(X,\varepsilon):=\frac1{n^2}y^\top X C_p X^\top y
+ -\E\left[\frac1{n^2}y^\top X C_p X^\top y\right],
+\]
+\[
+ g_{2,p}(Z):=\frac1{n_r^2}\tr(D_pW_r^2)
+ -\E\left[\frac1{n_r^2}\tr(D_pW_r^2)\right].
+\]
+By Assumption~\ref{ass:Q},
+\begin{equation}\label{eq:CpDp-bounds}
+ \norm{C_p}_{\op}=O(p^{-1}),
+ \qquad
+ \norm{D_p}_{\op}=O(p^{-1}).
+\end{equation}
+
+\subsection*{Step 4: derivative bounds for the Gaussian second-order Poincar\'e inequality}
+
+We invoke the Gaussian second-order Poincar\'e inequality in the form of Chatterjee's theorem: if $G=G(U)$ is a smooth functional of a centered Gaussian vector $U$, then the total variation distance between the law of $G$ and the Gaussian law with the same variance is controlled by the size of the first and second derivatives of $G$. We verify the requisite derivative bounds for $L_p$.
+
+\medskip
+\noindent
+\textbf{The GWAS term.}
+Let $\widetilde U=(u,U)$ with $u\in\R^n$, $U\in\R^{n\times p}$, and
+\[
+ \norm{u}_2^2+\norm{U}_F^2=1.
+\]
+Define
+\[
+ q:=U\alpha+u.
+\]
+Since $\norm{U}_{\op}\le \norm{U}_F\le 1$ and Assumption~\ref{ass:alpha} together with Assumption~\ref{ass:spectral} implies $\norm{\alpha}_2=O(1)$, we have
+\begin{equation}\label{eq:q-bound}
+ \norm{q}_2\le \norm{U}_{\op}\norm{\alpha}_2+\norm{u}_2=O(1).
+\end{equation}
+Consider the perturbation
+\[
+ X_t:=X+tU,
+ \qquad
+ y_t:=y+tq,
+ \qquad
+ \phi(t):=\frac1{n^2}y_t^\top X_t C_p X_t^\top y_t.
+\]
+Then the first and second directional derivatives of $g_{1,p}$ in the direction $\widetilde U$ are $\phi'(0)$ and $\phi''(0)$ respectively. Direct differentiation gives
+\[
+ \phi'(0)=\frac{2}{n^2}\Bigl(y^\top U C_p X^\top y+q^\top X C_p X^\top y\Bigr),
+\]
+whence
+\begin{equation}\label{eq:first-derivative-g1}
+ \abs{\phi'(0)}
+ \le \frac{C\norm{C_p}_{\op}}{n^2}
+ \Bigl(\norm{X}_{\op}\norm{y}_2^2+\norm{X}_{\op}^2\norm{y}_2\Bigr).
+\end{equation}
+Similarly,
+\[
+ \phi''(0)=\frac{2}{n^2}\Bigl(y^\top U C_p U^\top y+2q^\top U C_p X^\top y+2q^\top X C_p U^\top y+q^\top X C_p X^\top q\Bigr),
+\]
+so that
+\begin{equation}\label{eq:second-derivative-g1}
+ \abs{\phi''(0)}
+ \le \frac{C\norm{C_p}_{\op}}{n^2}
+ \Bigl(\norm{y}_2^2+\norm{X}_{\op}\norm{y}_2+\norm{X}_{\op}^2\Bigr).
+\end{equation}
+For a Gaussian matrix with covariance uniformly bounded in operator norm and with $p/n\to\gamma\in(0,\infty)$, standard random-matrix bounds imply that $p^{-1/2}\norm{X}_{\op}$ has moments of all orders bounded uniformly in $p$. Likewise, because $\tau^2=\alpha^\top\Sigma\alpha+\sigma_\varepsilon^2=O(1)$, the quantity $n^{-1/2}\norm{y}_2$ has moments of all orders bounded uniformly in $p$. Combining these facts with \eqref{eq:CpDp-bounds}, \eqref{eq:first-derivative-g1}, and \eqref{eq:second-derivative-g1}, we obtain
+\begin{equation}\label{eq:kappa-g1}
+ \Bigl(\E\norm{\nabla g_{1,p}}_2^4\Bigr)^{1/4}=O(p^{-1/2}),
+ \qquad
+ \Bigl(\E\norm{\nabla^2 g_{1,p}}_{\op}^4\Bigr)^{1/4}=O(p^{-1}).
+\end{equation}
+
+\medskip
+\noindent
+\textbf{The reference-panel term.}
+Let $U\in\R^{n_r\times p}$ satisfy $\norm{U}_F=1$. Define
+\[
+ Z_t:=Z+tU,
+ \qquad
+ W_t:=Z_t^\top Z_t=W_r+tA+t^2B,
+\]
+where
+\[
+ A:=U^\top Z+Z^\top U,
+ \qquad
+ B:=U^\top U.
+\]
+Set
+\[
+ \psi(t):=\frac1{n_r^2}\tr(D_pW_t^2).
+\]
+Then
+\[
+ \psi'(0)=\frac{2}{n_r^2}\tr(D_pW_rA),
+\]
+so that
+\begin{equation}\label{eq:first-derivative-g2}
+ \abs{\psi'(0)}
+ \le \frac{C\norm{D_p}_{\op}}{n_r^2}\norm{W_r}_{\op}\norm{A}_{\op}
+ \le \frac{C}{n_r^2}\norm{Z}_{\op}^3.
+\end{equation}
+Also,
+\[
+ \psi''(0)=\frac{2}{n_r^2}\tr(D_pA^2)+\frac{4}{n_r^2}\tr(D_pW_rB),
+\]
+which yields
+\begin{equation}\label{eq:second-derivative-g2}
+ \abs{\psi''(0)}
+ \le \frac{C\norm{D_p}_{\op}}{n_r^2}\bigl(\norm{A}_{\op}^2+\norm{W_r}_{\op}\norm{B}_{\op}\bigr)
+ \le \frac{C}{n_r^2}\bigl(\norm{Z}_{\op}^2+1\bigr).
+\end{equation}
+As before, $p^{-1/2}\norm{Z}_{\op}$ has moments of all orders bounded uniformly in $p$, and hence
+\begin{equation}\label{eq:kappa-g2}
+ \Bigl(\E\norm{\nabla g_{2,p}}_2^4\Bigr)^{1/4}=O(p^{-1/2}),
+ \qquad
+ \Bigl(\E\norm{\nabla^2 g_{2,p}}_{\op}^4\Bigr)^{1/4}=O(p^{-1}).
+\end{equation}
+
+Combining \eqref{eq:kappa-g1} and \eqref{eq:kappa-g2} with \eqref{eq:Lp-split}, we conclude that, for the full Gaussian argument vector underlying $(X,\varepsilon,Z)$,
+\begin{equation}\label{eq:global-kappa}
+ \Bigl(\E\norm{\nabla L_p}_2^4\Bigr)^{1/4}=O(p^{-1/2}),
+ \qquad
+ \Bigl(\E\norm{\nabla^2 L_p}_{\op}^4\Bigr)^{1/4}=O(p^{-1}).
+\end{equation}
+
+\subsection*{Step 5: asymptotic normality of the linear term}
+
+Let
+\[
+ s_p^2:=\Var(L_p).
+\]
+By Assumption~\ref{ass:variance},
+\begin{equation}\label{eq:variance-scale}
+ s_p^2\asymp p^{-1}.
+\end{equation}
+Applying Chatterjee's second-order Poincar\'e inequality to the smooth Gaussian functional $L_p$, and using \eqref{eq:global-kappa}--\eqref{eq:variance-scale}, we obtain
+\[
+ d_{\TV}\bigl(L_p,N(0,s_p^2)\bigr)
+ \le C\,\frac{\bigl(\E\norm{\nabla L_p}_2^4\bigr)^{1/4}\bigl(\E\norm{\nabla^2 L_p}_{\op}^4\bigr)^{1/4}}{s_p^2}
+ =O(p^{-1/2})\to 0.
+\]
+Hence
+\begin{equation}\label{eq:Lp-clt}
+ \frac{L_p}{s_p}\dto N(0,1).
+\end{equation}
+
+\subsection*{Step 6: completion of the proof}
+
+From \eqref{eq:main-linearization},
+\[
+ \widehat\sigma_\alpha^2-\sigma_\alpha^2=L_p+b_p+o_p(p^{-1/2}),
+\]
+with $b_p=O(p^{-1})$ by \eqref{eq:bias-term}. Since $s_p\asymp p^{-1/2}$ by \eqref{eq:variance-scale}, it follows that
+\[
+ \frac{\widehat\sigma_\alpha^2-\sigma_\alpha^2}{s_p}
+ =\frac{L_p}{s_p}+o_p(1).
+\]
+Combining this with \eqref{eq:Lp-clt} yields
+\[
+ \frac{\widehat\sigma_\alpha^2-\sigma_\alpha^2}{s_p}\dto N(0,1).
+\]
+In particular,
+\[
+ \Var(\widehat\sigma_\alpha^2)=s_p^2+o(p^{-1}),
+ \qquad
+ \E\widehat\sigma_\alpha^2-\sigma_\alpha^2=O(p^{-1}).
+\]
+Therefore
+\[
+ \frac{\widehat\sigma_\alpha^2-\E\widehat\sigma_\alpha^2}{\sqrt{\Var(\widehat\sigma_\alpha^2)}}\dto N(0,1),
+\]
+which proves part~(ii).
+
+If in addition $ps_p^2\to v^2\in(0,\infty)$, then multiplying the previous display by $\sqrt p$ gives
+\[
+ \sqrt p\,\bigl(\widehat\sigma_\alpha^2-\sigma_\alpha^2\bigr)\dto N(0,v^2),
+\]
+proving part~(iii). This completes the proof.
+\qed
+
+\section*{Concluding remark}
+
+The theorem is a fixed-effect result. The parameter $\sigma_\alpha^2$ is deterministic and depends on the realized vector $\alpha$ only through the population marginal signal profile
+\[
+ m_j=(\Sigma\alpha)_j^2,
+ \qquad 1\le j\le p.
+\]
+At no point is $\alpha$ modeled as random. The proof uses two ingredients: first, Wishart moment identities to obtain the exact leading means and the required variance bounds for the reference-panel LD scores; second, Chatterjee's second-order Poincar\'e inequality to deduce Gaussian fluctuations of the linearized statistic $L_p$.
+
+\end{document}

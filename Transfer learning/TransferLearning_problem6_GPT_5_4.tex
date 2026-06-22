@@ -1,0 +1,501 @@
+\documentclass[11pt]{article}
+\usepackage{xcolor}
+\usepackage{amsmath,amsthm,amssymb,mathtools,bbm,enumitem,geometry}
+\geometry{margin=1in}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\1}{\mathbf{1}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+
+\title{Asymptotic Upper Bound of a Transfer Learning Estimator}
+\author{}
+\date{}
+
+
+\begin{document}
+\begin{theorem}[Asymptotic predictive risk bound for transfer with structured missing features]
+\label{thm:main}
+Fix a target site \(t\) and source sites \(m=1,\dots,M\). Let \(S:=\mathcal R(t)\subset[p]\),
+\(q:=|S|\), and write \(S^c=[p]\setminus S\). Assume:
+
+\begin{enumerate}
+\item[(A1)] \textbf{Gaussian design.}
+For every site, \(x\sim N(0,\Sigma)\), where \(\Sigma\succeq 0\) is deterministic,
+\(\lambda_{\min}(\Sigma)\ge c_\Sigma>0\), \(\lambda_{\max}(\Sigma)\le C_\Sigma<\infty\), and
+the empirical spectral distribution of \(\Sigma_{SS}\) converges weakly to a compactly supported
+probability law \(H\).
+
+\item[(A2)] \textbf{Proportional asymptotics.}
+\(q/n_t\to \gamma_t\in(0,\infty)\), and for each source site \(m\),
+\(q_m/n_m\to \gamma_m\in(0,\infty)\), where \(q_m:=|\mathcal R(m)|\).
+Also \(n_m/n_t\to \tau_m\in(0,\infty)\).
+
+\item[(A3)] Common source parameter across source views.
+There is a single source coefficient vector \(\beta^{(s)}\in\mathbb R^p\) such that
+for each source site \(m\),
+\[
+y^{(m)}=x^\top \beta^{(s)}+\varepsilon,\qquad \varepsilon\sim N(0,\sigma^2),
+\]
+while the target site satisfies
+\[
+y^{(t)}=x^\top \beta^{(t)}+\varepsilon,\qquad \varepsilon\sim N(0,\sigma^2).
+\]
+
+\item[(A4)] Random effects on the target-observed regression problem.
+Define the target-observed optimal linear coefficient
+\[
+\omega_*^{(t)}:=\Phi^{(t)}\beta^{(t)}
+=\beta^{(t)}_{S}+\Sigma_{SS}^{-1}\Sigma_{S S^c}\beta^{(t)}_{S^c},
+\]
+and the corresponding source anchor signal
+\[
+w_*:=\Phi^{(t)}\beta^{(s)}
+=\beta^{(s)}_{S}+\Sigma_{SS}^{-1}\Sigma_{S S^c}\beta^{(s)}_{S^c}.
+\]
+Assume that, on \(\mathbb R^q\),
+\[
+\mathbb E[\omega_*^{(t)}]=0,\qquad
+\mathrm{Var}(\omega_*^{(t)})=\frac{\alpha_t^2}{q}I_q,
+\]
+\[
+\mathbb E[w_*]=0,\qquad
+\mathrm{Var}(w_*)=\frac{\alpha_s^2}{q}I_q,
+\]
+and
+\[
+\mathrm{Cov}(\omega_*^{(t)},w_*)=\frac{\rho\alpha_t\alpha_s}{q}I_q,
+\qquad \rho\in[-1,1].
+\]
+
+\item[(A5)] \textbf{Local ridge asymptotic linearity.}
+For each source site \(m\), define the site-specific observed-feature oracle coefficient
+\[
+\omega_*^{(m)}:=\Phi^{(m)}\beta^{(s)}
+=\beta^{(s)}_{\mathcal R(m)}+\Sigma_{\mathcal R(m),\mathcal R(m)}^{-1}
+\Sigma_{\mathcal R(m),\mathcal R(m)^c}\beta^{(s)}_{\mathcal R(m)^c}.
+\]
+Let
+\[
+\widehat\omega_{\mathrm{Loc}}^{(m)}
+:=\arg\min_\omega\Bigl\{\frac1{n_m}\|Y^{(m)}-X_{\mathcal R(m)}^{(m)}\omega\|_2^2
++\lambda_\omega^{(m)}\|\omega\|_2^2\Bigr\}.
+\]
+Assume that for each \(m\),
+\[
+\sqrt{n_t}\bigl(\widehat\omega_{\mathrm{Loc}}^{(m)}-\omega_*^{(m)}\bigr)
+\overset{d}{\longrightarrow}N(0,V_m),
+\]
+for a deterministic matrix \(V_m\succeq 0\), where \(V_m\) depends on
+\(\lambda_\omega^{(m)}\), \(\gamma_m\), \(\sigma^2\), \(\Sigma_{\mathcal R(m),\mathcal R(m)}\),
+and the local random-effects signal strength through the ridge deterministic equivalent.
+
+\item[(A6)] \textbf{Aggregation identifiability.}
+Let
+\[
+G(W):=\sum_{m=1}^M (\Phi^{(m)})^\top W_m \Phi^{(m)}.
+\]
+Assume that for the admissible weights considered below, \(G(W)\) is invertible.
+
+\item[(A7)] \textbf{Transfer estimator.}
+Define the aggregated source estimator
+\[
+\widehat\beta^{(s)}(W)
+:=\arg\min_{\beta\in\mathbb R^p}
+\sum_{m=1}^M \bigl\|\Phi^{(m)}\beta-\widehat\omega_{\mathrm{Loc}}^{(m)}\bigr\|_{W_m}^2.
+\]
+Define the target anchor
+\[
+\widehat w(W):=\Phi^{(t)}\widehat\beta^{(s)}(W)\in\mathbb R^q.
+\]
+The target \(L_2\)-transfer estimator is
+\[
+\widehat\omega_{\mathrm{TL}}^{(t)}
+:=\arg\min_{\omega\in\mathbb R^q}
+\Bigl\{\frac1{n_t}\|Y^{(t)}-X_S^{(t)}\omega\|_2^2
++\lambda_\delta\|\omega-\widehat w(W)\|_2^2\Bigr\}.
+\]
+
+\item[(A8)] \textbf{Anchor-error spectral regularity.}
+There exists a deterministic matrix \(C_A\succeq 0\) such that
+\[
+n_t\,\mathrm{Var}\!\left(\widehat w(W)-w_*\right)\to C_A,
+\]
+and if \(C_L:=\lambda_{\min}(C_A)\), \(C_U:=\lambda_{\max}(C_A)\), then
+\(0\le C_L\le C_U<\infty\).
+\end{enumerate}
+
+Then the following statements hold.
+
+\medskip
+\noindent\textbf{(i) Optimal aggregation weight.}
+The aggregation solution has the explicit form
+\[
+\widehat\beta^{(s)}(W)=G(W)^{-1}\sum_{m=1}^M (\Phi^{(m)})^\top W_m\widehat\omega_{\mathrm{Loc}}^{(m)},
+\]
+and
+\[
+\sqrt{n_t}\bigl(\widehat\beta^{(s)}(W)-\beta^{(s)}\bigr)
+\overset{d}{\longrightarrow}
+N\!\Bigl(0,\,
+\Gamma(W)\Bigr),
+\]
+with
+\[
+\Gamma(W)
+=
+G(W)^{-1}
+\Bigl(\sum_{m=1}^M (\Phi^{(m)})^\top W_m V_m W_m \Phi^{(m)}\Bigr)
+G(W)^{-1}.
+\]
+Among all deterministic \(W_m\succeq 0\), the covariance \(\Gamma(W)\) is minimized
+in the Loewner order by the generalized least-squares choice
+\[
+W_m^\star = V_m^{\dagger},
+\]
+where \(V_m^\dagger\) denotes the Moore--Penrose inverse, and when each \(V_m\) is invertible,
+\(W_m^\star=V_m^{-1}\). The minimal covariance is
+\[
+\Gamma^\star
+=
+\Bigl(\sum_{m=1}^M (\Phi^{(m)})^\top V_m^{-1}\Phi^{(m)}\Bigr)^{-1}.
+\]
+
+\medskip
+\noindent\textbf{(ii) Anchor error covariance.}
+For any admissible \(W\),
+\[
+\sqrt{n_t}\bigl(\widehat w(W)-w_*\bigr)
+\overset{d}{\longrightarrow}
+N\!\Bigl(0,\,
+C_A(W)\Bigr),
+\qquad
+C_A(W):=\Phi^{(t)}\Gamma(W)\Phi^{(t)\top},
+\]
+and under the optimal aggregation weight,
+\[
+C_A^\star
+=
+\Phi^{(t)}
+\Bigl(\sum_{m=1}^M (\Phi^{(m)})^\top V_m^{-1}\Phi^{(m)}\Bigr)^{-1}
+\Phi^{(t)\top}.
+\]
+
+\medskip
+\noindent\textbf{(iii) Deterministic-equivalent transfer-risk bound.}
+Let \(v_t(z)\) be the companion Stieltjes transform associated with the limiting spectral law
+of \(n_t^{-1}X_S^{(t)}X_S^{(t)\top}\), evaluated at \(z\in\mathbb C\setminus \mathbb R_+\).
+Then, as \(n_t,q\to\infty\),
+\[
+r^{\mathrm{pred}}\!\bigl(\widehat\omega_{\mathrm{TL}}^{(t)}\bigr)
+\;\Longrightarrow\;
+R_{\mathrm{TL}}(\lambda_\delta),
+\]
+and
+\[
+R(\lambda_\delta,C_L)\;\le\;
+R_{\mathrm{TL}}(\lambda_\delta)
+\;\le\;
+R(\lambda_\delta,C_U),
+\]
+where
+\[
+R(\lambda,C)
+:=
+\frac{\lambda^2(\alpha_t^2+\alpha_s^2+C-2\rho\alpha_t\alpha_s)
+\bigl[v_t(-\lambda)-\lambda v_t'(-\lambda)\bigr]}
+{\gamma_t\bigl[\lambda v_t(-\lambda)\bigr]^2}
++
+\sigma^2\frac{v_t'(-\lambda)}{v_t(-\lambda)}.
+\]
+
+\medskip
+\noindent\textbf{(iv) Optimal transfer penalty.}
+For the upper bound \(R(\lambda,C_U)\), the optimal penalty is
+\[
+\lambda_\delta^\star
+=
+\frac{\gamma_t\sigma^2}
+{\alpha_t^2+\alpha_s^2+C_U-2\rho\alpha_t\alpha_s},
+\]
+and the corresponding optimal upper bound is
+\[
+\inf_{\lambda_\delta>0}
+R(\lambda_\delta,C_U)
+=
+\sigma^2 \lambda_\delta^\star v_t(-\lambda_\delta^\star).
+\]
+If \(C_A^\star=c_A I_q\) is asymptotically isotropic, then the bound is exact with \(C_L=C_U=c_A\), and
+\[
+R_{\mathrm{TL}}^\star
+=
+\sigma^2 \lambda_\delta^\star v_t(-\lambda_\delta^\star),
+\qquad
+\lambda_\delta^\star
+=
+\frac{\gamma_t\sigma^2}
+{\alpha_t^2+\alpha_s^2+c_A-2\rho\alpha_t\alpha_s}.
+\]
+
+\medskip
+\noindent\textbf{(v) Choice of local ridge penalties.}
+For each source site \(m\), the asymptotically optimal local penalty
+\(\lambda_\omega^{(m)\star}\) is the minimizer of the site-wise ridge predictive risk
+for the projected regression problem
+\[
+Y^{(m)} = X_{\mathcal R(m)}^{(m)}\omega_*^{(m)} + \xi^{(m)},
+\]
+with design covariance \(\Sigma_{\mathcal R(m),\mathcal R(m)}\).
+Equivalently, \(\lambda_\omega^{(m)\star}\) is the value minimizing the corresponding
+Dobriban--Wager deterministic equivalent for that local problem.
+With this choice, \(V_m\) is minimized, hence \(C_A^\star\) is minimized, and therefore
+the transfer upper bound in (iii)--(iv) is minimized.
+\end{theorem}
+
+\begin{proof}
+We divide the proof into five steps.
+
+\paragraph{Step 1: Oracle coefficients under structured missingness.}
+Fix a site \(m\in\{t,1,\dots,M\}\), and write \(R_m:=\mathcal R(m)\).
+Partition \(x=(x_{R_m}^\top,x_{R_m^c}^\top)^\top\). Since \(x\sim N(0,\Sigma)\),
+the conditional expectation of the unobserved coordinates given the observed ones is
+\[
+\mathbb E[x_{R_m^c}\mid x_{R_m}]
+=
+\Sigma_{R_m^c,R_m}\Sigma_{R_m,R_m}^{-1}x_{R_m}.
+\]
+Therefore
+\[
+\mathbb E[y^{(m)}\mid x_{R_m}]
+=
+x_{R_m}^\top \beta_{R_m}^{(u)}
++\mathbb E[x_{R_m^c}^\top\beta_{R_m^c}^{(u)}\mid x_{R_m}]
+=
+x_{R_m}^\top
+\Bigl(
+\beta_{R_m}^{(u)}
++\Sigma_{R_m,R_m}^{-1}\Sigma_{R_m,R_m^c}\beta_{R_m^c}^{(u)}
+\Bigr),
+\]
+where \(u=s\) for source sites and \(u=t\) for the target site.
+Hence the best linear predictor based only on \(x_{R_m}\) has coefficient
+\[
+\omega_*^{(m)}=\Phi^{(m)}\beta^{(u)}.
+\]
+In particular, for the target site,
+\[
+\omega_*^{(t)}=\Phi^{(t)}\beta^{(t)},
+\qquad
+w_*=\Phi^{(t)}\beta^{(s)}.
+\]
+
+\paragraph{Step 2: Exact aggregation formula and optimal weights.}
+By definition,
+\[
+\widehat\beta^{(s)}(W)
+=
+\arg\min_\beta
+\sum_{m=1}^M
+\bigl(\Phi^{(m)}\beta-\widehat\omega_{\mathrm{Loc}}^{(m)}\bigr)^\top
+W_m
+\bigl(\Phi^{(m)}\beta-\widehat\omega_{\mathrm{Loc}}^{(m)}\bigr).
+\]
+The objective is quadratic in \(\beta\), so the first-order condition is
+\[
+\sum_{m=1}^M (\Phi^{(m)})^\top W_m \Phi^{(m)} \widehat\beta^{(s)}(W)
+=
+\sum_{m=1}^M (\Phi^{(m)})^\top W_m \widehat\omega_{\mathrm{Loc}}^{(m)}.
+\]
+Under (A6), \(G(W)\) is invertible, hence
+\[
+\widehat\beta^{(s)}(W)
+=
+G(W)^{-1}\sum_{m=1}^M (\Phi^{(m)})^\top W_m\widehat\omega_{\mathrm{Loc}}^{(m)}.
+\]
+Because \(\omega_*^{(m)}=\Phi^{(m)}\beta^{(s)}\), we obtain the exact error decomposition
+\[
+\widehat\beta^{(s)}(W)-\beta^{(s)}
+=
+G(W)^{-1}
+\sum_{m=1}^M (\Phi^{(m)})^\top W_m
+\bigl(\widehat\omega_{\mathrm{Loc}}^{(m)}-\omega_*^{(m)}\bigr).
+\]
+Multiplying by \(\sqrt{n_t}\) and using (A5),
+\[
+\sqrt{n_t}\bigl(\widehat\beta^{(s)}(W)-\beta^{(s)}\bigr)
+\overset{d}{\longrightarrow}
+N(0,\Gamma(W)),
+\]
+with
+\[
+\Gamma(W)
+=
+G(W)^{-1}
+\Bigl(\sum_{m=1}^M (\Phi^{(m)})^\top W_m V_m W_m \Phi^{(m)}\Bigr)
+G(W)^{-1}.
+\]
+
+We now optimize \(W\). This is a standard generalized least-squares problem.
+Let \(e_m:=\widehat\omega_{\mathrm{Loc}}^{(m)}-\omega_*^{(m)}\), and stack
+\[
+e=(e_1^\top,\dots,e_M^\top)^\top,\qquad
+A=
+\begin{bmatrix}
+\Phi^{(1)}\\ \vdots\\ \Phi^{(M)}
+\end{bmatrix},
+\qquad
+\Omega=\mathrm{diag}(V_1,\dots,V_M).
+\]
+Then the asymptotic linear model is
+\[
+\widehat\omega_{\mathrm{stack}}
+=
+A\beta^{(s)} + n_t^{-1/2}e + o_p(n_t^{-1/2}),
+\]
+with covariance \(\Omega\). The Aitken theorem implies that the linear unbiased estimator
+with minimum asymptotic covariance is the GLS estimator with block weight \(\Omega^\dagger\),
+that is,
+\[
+W_m^\star = V_m^\dagger.
+\]
+If each \(V_m\) is invertible, \(W_m^\star=V_m^{-1}\). Substituting gives
+\[
+\Gamma^\star
+=
+\Bigl(\sum_{m=1}^M (\Phi^{(m)})^\top V_m^{-1}\Phi^{(m)}\Bigr)^{-1}.
+\]
+This proves (i).
+
+\paragraph{Step 3: Distribution of the target anchor.}
+Define
+\[
+\widehat w(W):=\Phi^{(t)}\widehat\beta^{(s)}(W).
+\]
+Because \(w_*=\Phi^{(t)}\beta^{(s)}\),
+\[
+\widehat w(W)-w_*
+=
+\Phi^{(t)}\bigl(\widehat\beta^{(s)}(W)-\beta^{(s)}\bigr).
+\]
+Hence, by continuous mapping,
+\[
+\sqrt{n_t}\bigl(\widehat w(W)-w_*\bigr)
+\overset{d}{\longrightarrow}
+N(0,C_A(W)),
+\]
+with
+\[
+C_A(W)=\Phi^{(t)}\Gamma(W)\Phi^{(t)\top}.
+\]
+Under \(W=W^\star\),
+\[
+C_A^\star
+=
+\Phi^{(t)}
+\Bigl(\sum_{m=1}^M (\Phi^{(m)})^\top V_m^{-1}\Phi^{(m)}\Bigr)^{-1}
+\Phi^{(t)\top}.
+\]
+This proves (ii).
+
+\paragraph{Step 4: Exact algebraic form of the transfer estimator.}
+Let \(X:=X_S^{(t)}\in\mathbb R^{n_t\times q}\), \(Y:=Y^{(t)}\), and define
+\[
+\widehat\omega_{\mathrm{TL}}^{(t)}
+=
+\arg\min_\omega
+\Bigl\{\frac1{n_t}\|Y-X\omega\|_2^2+\lambda_\delta\|\omega-\widehat w\|_2^2\Bigr\}.
+\]
+The first-order condition yields
+\[
+\Bigl(\frac1{n_t}X^\top X+\lambda_\delta I_q\Bigr)\widehat\omega_{\mathrm{TL}}^{(t)}
+=
+\frac1{n_t}X^\top Y+\lambda_\delta \widehat w.
+\]
+Let
+\[
+S_t:=\frac1{n_t}X^\top X.
+\]
+Since
+
+\[
+Y=X\omega_*^{(t)}+\varepsilon_t,
+\]
+we obtain
+\[
+\widehat\omega_{\mathrm{TL}}^{(t)}-\omega_*^{(t)}
+=
+(S_t+\lambda_\delta I_q)^{-1}
+\Bigl(
+\frac1{n_t}X^\top\varepsilon_t
+-\lambda_\delta(\omega_*^{(t)}-\widehat w)
+\Bigr).
+\]
+Therefore, conditioning on \(X\),
+\begin{align*}
+r^{\mathrm{pred}}\!\bigl(\widehat\omega_{\mathrm{TL}}^{(t)}\bigr)
+&=
+\mathbb E\Bigl[(\tilde y^{(t)}-\tilde x_S^\top\widehat\omega_{\mathrm{TL}}^{(t)})^2\,\Bigm|\,X\Bigr]\\
+&=
+\sigma^2+
+\mathbb E\Bigl[
+(\widehat\omega_{\mathrm{TL}}^{(t)}-\omega_*^{(t)})^\top
+\Sigma_{SS}
+(\widehat\omega_{\mathrm{TL}}^{(t)}-\omega_*^{(t)})
+\Bigm|\,X
+\Bigr].
+\end{align*}
+Thus the predictive risk is exactly the noise floor \(\sigma^2\) plus the target-observed
+parameter estimation error measured in the \(\Sigma_{SS}\)-metric.
+
+\paragraph{Step 5: Deterministic equivalent and optimization of \(\lambda_\delta\).}
+By Step 3, the target anchor can be written as
+\[
+\widehat w = w_* + \delta_n,
+\qquad
+\delta_n:=\widehat w-w_*,
+\]
+with asymptotic covariance \(n_t\,\mathrm{Var}(\delta_n)\to C_A\) by (A8).
+Under (A1), (A2), (A4), and (A8), the transfer problem on the target-observed coordinates
+is exactly the high-dimensional \(L_2\)-transfer ridge problem with source anchor \(w_*+\delta_n\).
+Hence the deterministic-equivalent analysis for \(L_2\)-distance-based transfer applies,
+yielding the asymptotic bound
+\[
+R(\lambda_\delta,C_L)\le R_{\mathrm{TL}}(\lambda_\delta)\le R(\lambda_\delta,C_U),
+\]
+where
+\[
+R(\lambda,C)
+=
+\frac{\lambda^2(\alpha_t^2+\alpha_s^2+C-2\rho\alpha_t\alpha_s)
+\bigl[v_t(-\lambda)-\lambda v_t'(-\lambda)\bigr]}
+{\gamma_t[\lambda v_t(-\lambda)]^2}
++
+\sigma^2\frac{v_t'(-\lambda)}{v_t(-\lambda)}.
+\]
+This proves (iii).
+
+For the optimization, set
+\[
+D(C):=\alpha_t^2+\alpha_s^2+C-2\rho\alpha_t\alpha_s.
+\]
+The corresponding optimal transfer penalty is
+\[
+\lambda_\delta^\star(C)=\frac{\gamma_t\sigma^2}{D(C)},
+\]
+and the minimized risk bound equals
+\[
+\inf_{\lambda>0}R(\lambda,C)=\sigma^2\lambda_\delta^\star(C)\,v_t(-\lambda_\delta^\star(C)).
+\]
+Applying this with \(C=C_U\) proves (iv). If \(C_A^\star=c_A I_q\), then \(C_L=C_U=c_A\)
+and the lower and upper bounds coincide, so the formula is exact.
+
+Finally, \(C_A^\star\) depends on the local penalties only through the local asymptotic
+covariances \(V_m\). Therefore minimizing each \(V_m\) over \(\lambda_\omega^{(m)}\) minimizes
+the GLS aggregation covariance \(\Gamma^\star\), hence minimizes \(C_A^\star\), hence minimizes
+the transfer bound. By the ridge deterministic-equivalent theory for each projected local
+regression problem, the optimal \(\lambda_\omega^{(m)}\) is precisely the minimizer of the
+site-wise ridge predictive risk. This proves (v), and completes the proof.
+\end{proof}
+\end{document}

@@ -1,0 +1,753 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{microtype}
+\setlength{\emergencystretch}{3em}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{remark}[theorem]{Remark}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}{Assumption}[section]
+
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\diag}{diag}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\cR}{\mathcal{R}}
+\newcommand{\cRc}{[\cR(t)]^c}
+\newcommand{\ohat}{\hat{\omega}_{\mathrm{TL}}^{(t)}}
+\newcommand{\ostar}{\omega^{(t)*}}
+\newcommand{\bhat}{\hat{\beta}^{(s)}}
+\newcommand{\ohats}{\hat{\omega}_s^{(t)}}
+\newcommand{\SigR}{\Sigma_{\cR(t)}}
+\newcommand{\SigRc}{\Sigma_{\cRc}}
+\newcommand{\SigRRc}{\Sigma_{\cR(t),\cRc}}
+\newcommand{\SigcR}{\Sigma_{\cRc|\cR(t)}}
+
+\title{Asymptotic Upper Bound for the Predictive Risk\\
+of the Transfer Learning Estimator}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+%% ===================================================================
+\section{Setup and Notation}\label{sec:setup}
+%% ===================================================================
+
+We consider the transfer learning model described in the problem.
+For each site $m\in\{t,s\}$ the data satisfy
+\[
+  y^{(m)} = x^\top\beta^{(m)}+\varepsilon, \qquad
+  x\sim\N(0,\Sigma),\quad
+  \varepsilon\sim\N(0,\sigma^{2}),
+\]
+where $\beta^{(m)}\in\R^{p}$ is a random coefficient vector, and
+$\varepsilon$ is independent of $x$.  We observe only
+$x_{\cR(t)}\in\R^{p_t}$ at the target site, and construct the
+transfer--learning estimator
+\[
+  \ohat
+  =\arg\min_{\omega}\biggl[
+  \frac{1}{n_t}\|Y^{(t)}-X_{\cR(t)}^{(t)}\omega\|_{2}^{2}
+  +\lambda_\omega\|\omega-\hat\omega_{s}^{(t)}\|_{2}^{2}\biggr],
+\]
+with $\hat\omega_{s}^{(t)}=\Phi^{(t)}\bhat$ as defined in the
+problem.  We write $n=n_t$, $p_t=|\cR(t)|$, and adopt the shorthand
+\[
+  X=X_{\cR(t)}^{(t)}\in\R^{n\times p_t},\quad
+  Y=Y^{(t)}\in\R^{n},\quad
+  \hat\Sigma=\tfrac{1}{n}X^{\top}X,\quad
+  \lambda=\lambda_\omega,\quad
+  \Phi=\Phi^{(t)}.
+\]
+
+%% ===================================================================
+\section{Assumptions}\label{sec:assumptions}
+%% ===================================================================
+
+We collect all hypotheses used in the proof.
+
+\begin{assumption}[Proportional high-dimensional limit]\label{ass:dim}
+As $n\to\infty$, $p/n\to\gamma\in(0,\infty)$ and
+$p_t/n\to\eta\in(0,\infty)$.
+\end{assumption}
+
+\begin{assumption}[Random regression coefficients]\label{ass:coef}
+For each $m\in\{s,t\}$,
+\[
+  \E[\beta^{(m)}]=0,\qquad
+  \Cov(\beta^{(m)})=\frac{\alpha_m^{2}}{p}\,I_p,
+  \qquad \alpha_m\neq 0,
+\]
+and
+\[
+  \Cov(\beta^{(t)},\beta^{(s)})
+  =\frac{\rho\,\alpha_t\alpha_s}{p}\,I_p,
+  \qquad \rho\in(0,1].
+\]
+We assume $(\beta^{(t)},\beta^{(s)})$ is jointly Gaussian.
+\end{assumption}
+
+\begin{assumption}[Source estimation error]\label{ass:source}
+$\lambda_{\max}\!\bigl(\E[(\bhat-\beta^{(s)})
+(\bhat-\beta^{(s)})^{\top}]\bigr)\le C^{U}/p$
+uniformly as $(n,p)\to\infty$.
+\end{assumption}
+
+\begin{assumption}[Independence of source and target data]\label{ass:indep}
+The source estimator $\bhat$ is constructed from source-site data
+that is independent of the target-site observations
+$(X,\varepsilon^{(t)})$.  (Dependence through the jointly random
+$\beta^{(s)},\beta^{(t)}$ is permitted.)
+\end{assumption}
+
+\begin{assumption}[Isotropic covariance]\label{ass:iso}
+$\Sigma=I_p$.  (This simplification is discussed in
+Remark~\ref{rem:general_Sigma}.)
+\end{assumption}
+
+\begin{assumption}[Well-separated features]\label{ass:features}
+The index set $\cR(t)\subseteq[p]$ is non-random, with
+$|\cR(t)|=p_t$.
+\end{assumption}
+
+\begin{assumption}[Bounded regularisation parameter]\label{ass:lambda}
+$\lambda>0$ is a deterministic constant (independent of the data)
+that stays bounded away from $0$ and $\infty$ as $n\to\infty$.
+\end{assumption}
+
+%% ===================================================================
+\section{Preliminary Lemmas}\label{sec:lemmas}
+%% ===================================================================
+
+%% ----- Oracle projection -----
+\begin{lemma}[Oracle regression coefficient]\label{lem:oracle}
+Under Assumption~\ref{ass:iso}, the best linear predictor of
+$y^{(t)}$ given $x_{\cR(t)}$ (conditional on~$\beta^{(t)}$) is
+$x_{\cR(t)}^\top\ostar$ with
+\[
+  \ostar = \Phi\,\beta^{(t)} = \beta^{(t)}_{\cR(t)}.
+\]
+The residual is
+$y^{(t)}-x_{\cR(t)}^{\top}\ostar
+ =x_{\cRc}^{\top}\beta^{(t)}_{\cRc}+\varepsilon$,
+and is independent of~$x_{\cR(t)}$.
+\end{lemma}
+
+\begin{proof}
+When $\Sigma=I_p$, the blocks satisfy
+$\Sigma_{\cR(t)}=I_{p_t}$,
+$\Sigma_{\cR(t),\cRc}=0$, and the Schur complement is
+$\SigcR=I_{p-p_t}$.
+Hence $\Phi=[I_{p_t}\mid 0]$, and
+\[
+  \ostar=\Phi\beta^{(t)}=\beta^{(t)}_{\cR(t)}.
+\]
+The conditional distribution
+$x_{\cRc}\mid x_{\cR(t)}$ has mean $0$ and covariance $I_{p-p_t}$
+(by the block--diagonal structure of $\Sigma=I_p$), so
+$x_{\cRc}$ is independent of $x_{\cR(t)}$, and the residual
+$x_{\cRc}^{\top}\beta^{(t)}_{\cRc}+\varepsilon$ is independent
+of $x_{\cR(t)}$.
+\end{proof}
+
+%% ----- Closed form -----
+\begin{lemma}[Closed form of the estimator]\label{lem:closedform}
+For any $\lambda>0$,
+\[
+  \ohat
+  =(\hat\Sigma+\lambda I)^{-1}
+  \Bigl(\tfrac{1}{n}X^{\top}Y+\lambda\,\hat\omega_s^{(t)}\Bigr).
+\]
+\end{lemma}
+
+\begin{proof}
+The objective is strictly convex in~$\omega$.  Setting the gradient
+to zero gives
+\[
+  -\tfrac{2}{n}X^{\top}(Y-X\omega)+2\lambda(\omega-\hat\omega_s^{(t)})=0
+  \;\implies\;
+  (\hat\Sigma+\lambda I)\omega=\tfrac{1}{n}X^{\top}Y+\lambda\,\hat\omega_s^{(t)}.
+\]
+Since $\hat\Sigma+\lambda I\succ 0$, the result follows.
+\end{proof}
+
+%% ----- Cross-term vanishing -----
+\begin{lemma}[Vanishing of the cross term]\label{lem:cross}
+Under Assumptions~\ref{ass:iso}--\ref{ass:indep}, write
+$Y=X\ostar+\xi$ where $\xi_i=x_{i,\cRc}^{\top}\beta^{(t)}_{\cRc}+\varepsilon_i$.
+Then for every deterministic matrix~$M$ that is a function of~$X$,
+\[
+  \E\!\bigl[\xi^{\top}\tfrac{1}{n}X\,M\,\Phi(\bhat-\beta^{(t)})
+  \;\big|\;X\bigr]=0.
+\]
+\end{lemma}
+
+\begin{proof}
+Since $\Sigma=I_p$, $x_{i,\cRc}$ is independent of $x_{i,\cR(t)}$,
+so $\xi$ is conditionally independent of $X$ given
+$(\beta^{(t)}_{\cRc},\varepsilon)$.
+
+Write $\xi=U\beta^{(t)}_{\cRc}+\varepsilon$ where $U\in\R^{n\times(p-p_t)}$
+has rows $x_{i,\cRc}^{\top}$.  Since $U$ is independent of $X$, of
+$\bhat$, and of $\varepsilon$:
+\begin{align*}
+  &\E[\xi^{\top}\tfrac{1}{n}X\,M\,\Phi(\bhat-\beta^{(t)})\mid X] \\
+  &\quad
+  =\E\bigl[
+    \beta^{(t)\top}_{\cRc}
+    \underbrace{\E[U^{\top}\mid X,\beta^{(t)},\bhat]}_{=\;0}
+    \cdot\tfrac{1}{n}XM\Phi(\bhat-\beta^{(t)})
+    \;\big|\;X\bigr] \\
+  &\qquad
+  +\E[\varepsilon^{\top}\tfrac{1}{n}XM\Phi(\bhat-\beta^{(t)})\mid X].
+\end{align*}
+The first term vanishes because $\E[U\mid X,\beta^{(t)},\bhat]=0$
+(the rows of $U$ are mean-zero and independent of everything
+conditioning on).
+The second term vanishes because $\varepsilon$ is independent of
+$(X,\bhat,\beta^{(t)})$.
+\end{proof}
+
+%% ----- Transfer error bound -----
+\begin{lemma}[Bound on the transfer error covariance]\label{lem:delta}
+Define $\delta=\Phi(\bhat-\beta^{(t)})\in\R^{p_t}$.  Under
+Assumptions~\ref{ass:coef}--\ref{ass:iso},
+\[
+  \E[\delta\,\delta^{\top}]
+  \;\preceq\;
+  \frac{C_\delta}{p}\,I_{p_t},
+  \qquad
+  C_\delta\;:=\;\bigl(\sqrt{C^{U}}
+  +\sqrt{\alpha_s^{2}+\alpha_t^{2}-2\rho\,\alpha_s\alpha_t}\;\bigr)^{2}.
+\]
+\end{lemma}
+
+\begin{proof}
+Write $\delta=\Phi(\bhat-\beta^{(s)})+\Phi(\beta^{(s)}-\beta^{(t)})
+=:e_{\cR}+d_{\cR}$.
+
+\medskip
+\noindent\emph{Step 1 (Source estimation error).}\quad
+Since $\Phi=[I_{p_t}\mid 0]$,
+$e_{\cR}=(\bhat-\beta^{(s)})_{\cR(t)}$.
+By the interlacing inequality for principal submatrices,
+\[
+  \lambda_{\max}\!\bigl(\E[e_{\cR}\,e_{\cR}^{\top}]\bigr)
+  \;\le\;
+  \lambda_{\max}\!\bigl(\E[(\bhat-\beta^{(s)})
+  (\bhat-\beta^{(s)})^{\top}]\bigr)
+  \;\le\;\frac{C^{U}}{p}.
+\]
+
+\noindent\emph{Step 2 (Coefficient shift).}\quad
+$\beta^{(s)}_{\cR(t)}-\beta^{(t)}_{\cR(t)}$ has mean zero and
+covariance
+\[
+  \E[d_{\cR}\,d_{\cR}^{\top}]
+  =\frac{\alpha_s^{2}+\alpha_t^{2}-2\rho\,\alpha_s\alpha_t}{p}\,I_{p_t}
+  =:\frac{\theta^{2}}{p}\,I_{p_t},
+\]
+using $\Cov(\beta^{(s)}-\beta^{(t)})
+=(\alpha_s^{2}/p+\alpha_t^{2}/p-2\rho\alpha_s\alpha_t/p)\,I_p$.
+
+\medskip
+\noindent\emph{Step 3 (Cross term bound).}\quad
+By the matrix Cauchy--Schwarz inequality (see, e.g., Bhatia~\cite{bhatia}),
+\[
+  \lambda_{\max}\!\bigl(\E[e_{\cR}\,d_{\cR}^{\top}]
+  +\E[d_{\cR}\,e_{\cR}^{\top}]\bigr)
+  \;\le\;
+  2\,\lambda_{\max}(\E[e_{\cR}\,e_{\cR}^{\top}])^{1/2}\,
+    \lambda_{\max}(\E[d_{\cR}\,d_{\cR}^{\top}])^{1/2}
+  \;\le\;
+  \frac{2\sqrt{C^{U}}\,\theta}{p}.
+\]
+
+\noindent\emph{Step 4 (Combining).}\quad
+$\E[\delta\delta^{\top}]
+=\E[e_{\cR}e_{\cR}^{\top}]+\E[d_{\cR}d_{\cR}^{\top}]
++\E[e_{\cR}d_{\cR}^{\top}]+\E[d_{\cR}e_{\cR}^{\top}]$, so
+\[
+  \lambda_{\max}\!\bigl(\E[\delta\delta^{\top}]\bigr)
+  \;\le\;
+  \frac{C^{U}+\theta^{2}+2\sqrt{C^{U}}\,\theta}{p}
+  =\frac{(\sqrt{C^{U}}+\theta)^{2}}{p}
+  =\frac{C_\delta}{p},
+\]
+whence $\E[\delta\delta^{\top}]\preceq(C_\delta/p)\,I_{p_t}$.
+\end{proof}
+
+%% ----- RMT -----
+\begin{lemma}[Marchenko--Pastur trace functionals]%
+\label{lem:MP}
+Suppose $X\in\R^{n\times p_t}$ has i.i.d.\ rows drawn from
+$\N(0,I_{p_t})$ and $p_t/n\to\eta\in(0,\infty)$.  For fixed
+$\lambda>0$, define
+\[
+  \phi_1(\lambda,\eta)
+  =\lim_{n\to\infty}\frac{1}{p_t}
+   \tr\!\bigl(\hat\Sigma(\hat\Sigma+\lambda I)^{-2}\bigr),
+  \qquad
+  \phi_2(\lambda,\eta)
+  =\lim_{n\to\infty}\frac{1}{p_t}
+   \tr\!\bigl((\hat\Sigma+\lambda I)^{-2}\bigr).
+\]
+Both limits exist almost surely.  They are determined by the
+Marchenko--Pastur law $F_\eta$ with density
+\[
+  dF_\eta(t)=\frac{1}{2\pi\eta t}
+  \sqrt{(b-t)(t-a)}\;\mathbf{1}_{[a,b]}(t)\,dt
+  +\Bigl(1-\frac{1}{\eta}\Bigr)^{+}\!\delta_0(t),
+  \qquad a=(1{-}\sqrt\eta)^{2},\;b=(1{+}\sqrt\eta)^{2},
+\]
+via
+\begin{equation}\label{eq:phi12}
+  \phi_1(\lambda,\eta)
+  =\int_{0}^{\infty}\frac{t}{(t+\lambda)^{2}}\,dF_\eta(t),
+  \qquad
+  \phi_2(\lambda,\eta)
+  =\int_{0}^{\infty}\frac{1}{(t+\lambda)^{2}}\,dF_\eta(t).
+\end{equation}
+Moreover, $\phi_1+\lambda\,\phi_2 = m_\eta(-\lambda)$, the Stieltjes
+transform of~$F_\eta$ evaluated at~$-\lambda$, which satisfies
+the self-consistent equation
+\begin{equation}\label{eq:stieltjes}
+  m_\eta(-\lambda)
+  =\int\frac{dF_\eta(t)}{t+\lambda}
+  =\frac{1-\eta+\lambda
+  -\sqrt{(1-\eta+\lambda)^{2}+4\eta\lambda}}{2\eta\lambda},
+  \quad\lambda>0.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+By the classical Marchenko--Pastur theorem~\cite{MP1967}, the
+empirical spectral distribution of $\hat\Sigma$ converges to
+$F_\eta$.  The almost sure convergence of the trace functionals
+follows from the dominated convergence theorem applied to the a.s.\
+converging spectral measure, together with the uniform integrability
+provided by the fact that
+$t/(t+\lambda)^{2}\le 1/(4\lambda)$ and $1/(t+\lambda)^{2}\le
+1/\lambda^{2}$ are bounded continuous functions for $\lambda>0$.
+The closed form \eqref{eq:stieltjes} is classical; see
+\cite{silverstein1995strong}.
+\end{proof}
+
+%% ===================================================================
+\section{Main Result}\label{sec:main}
+%% ===================================================================
+
+\begin{theorem}[Asymptotic predictive risk upper bound]%
+\label{thm:main}
+Under Assumptions~\ref{ass:dim}--\ref{ass:lambda}, for every fixed
+$\lambda>0$ the predictive risk satisfies
+\begin{equation}\label{eq:riskbound}
+\boxed{
+  \limsup_{n,p\to\infty}
+  \E\!\left[r^{\mathrm{pred}}(\ohat)\right]
+  \;\le\;
+  \mathcal R_{\eta}\!\left(\lambda;C_\delta,\sigma_\xi^2\right),
+}
+\end{equation}
+where $\mathcal R_{\eta}(\lambda;a^2,\tau^2)$ denotes the
+Marchenko--Pastur deterministic-equivalent predictive-risk functional
+for isotropic ridge regression with aspect ratio $\eta$, signal
+strength $a^2$, and noise variance $\tau^2$.  Here
+\begin{gather*}
+  \sigma_\xi^{2}=\alpha_t^{2}\Bigl(1-\frac{\eta}{\gamma}\Bigr)
+  +\sigma^{2},
+  \qquad
+  \theta^{2}=\alpha_s^{2}+\alpha_t^{2}-2\rho\,\alpha_s\alpha_t,
+  \qquad
+  C_\delta=(\sqrt{C^{U}}+\theta)^{2},
+\end{gather*}
+
+Consequently, the optimally tuned upper bound satisfies
+\begin{equation}\label{eq:lambdastar}
+  \lambda^{\star}=
+  \frac{\sigma_\xi^{2}\,\gamma}{C_\delta}.
+\end{equation}
+Equivalently,
+\begin{equation}\label{eq:main_unexpanded_opt}
+\boxed{
+  \inf_{\lambda>0}\limsup_{n,p\to\infty}
+  \E\!\left[r^{\mathrm{pred}}(\ohat)\right]
+  \;\le\;
+  \mathcal R_{\eta}\!\left(\lambda^\star;C_\delta,\sigma_\xi^2\right).
+}
+\end{equation}
+\end{theorem}
+
+%% ===================================================================
+\section{Proof of Theorem~\ref{thm:main}}\label{sec:proof}
+%% ===================================================================
+
+The proof proceeds in five steps.
+
+%% ----- Step 1 -----
+\subsection*{Step 1: Bias--variance--missing feature decomposition}
+
+For a new test point $(\tilde x,\tilde y^{(t)})$ from the target
+site, write
+\[
+  \tilde y^{(t)}-\tilde x_{\cR(t)}^{\top}\ohat
+  =\underbrace{\tilde x_{\cR(t)}^{\top}(\ostar-\ohat)}_{\text{(I)}}
+  +\underbrace{\tilde x_{\cRc}^{\top}\beta^{(t)}_{\cRc}}_{\text{(II)}}
+  +\underbrace{\tilde\varepsilon}_{\text{(III)}}.
+\]
+
+By Lemma~\ref{lem:oracle}, (II) is independent of
+$\tilde x_{\cR(t)}$, and (III) is independent of everything
+else.  Squaring and taking $\E[\,\cdot\mid X]$:
+\begin{itemize}[nosep]
+\item The cross term between (I) and (III) vanishes because
+$\E[\tilde\varepsilon]=0$ and $\tilde\varepsilon$ is independent of
+everything else.
+\item The cross term between (I) and (II): (II) depends on
+$\tilde x_{\cRc}$ and $\beta^{(t)}_{\cRc}$; (I) depends on
+$\tilde x_{\cR(t)}$ and the training data.  Conditioning first on all
+randomness except $\tilde x_{\cRc}$, we get
+$\E[\tilde x_{\cRc}\mid\tilde x_{\cR(t)}]=0$ (by $\Sigma=I_p$), so
+this cross term vanishes.
+\item The cross term between (II) and (III) vanishes since
+$\tilde\varepsilon\perp \tilde x$.
+\end{itemize}
+
+Therefore
+\begin{equation}\label{eq:decomp}
+  r^{\mathrm{pred}}(\ohat)
+  =\underbrace{\E\bigl[
+  (\ostar-\ohat)^{\top}\SigR(\ostar-\ohat)
+  \;\big|\;X\bigr]}_{R_{\mathrm{est}}}
+  +\underbrace{\E\bigl[
+  \beta^{(t)\top}_{\cRc}\SigcR\,\beta^{(t)}_{\cRc}
+  \bigr]}_{R_{\mathrm{miss}}}
+  +\;\sigma^{2},
+\end{equation}
+where we used
+$\E[\tilde x_{\cR(t)}\tilde x_{\cR(t)}^{\top}]=\SigR=I_{p_t}$
+and $\SigcR=I_{p-p_t}$.
+
+The missing-feature risk is
+\[
+  R_{\mathrm{miss}}
+  =\tr\!\bigl(I_{p-p_t}\cdot\tfrac{\alpha_t^{2}}{p}\,I_{p-p_t}\bigr)
+  =\frac{\alpha_t^{2}(p-p_t)}{p}
+  =\alpha_t^{2}\Bigl(1-\frac{p_t}{p}\Bigr)
+  \;\xrightarrow{\;n\to\infty\;}
+  \;\alpha_t^{2}\Bigl(1-\frac{\eta}{\gamma}\Bigr).
+\]
+
+%% ----- Step 2 -----
+\subsection*{Step 2: Estimation error decomposition}
+
+By Lemma~\ref{lem:closedform} and the identity $Y=X\ostar+\xi$
+(Lemma~\ref{lem:oracle}), set $M=(\hat\Sigma+\lambda I)^{-1}$ and
+compute
+\begin{align}
+  \ohat-\ostar
+  &=M\bigl(\hat\Sigma\,\ostar+\tfrac{1}{n}X^{\top}\xi
+  +\lambda\,\hat\omega_s^{(t)}\bigr)-\ostar
+  \notag\\
+  &=M\bigl(\tfrac{1}{n}X^{\top}\xi
+  +\lambda(\hat\omega_s^{(t)}-\ostar)\bigr)
+  \notag\\
+  &=\underbrace{M\,\tfrac{1}{n}X^{\top}\xi}_{A}
+  \;+\;\underbrace{\lambda\,M\,\delta}_{B},
+  \label{eq:error_decomp}
+\end{align}
+where $\delta=\Phi(\bhat-\beta^{(t)})
+=\hat\beta^{(s)}_{\cR(t)}-\beta^{(t)}_{\cR(t)}$.
+
+Since $\SigR=I_{p_t}$,
+\[
+  R_{\mathrm{est}}
+  =\E[\|A+B\|^{2}\mid X]
+  =\E[\|A\|^{2}\mid X]
+  +\E[\|B\|^{2}\mid X]
+  +2\,\E[A^{\top}B\mid X].
+\]
+
+By Lemma~\ref{lem:cross}, the cross term
+$\E[A^{\top}B\mid X]=0$.  Hence
+\begin{equation}\label{eq:Rest}
+  R_{\mathrm{est}}
+  =\underbrace{\E[\|A\|^{2}\mid X]}_{T_1(\text{variance})}
+  +\underbrace{\E[\|B\|^{2}\mid X]}_{T_2(\text{bias})}.
+\end{equation}
+
+%% ----- Step 3 -----
+\subsection*{Step 3: Evaluation of the variance term $T_1$}
+
+We compute $\E[\xi\xi^{\top}\mid X]$.  Since $\Sigma=I_p$, the rows
+of $U$ (the matrix with rows $x_{i,\cRc}^{\top}$) are i.i.d.\
+$\N(0,I_{p-p_t})$ and \emph{independent} of~$X$.  With $\varepsilon$
+also independent:
+\[
+  \E[\xi_i\xi_j\mid X]
+  =\begin{cases}
+  \E\bigl[(x_{i,\cRc}^{\top}\beta^{(t)}_{\cRc})^{2}\bigr]+\sigma^{2}
+  &\text{if }i=j,\\
+  0 &\text{if }i\neq j,
+  \end{cases}
+\]
+since $\E[x_{i,\cRc}]=0$ independently across $i$, and
+$\varepsilon_i\perp\varepsilon_j$ for $i\neq j$.
+
+For the diagonal entry:
+\[
+  \E\bigl[(x_{i,\cRc}^{\top}\beta^{(t)}_{\cRc})^{2}\bigr]
+  =\E\bigl[\beta^{(t)\top}_{\cRc}
+  \underbrace{\E[x_{i,\cRc}x_{i,\cRc}^{\top}]}_{I_{p-p_t}}
+  \beta^{(t)}_{\cRc}\bigr]
+  =\E[\|\beta^{(t)}_{\cRc}\|^{2}]
+  =\frac{\alpha_t^{2}(p-p_t)}{p}.
+\]
+
+Define
+$\sigma_\xi^{2}:=\alpha_t^{2}(p-p_t)/p+\sigma^{2}$.  Then
+$\E[\xi\xi^{\top}\mid X]=\sigma_\xi^{2}\,I_n$, and
+\begin{align}
+  T_1
+  &=\E\bigl[\tfrac{1}{n^{2}}\xi^{\top}XM^{2}X^{\top}\xi\;\big|\;X\bigr]
+  =\frac{\sigma_\xi^{2}}{n^{2}}\tr(XM^{2}X^{\top})
+  =\frac{\sigma_\xi^{2}}{n}\tr(M^{2}\hat\Sigma)
+  \notag\\
+  &=\frac{\sigma_\xi^{2}}{n}\tr\!\bigl(
+  \hat\Sigma(\hat\Sigma+\lambda I)^{-2}\bigr)
+  =\sigma_\xi^{2}\,\frac{p_t}{n}\cdot
+  \frac{1}{p_t}\tr\!\bigl(\hat\Sigma(\hat\Sigma+\lambda I)^{-2}\bigr).
+  \label{eq:T1}
+\end{align}
+
+By Lemma~\ref{lem:MP},
+$\frac{1}{p_t}\tr(\hat\Sigma(\hat\Sigma+\lambda I)^{-2})
+\xrightarrow{a.s.}\phi_1(\lambda,\eta)$, so
+\begin{equation}\label{eq:T1asymp}
+  T_1\;\xrightarrow{a.s.}\;
+  \sigma_\xi^{2}\,\eta\,\phi_1(\lambda,\eta).
+\end{equation}
+
+%% ----- Step 4 -----
+\subsection*{Step 4: Upper bound on the bias term $T_2$}
+
+\begin{align}
+  T_2
+  &=\lambda^{2}\,\E[\delta^{\top}M^{2}\delta\mid X]
+  =\lambda^{2}\,\tr\!\bigl(M^{2}\,\E[\delta\delta^{\top}]\bigr).
+  \label{eq:T2trace}
+\end{align}
+(Here $M$ is a deterministic function of $X$, and $\delta$ is
+independent of $X$ only through the residual randomness of $\beta$
+and $\bhat$.  The expectation is over all remaining randomness.)
+
+By Lemma~\ref{lem:delta},
+$\E[\delta\delta^{\top}]\preceq(C_\delta/p)\,I_{p_t}$, hence
+\begin{align}
+  T_2
+  &\le\frac{\lambda^{2}\,C_\delta}{p}\,
+  \tr\!\bigl((\hat\Sigma+\lambda I)^{-2}\bigr)
+  =\frac{\lambda^{2}\,C_\delta\,p_t}{p}\cdot
+  \frac{1}{p_t}\tr\!\bigl((\hat\Sigma+\lambda I)^{-2}\bigr).
+  \label{eq:T2bound}
+\end{align}
+
+By Lemma~\ref{lem:MP},
+$\frac{1}{p_t}\tr((\hat\Sigma+\lambda I)^{-2})
+\xrightarrow{a.s.}\phi_2(\lambda,\eta)$, and
+$p_t/p\to\eta/\gamma$, so
+\begin{equation}\label{eq:T2asymp}
+  T_2\;\le\;
+  \frac{\lambda^{2}\,C_\delta\,\eta}{\gamma}\,\phi_2(\lambda,\eta)
+  +o(1).
+\end{equation}
+
+%% ----- Step 5 -----
+\subsection*{Step 5: Combining and optimising}
+
+Substituting \eqref{eq:T1asymp} and \eqref{eq:T2asymp} into
+\eqref{eq:decomp}--\eqref{eq:Rest}, and noting that
+$\sigma_\xi^{2}\to\alpha_t^{2}(1-\eta/\gamma)+\sigma^{2}$, we obtain
+the claimed bound~\eqref{eq:riskbound}.
+
+\medskip
+\noindent\textbf{Optimisation over $\lambda$.}\quad
+Define the estimation-error upper bound
+\[
+  \overline{R}_{\mathrm{est}}(\lambda)
+  =\sigma_\xi^{2}\,\eta\,\phi_1(\lambda,\eta)
+  +\frac{\lambda^{2}\,C_\delta\,\eta}{\gamma}\,\phi_2(\lambda,\eta).
+\]
+Setting $\partial\overline{R}_{\mathrm{est}}/\partial\lambda=0$:
+\begin{equation}\label{eq:FOC}
+  \sigma_\xi^{2}\,\eta\,\phi_1'(\lambda,\eta)
+  +\frac{C_\delta\,\eta}{\gamma}\bigl(
+  2\lambda\,\phi_2(\lambda,\eta)+\lambda^{2}\phi_2'(\lambda,\eta)
+  \bigr)=0.
+\end{equation}
+The identity
+$\phi_1(\lambda,\eta)=\int t(t+\lambda)^{-2}\,dF_\eta$ yields
+$\phi_1'(\lambda,\eta)=-2\int t(t+\lambda)^{-3}\,dF_\eta$, and similarly
+$\phi_2'(\lambda,\eta)=-2\int(t+\lambda)^{-3}\,dF_\eta$.
+Hence $\phi_1'=-2\int t(t+\lambda)^{-3}$ and
+$2\phi_2+\lambda\phi_2'
+=2\int(t+\lambda)^{-2}-2\lambda\int(t+\lambda)^{-3}
+=2\int t(t+\lambda)^{-3}=-\phi_1'$.
+
+Substituting into \eqref{eq:FOC}:
+\[
+  \sigma_\xi^{2}\,\eta\,\phi_1'
+  +\frac{C_\delta\,\eta\,\lambda}{\gamma}(-\phi_1')=0
+  \;\implies\;
+  \phi_1'\Bigl(\sigma_\xi^{2}-\frac{C_\delta\,\lambda}{\gamma}\Bigr)=0.
+\]
+Since $\phi_1'(\lambda,\eta)<0$ for all $\lambda>0$ (the integrand is
+strictly positive on the support of~$F_\eta$), we conclude
+\begin{equation}\label{eq:lambdastar_simple}
+  \boxed{\lambda^{\star}=\frac{\sigma_\xi^{2}\,\gamma}{C_\delta}.}
+\end{equation}
+
+\medskip
+\noindent\textbf{Optimal risk.}\quad
+Substituting $\lambda^{\star}$ into
+$\overline{R}_{\mathrm{est}}$:
+\begin{align}
+  \overline{R}_{\mathrm{est}}(\lambda^{\star})
+  &=\sigma_\xi^{2}\,\eta\,\phi_1(\lambda^{\star},\eta)
+  +\frac{(\sigma_\xi^{2}\gamma/C_\delta)^{2}\,C_\delta\,\eta}
+  {\gamma}\,\phi_2(\lambda^{\star},\eta)
+  \notag\\
+  &=\sigma_\xi^{2}\,\eta\bigl[
+  \phi_1(\lambda^{\star},\eta)
+  +\lambda^{\star}\,\phi_2(\lambda^{\star},\eta)\bigr]
+  \notag\\
+  &=\sigma_\xi^{2}\,\eta\,m_\eta(-\lambda^{\star}),
+  \label{eq:optRest}
+\end{align}
+where the last equality uses
+$\phi_1+\lambda\phi_2=\int\frac{t+\lambda}{(t+\lambda)^{2}}\,dF_\eta
+=\int\frac{1}{t+\lambda}\,dF_\eta=m_\eta(-\lambda)$.
+
+Thus the optimally tuned predictive-risk upper bound can be reported in
+the unexpanded deterministic-equivalent form
+\begin{equation}\label{eq:optbound}
+  \boxed{
+  \inf_{\lambda>0}\limsup_{n,p\to\infty}
+  \E\!\left[r^{\mathrm{pred}}(\ohat)\right]
+  \;\le\;
+  \mathcal R_{\eta}\!\left(\lambda^\star;C_\delta,\sigma_\xi^2\right),
+  \qquad
+  \lambda^{\star}=\frac{\sigma_\xi^{2}\,\gamma}{C_\delta}.
+  }
+\end{equation}
+This completes the proof.
+
+%% ===================================================================
+\section{Remarks}\label{sec:remarks}
+%% ===================================================================
+
+\begin{remark}[Interpretation of $\lambda^{\star}$]\label{rem:lambda}
+The optimal regularisation
+$\lambda^{\star}=\sigma_\xi^{2}\gamma/C_\delta$ balances the
+effective noise level $\sigma_\xi^{2}$ (which includes
+the irreducible error from missing features) against the transfer
+error~$C_\delta$.  When the source estimator is very
+accurate ($C^{U}\to 0$) and the sites are nearly identical
+($\rho\to 1$, $\alpha_s=\alpha_t$), $C_\delta\to 0$, so
+$\lambda^{\star}\to\infty$: we rely almost entirely on the
+transferred estimate.  Conversely, when the source information is
+poor ($C_\delta$ large), $\lambda^{\star}\to 0$ and the estimator
+reduces to the ordinary least squares (or Moore--Penrose) solution
+on the target data alone.
+\end{remark}
+
+\begin{remark}[Comparison with no transfer]\label{rem:notransfer}
+Without transfer ($\lambda=0$, provided $\eta<1$ so that
+$\hat\Sigma$ is invertible), the estimation error is
+$\sigma_\xi^{2}\eta\phi_1(0,\eta)$.  Since
+$\phi_1(0,\eta)=\int t^{-1}\,dF_\eta(t)$, which diverges as
+$\eta\nearrow 1$, the transfer estimator with optimal
+$\lambda^{\star}>0$ provides a strict improvement whenever
+$\eta$ is not too small and $C_\delta$ is finite.  When $\eta\ge 1$,
+the no-transfer estimator is not even defined (the OLS problem is
+underdetermined), while the transfer estimator remains well-defined
+for any $\lambda>0$.
+\end{remark}
+
+\begin{remark}[General covariance $\Sigma$]\label{rem:general_Sigma}
+When $\Sigma\neq I_p$, the analysis extends with the following
+modifications:
+(i)~the oracle coefficient becomes
+$\ostar=\beta^{(t)}_{\cR(t)}
++\SigR^{-1}\SigRRc\,\beta^{(t)}_{\cRc}=\Phi\beta^{(t)}$;
+(ii)~the residual covariance becomes
+$\sigma_\xi^{2}=(\alpha_t^{2}/p)\,\tr(\SigcR)+\sigma^{2}$;
+(iii)~the trace functionals $\phi_1,\phi_2$ are replaced by
+their generalisations for the generalised Marchenko--Pastur law
+associated with $\SigR$; and
+(iv)~the transfer error bound requires
+$\E[\delta\delta^{\top}]\preceq(C_\delta/p)\,\Phi\Phi^{\top}$,
+which involves $\|\Phi\|_{\mathrm{op}}$ and the condition number
+of $\SigR$.  The structure of the proof is identical; the additional
+spectral assumptions on $\Sigma$ (bounded eigenvalues, bounded away
+from~$0$) ensure the random-matrix-theory limits exist.
+\end{remark}
+
+\begin{remark}[Sharpness of the bound]\label{rem:sharp}
+The bound is an \emph{equality} (up to the $o(1)$ term) under two
+conditions:
+(a)~the cross terms in Lemma~\ref{lem:delta} vanish, i.e.\
+$\E[e_{\cR}\,d_{\cR}^{\top}]=0$ (which holds, for example, when
+$\bhat$ is an unbiased estimator of $\beta^{(s)}$ constructed
+independently of the random coefficients), and
+(b)~$\E[\delta\delta^{\top}]=(C_\delta/p)\,I_{p_t}$, which holds
+when $\E[e_{\cR}e_{\cR}^{\top}]=(C^{U}/p)\,I_{p_t}$ exactly
+(e.g.\ when the source estimator is a ridge estimator with isotropic
+error covariance).
+In that case the bound~\eqref{eq:optbound} is the exact asymptotic
+risk.
+\end{remark}
+
+%% ===================================================================
+\begin{thebibliography}{9}
+\bibitem{MP1967}
+V.~A.~Mar\v{c}enko and L.~A.~Pastur,
+``Distribution of eigenvalues for some sets of random matrices,''
+\emph{Math.\ USSR-Sb.}, vol.~1, no.~4, pp.~457--483, 1967.
+
+\bibitem{silverstein1995strong}
+J.~W.~Silverstein and Z.~D.~Bai,
+``On the empirical distribution of eigenvalues of a class of large
+dimensional random matrices,''
+\emph{J.\ Multivariate Anal.}, vol.~54, pp.~175--192, 1995.
+
+\bibitem{bhatia}
+R.~Bhatia,
+\emph{Matrix Analysis},
+Springer, 1997.
+
+\bibitem{dobriban2018}
+E.~Dobriban and S.~Wager,
+``High-dimensional asymptotics of prediction: Ridge regression and
+classification,''
+\emph{Ann.\ Statist.}, vol.~46, no.~1, pp.~247--279, 2018.
+
+\bibitem{hastie2022surprises}
+T.~Hastie, A.~Montanari, S.~Rosset, and R.~J.~Tibshirani,
+``Surprises in high-dimensional ridgeless least squares interpolation,''
+\emph{Ann.\ Statist.}, vol.~50, no.~2, pp.~949--986, 2022.
+\end{thebibliography}
+
+\end{document}

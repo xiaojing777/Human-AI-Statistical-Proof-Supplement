@@ -1,0 +1,199 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\begin{document}
+
+\begin{theorem}[Equivalence of exact privacy curves for additive symmetric noise]
+Let
+\[
+M(x)=A(x)+Z,
+\]
+where \(A:\mathcal X\to \mathbb R^d\) is deterministic and \(Z\sim \nu\), with \(\nu\) a centered symmetric probability distribution on \(\mathbb R^d\), i.e.
+\[
+\nu(B)=\nu(-B)\qquad \text{for every Borel set }B\subseteq \mathbb R^d.
+\]
+Fix neighboring datasets \(x,x'\), and define
+\[
+a:=A(x),\qquad a':=A(x'),
+\]
+\[
+P:=\mathcal L(a+Z),\qquad Q:=\mathcal L(a'+Z).
+\]
+
+Assume \(P\ll Q\) (equivalently \(Q\ll P\) in this setting). Let
+\[
+L:=\frac{dP}{dQ}.
+\]
+
+Then the following data determine one another:
+\begin{enumerate}
+\item the full exact R\'enyi-DP curve \(\{D_\alpha(P\|Q):\alpha>1\}\);
+\item the full exact \(f\)-DP curve;
+\item the exact \((\varepsilon,\delta)\)-DP curve for \(\varepsilon\ge 0\).
+\end{enumerate}
+
+Equivalently, in this symmetric additive-noise setting, the one-sided exact privacy profile \(\{\delta(\varepsilon):\varepsilon\ge 0\}\) already determines the full two-sided profile \(\{\delta(\varepsilon):\varepsilon\in\mathbb R\}\), and hence determines the R\'enyi-DP and \(f\)-DP curves. The converse implications also hold.
+\end{theorem}
+
+\begin{proof}
+We proceed in several steps.
+
+\medskip
+\noindent
+\textbf{Step 1: Reflection symmetry exchanges \(P\) and \(Q\).}
+
+Define the midpoint
+\[
+m:=\frac{a+a'}{2},
+\]
+and the reflection
+\[
+T(y):=2m-y=a+a'-y,\qquad y\in\mathbb R^d.
+\]
+Then \(T\) is a measurable involution: \(T\circ T=\mathrm{id}\).
+
+We claim that
+\[
+T_\# P = Q,\qquad T_\# Q = P.
+\]
+Indeed, if \(Y=a+Z\sim P\), then
+\[
+T(Y)=a+a'-(a+Z)=a'-Z.
+\]
+Since \(Z\stackrel d= -Z\) by symmetry of \(\nu\), we have
+\[
+a'-Z \stackrel d= a'+Z \sim Q.
+\]
+Hence \(T_\#P=Q\). By symmetry the reverse identity \(T_\#Q=P\) also holds.
+
+\medskip
+\noindent
+\textbf{Step 2: The privacy profile is symmetric under swapping \(P\) and \(Q\).}
+
+Recall the exact privacy profile
+\[
+\delta_{P,Q}(\varepsilon):=\sup_{E}\bigl(P(E)-e^\varepsilon Q(E)\bigr),\qquad \varepsilon\in\mathbb R.
+\]
+For any measurable \(E\),
+\[
+P(E)-e^\varepsilon Q(E)
+=Q(T^{-1}E)-e^\varepsilon P(T^{-1}E).
+\]
+Taking the supremum over \(E\), and using that \(T^{-1}\) is a bijection on measurable sets, yields
+\[
+\delta_{P,Q}(\varepsilon)=\delta_{Q,P}(\varepsilon)\qquad \forall \varepsilon\in\mathbb R.
+\]
+Thus the privacy profile is invariant under exchanging \(P\) and \(Q\).
+
+\medskip
+\noindent
+\textbf{Step 3: Negative \(\varepsilon\) is determined by positive \(\varepsilon\).}
+
+For arbitrary probability measures \(P,Q\), one has the identity
+\[
+\delta_{P,Q}(-\varepsilon)
+=
+1-e^{-\varepsilon}+e^{-\varepsilon}\delta_{Q,P}(\varepsilon),
+\qquad \varepsilon\in\mathbb R.
+\]
+Indeed,
+\[
+\delta_{P,Q}(-\varepsilon)
+=
+\sup_E \bigl(P(E)-e^{-\varepsilon}Q(E)\bigr).
+\]
+Writing \(F=E^c\), we get
+\begin{align*}
+P(E)-e^{-\varepsilon}Q(E)
+&=1-P(F)-e^{-\varepsilon}(1-Q(F))\\
+&=1-e^{-\varepsilon}+\bigl(e^{-\varepsilon}Q(F)-P(F)\bigr)\\
+&=1-e^{-\varepsilon}+e^{-\varepsilon}\bigl(Q(F)-e^\varepsilon P(F)\bigr).
+\end{align*}
+Taking the supremum over \(E\), equivalently over \(F\), proves the identity.
+
+Now apply Step 2:
+\[
+\delta_{Q,P}(\varepsilon)=\delta_{P,Q}(\varepsilon).
+\]
+Therefore
+\[
+\boxed{
+\delta(-\varepsilon)=1-e^{-\varepsilon}+e^{-\varepsilon}\delta(\varepsilon),
+\qquad \varepsilon\ge 0.
+}
+\]
+Hence knowledge of \(\delta(\varepsilon)\) for all \(\varepsilon\ge 0\) uniquely determines \(\delta(\varepsilon)\) for all \(\varepsilon<0\). So the one-sided privacy profile determines the full two-sided profile.
+
+\medskip
+\noindent
+\textbf{Step 4: The full two-sided privacy profile determines the law of the likelihood ratio.}
+
+Let
+\[
+L:=\frac{dP}{dQ}.
+\]
+As usual,
+\[
+\delta(\varepsilon)=\mathbb E_Q[(L-e^\varepsilon)_+],\qquad \varepsilon\in\mathbb R.
+\]
+Equivalently, if
+\[
+g(u):=\mathbb E_Q[(L-u)_+],\qquad u>0,
+\]
+then
+\[
+\delta(\varepsilon)=g(e^\varepsilon).
+\]
+For every \(u>0\), \(g\) is convex and has one-sided derivatives
+\[
+g'_-(u)=-Q(L\ge u),\qquad g'_+(u)=-Q(L>u).
+\]
+Thus knowing \(g(u)\) for all \(u>0\) determines the tail probabilities of \(L\), hence the law of \(L\) under \(Q\).
+
+Since Step 3 shows that the one-sided profile \(\{\delta(\varepsilon):\varepsilon\ge 0\}\) determines the full profile \(\{\delta(\varepsilon):\varepsilon\in\mathbb R\}\), it follows that in the present symmetric setting, the one-sided profile determines the law of \(L\).
+
+\medskip
+\noindent
+\textbf{Step 5: The law of \(L\) determines the full exact R\'enyi-DP curve and the full exact \(f\)-DP curve.}
+
+For every \(\alpha>1\),
+\[
+D_\alpha(P\|Q)=\frac{1}{\alpha-1}\log \mathbb E_Q[L^\alpha].
+\]
+Hence the law of \(L\) determines the full R\'enyi-DP curve.
+
+Likewise, by the Neyman--Pearson lemma, the exact \(f\)-DP / tradeoff curve is determined by threshold tests in \(L\), hence is determined by the law of \(L\).
+
+Therefore the one-sided exact privacy profile determines both the full exact R\'enyi-DP curve and the full exact \(f\)-DP curve.
+
+\medskip
+\noindent
+\textbf{Step 6: Converse implications.}
+
+The full exact R\'enyi-DP curve determines the law of \(L\): indeed, for \(\alpha>1\),
+\[
+\mathbb E_Q[L^\alpha]=e^{(\alpha-1)D_\alpha(P\|Q)},
+\]
+so the moment generating function of \(\log L\) is known on \((1,\infty)\), which determines its distribution uniquely.
+
+The full exact \(f\)-DP curve also determines the law of \(L\), by Neyman--Pearson.
+
+Once the law of \(L\) is known, the exact privacy profile is given by
+\[
+\delta(\varepsilon)=\mathbb E_Q[(L-e^\varepsilon)_+].
+\]
+In particular, this determines the one-sided profile \(\varepsilon\ge 0\).
+
+Thus all three objects determine one another.
+\end{proof}
+
+
+\end{document}

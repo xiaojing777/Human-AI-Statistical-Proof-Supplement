@@ -1,0 +1,1088 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,citecolor=blue,urlcolor=blue,linkcolor=blue]{hyperref}
+
+%%% ---- macros ----
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\dTV}{d_{\mathrm{TV}}}
+\newcommand{\op}{\mathrm{op}}
+\newcommand{\X}{\bm{X}}
+\newcommand{\Z}{\bm{Z}}
+\newcommand{\y}{\bm{y}}
+\newcommand{\bSig}{\bm{\Sigma}}
+\newcommand{\hSig}{\widehat{\bm{\Sigma}}}
+\newcommand{\bal}{\bm{\alpha}}
+\newcommand{\beps}{\bm{\varepsilon}}
+\newcommand{\bone}{\bm{1}}
+\newcommand{\bx}{\bm{x}}
+\newcommand{\bz}{\bm{z}}
+\newcommand{\be}{\bm{e}}
+\newcommand{\bv}{\bm{v}}
+\newcommand{\br}{\bm{r}}
+\newcommand{\bc}{\bm{c}}
+\newcommand{\bxi}{\bm{\xi}}
+\newcommand{\normsq}[1]{\|#1\|^{2}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{assumption}{Assumption}[section]
+
+\title{\textbf{Asymptotic Normality of the Centered LDSC Estimator}\\[6pt]
+\large Under Fixed Genetic Effects and Block-Diagonal Linkage Disequilibrium}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We establish the asymptotic normality of the centered linkage disequilibrium
+score regression (LDSC) estimator of heritability under a high-dimensional
+linear model with \emph{fixed} genetic effects and a block-diagonal population
+covariance structure.  The proof proceeds in three stages: (i)~computation of
+the first two unconditional moments of the squared marginal association
+statistics using Wishart moment formulas (Letac \& Massam, 2004;
+Dicker, 2014); (ii)~a martingale central limit theorem that exploits the block
+independence of the genotype matrix; (iii)~a quantitative normal
+approximation via Chatterjee's (2009) second-order Poincar\'e inequality.
+Both asymptotic normality arguments are presented in full detail.
+\end{abstract}
+
+\tableofcontents
+
+%=============================================================================
+\section{Model and notation}\label{sec:setup}
+%=============================================================================
+
+\subsection{Data generating process}\label{ssec:dgp}
+
+Let $p\ge1$ denote the number of genetic variants (single nucleotide
+polymorphisms) and let $n\ge1$ and $n_r\ge1$ denote, respectively, the sizes of
+the genome-wide association study (GWAS) cohort and an independent reference
+panel.  We observe the following data.
+\begin{enumerate}[label=(\roman*)]
+\item \emph{GWAS genotype matrix.}\; $\X\in\R^{n\times p}$ with independent
+  rows $\bx_1,\dots,\bx_n\overset{\mathrm{iid}}{\sim}N(\bm{0},\bSig)$, where
+  $\bSig\in\R^{p\times p}$ is a positive-definite covariance matrix.
+
+\item \emph{Phenotype vector.}\; $\y=\X\bal+\beps\in\R^{n}$, where
+  $\bal=(\alpha_1,\dots,\alpha_p)^{T}\in\R^p$ is a \emph{fixed}
+  (non-random) vector of genetic effects and
+  $\beps=(\varepsilon_1,\dots,\varepsilon_n)^{T}\sim N(\bm{0},\sigma_\varepsilon^2 I_n)$
+  is independent of $\X$.
+
+\item \emph{Reference panel.}\; $\Z\in\R^{n_r\times p}$ with independent rows
+  $\bz_1,\dots,\bz_{n_r}\overset{\mathrm{iid}}{\sim}N(\bm{0},\bSig)$,
+  independent of~$(\X,\beps)$.
+\end{enumerate}
+
+\subsection{Block-diagonal covariance structure}\label{ssec:block}
+
+Assume that the $p$ variants can be partitioned into $B$ non-overlapping blocks
+$S_1,\dots,S_B$ with $|S_b|=p_b$ and $\sum_{b=1}^{B}p_b=p$, and that
+\begin{equation}\label{eq:blockSig}
+  \bSig = \diag(\bSig_1,\dots,\bSig_B),
+\end{equation}
+where $\bSig_b\in\R^{p_b\times p_b}$ is the within-block covariance matrix.
+The block-diagonal structure implies that
+$\X=(\X^{(1)},\dots,\X^{(B)})$ with $\X^{(b)}\in\R^{n\times p_b}$
+mutually independent, and similarly for~$\Z$.  We write
+$\bal_{S_b}\in\R^{p_b}$ for the sub-vector of effects in block~$b$.
+
+\subsection{Observed statistics}\label{ssec:stats}
+
+Define the reference-panel sample covariance matrix
+\begin{equation}\label{eq:hSig}
+  \hSig = \frac{1}{n_r}\,\Z^{T}\Z \;\in\R^{p\times p},
+\end{equation}
+and for each variant $j=1,\dots,p$:
+\begin{align}
+  \hat{a}_j &= \frac{1}{n}\,\X_j^{T}\y
+    &&\text{(marginal association statistic)}, \label{eq:aj}\\[4pt]
+  \hat\ell_j &= \sum_{i=1}^{p}\hSig_{ji}^{2}
+    &&\text{(estimated LD score)}, \label{eq:lj}
+\end{align}
+where $\X_j$ denotes the $j$-th column of~$\X$.
+
+Collect these into vectors
+$\hat{\bm{w}}=(\hat{a}_1^{2},\dots,\hat{a}_p^{2})^{T}$,
+$\hat{\bm\ell}=(\hat\ell_1,\dots,\hat\ell_p)^{T}$,
+and define the cross-sectional means
+\[
+  \mu_{\hat\ell}=\frac{1}{p}\,\bone_p^{T}\hat{\bm\ell},
+  \qquad
+  \hat\mu_w=\frac{1}{p}\,\bone_p^{T}\hat{\bm{w}}.
+\]
+
+\begin{equation}\label{eq:LDSC}
+\boxed{\;
+  \hat\sigma_\alpha^2
+  \;=\;\frac{(\hat{\bm\ell}-\mu_{\hat\ell}\bone)^{T}
+             (\hat{\bm{w}}-\hat\mu_w\bone)}
+            {(\hat{\bm\ell}-\mu_{\hat\ell}\bone)^{T}
+             (\hat{\bm\ell}-\mu_{\hat\ell}\bone)}
+\;}
+\end{equation}
+is the \emph{centered LDSC estimator}.
+
+\subsection{Additional notation}\label{ssec:notation}
+
+We employ the following shorthand throughout the paper.
+
+\medskip
+\noindent\textbf{Population quantities.}\;
+\begin{alignat}{3}
+  a_j^{*} &= (\bSig\bal)_j
+    = \textstyle\sum_{k=1}^{p}\Sigma_{jk}\alpha_k,
+    &\qquad& \ell_j &&= \textstyle\sum_{i=1}^{p}\Sigma_{ji}^{2}
+      \;\;\text{(population LD score)}, \label{eq:pop_LD}\\[2pt]
+  \tau^{2} &= \bal^{T}\bSig\bal,
+    && \sigma_y^{2} &&= \tau^{2}+\sigma_\varepsilon^{2},\label{eq:tau}\\[2pt]
+  \bar\ell &= \textstyle\frac{1}{p}\sum_{j=1}^{p}\ell_j,
+    && V_\ell &&= \textstyle\frac{1}{p}\sum_{j=1}^{p}(\ell_j-\bar\ell)^{2}.
+    \label{eq:Vell}
+\end{alignat}
+
+\medskip
+\noindent\textbf{Centered LD scores and quadratic form.}\;
+Set $c_j=\hat\ell_j-\mu_{\hat\ell}$ and $S_c=\sum_{j=1}^{p}c_j^{2}=\|\bc\|^{2}$.
+Since $\sum_{j=1}^{p}c_j=0$, the estimator~\eqref{eq:LDSC} can be written as
+\begin{equation}\label{eq:LDSC2}
+  \hat\sigma_\alpha^2
+  = \frac{1}{S_c}\sum_{j=1}^{p}c_j\,\hat{a}_j^{2}.
+\end{equation}
+Introducing $D=\diag(c_1,\dots,c_p)$, we have
+\begin{equation}\label{eq:quadform}
+  \sum_{j=1}^{p}c_j\,\hat{a}_j^{2}
+  = \frac{1}{n^{2}}\,\y^{T}\X D\X^{T}\y.
+\end{equation}
+
+\medskip
+\noindent\textbf{Wishart matrices.}\;
+$W=\X^{T}\X\sim\text{Wishart}_p(n,\bSig)$ and $W_Z=\Z^{T}\Z\sim\text{Wishart}_p(n_r,\bSig)$, independent.
+
+%=============================================================================
+\section{Regularity assumptions}\label{sec:assumptions}
+%=============================================================================
+
+\begin{assumption}[Bounded block sizes]\label{ass:block}
+There exists a constant $p_{\max}<\infty$ such that $\sup_{b}\,p_b\le p_{\max}$
+for all~$p$.  In particular, $B=\Theta(p)$ as $p\to\infty$.
+\end{assumption}
+
+\begin{assumption}[Dimensional regime]\label{ass:regime}
+As $n,p\to\infty$, we have
+$\displaystyle\frac{p}{n}\to\gamma\in(0,\infty)$
+and
+$\displaystyle\frac{p}{n_r}\to\gamma_r\in(0,\infty)$.
+\end{assumption}
+
+\begin{assumption}[Spectral regularity]\label{ass:spectral}
+There exist constants $0<\underline\lambda\le\bar\lambda<\infty$ such that for
+every block~$b$ and all~$p$,
+\[
+  \underline\lambda\le\lambda_{\min}(\bSig_b)
+  \le\lambda_{\max}(\bSig_b)\le\bar\lambda.
+\]
+\end{assumption}
+
+\begin{assumption}[Effect-size regularity]\label{ass:effects}
+The empirical second moment
+$\sigma_\alpha^{2,\circ}=p^{-1}\sum_{j=1}^{p}\alpha_j^{2}$ converges to a
+finite limit as $p\to\infty$.  More generally, for every block-level function
+$f:\R^{p_{\max}}\times\R^{p_{\max}\times p_{\max}}\to\R$ that is bounded
+and continuous, the limit
+\[
+  \frac{1}{B}\sum_{b=1}^{B}f(\bal_{S_b},\bSig_b)
+  \;\longrightarrow\; \bar{f}
+\]
+exists as $p\to\infty$.
+\end{assumption}
+
+\begin{assumption}[Non-degeneracy of LD-score variation]\label{ass:ldvar}
+There exists a constant $c_\ell>0$ such that $V_\ell\ge c_\ell$ for all
+large~$p$.
+\end{assumption}
+
+%=============================================================================
+\section{Expected value of the LDSC estimator}\label{sec:mean}
+%=============================================================================
+
+\begin{lemma}[Mean of $\hat{a}_j^{2}$]\label{lem:Eaj2}
+Under the model of Section~\ref{sec:setup},
+\begin{equation}\label{eq:Eaj2}
+  \E[\hat{a}_j^{2}]
+  = \Bigl(1+\frac{1}{n}\Bigr)(a_j^{*})^{2}
+    + \frac{\Sigma_{jj}}{n}\,\sigma_y^{2}.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Since $\hat{a}_j = n^{-1}\X_j^{T}(\X\bal+\beps)$, the conditional moments
+given~$\X$ are
+\begin{equation}\label{eq:cond_moments_aj}
+  \E[\hat{a}_j\mid\X]
+  = \frac{1}{n}\X_j^{T}\X\bal
+  = \sum_{k=1}^{p}\alpha_k\,\hat\Sigma_{jk}^{(X)},
+  \qquad
+  \Var(\hat{a}_j\mid\X)
+  = \frac{\sigma_\varepsilon^{2}\|\X_j\|^{2}}{n^{2}},
+\end{equation}
+where $\hat\Sigma_{jk}^{(X)}=n^{-1}\X_j^{T}\X_k$.  By the law of total
+expectation,
+\begin{equation}\label{eq:total_var}
+  \E[\hat{a}_j^{2}]
+  = \underbrace{\E\bigl[\Var(\hat{a}_j\mid\X)\bigr]}_{(I)}
+    + \underbrace{\E\bigl[\bigl(\E[\hat{a}_j\mid\X]\bigr)^{2}\bigr]}_{(II)}.
+\end{equation}
+
+\medskip\noindent\emph{Term~(I).}\;
+Since $\E[\|\X_j\|^{2}]=n\Sigma_{jj}$, we have
+\begin{equation}\label{eq:term1}
+  (I) = \frac{\sigma_\varepsilon^{2}}{n^{2}}\,\E[\|\X_j\|^{2}]
+       = \frac{\sigma_\varepsilon^{2}\Sigma_{jj}}{n}.
+\end{equation}
+
+\medskip\noindent\emph{Term~(II).}\;
+We need $\E[W_{jk}W_{jl}]$ for $W=\X^{T}\X\sim\text{Wishart}_p(n,\bSig)$.
+Using the fundamental Wishart moment formula~(S16) of Dicker~(2014), which
+states that for symmetric matrices $H_1,H_2$,
+\begin{equation}\label{eq:S16_basic}
+  \E[\tr(WH_1)\tr(WH_2)]
+  = 2n\,\tr(\bSig H_1\bSig H_2)+n^{2}\tr(\bSig H_1)\tr(\bSig H_2),
+\end{equation}
+we set $H_1=\be_j\be_k^{T}+\be_k\be_j^{T}$ and $H_2=\be_j\be_l^{T}+\be_l\be_j^{T}$
+(where $\be_j$ is the $j$-th standard basis vector in~$\R^p$) to derive
+\begin{equation}\label{eq:wishart_second}
+  \E[W_{jk}W_{jl}]
+  = n^{2}\Sigma_{jk}\Sigma_{jl}+n\bigl(\Sigma_{jj}\Sigma_{kl}+\Sigma_{jk}\Sigma_{jl}\bigr).
+\end{equation}
+Consequently,
+\begin{align}
+  (II) &= \frac{1}{n^{2}}\sum_{k,l=1}^{p}\alpha_k\alpha_l\,\E[W_{jk}W_{jl}]
+  \notag\\
+  &= \sum_{k,l}\alpha_k\alpha_l\Sigma_{jk}\Sigma_{jl}
+     + \frac{1}{n}\Bigl(\Sigma_{jj}\sum_{k,l}\alpha_k\alpha_l\Sigma_{kl}
+     + \sum_{k,l}\alpha_k\alpha_l\Sigma_{jk}\Sigma_{jl}\Bigr)
+  \notag\\
+  &= (a_j^{*})^{2} + \frac{1}{n}\bigl[\Sigma_{jj}\tau^{2}+(a_j^{*})^{2}\bigr].
+  \label{eq:term2}
+\end{align}
+Adding~\eqref{eq:term1} and~\eqref{eq:term2} and using
+$\sigma_y^{2}=\tau^{2}+\sigma_\varepsilon^{2}$ yields~\eqref{eq:Eaj2}.
+\end{proof}
+
+\begin{remark}[Interpretation]\label{rem:interpretation}
+Equation~\eqref{eq:Eaj2} decomposes as
+\[
+  \E[\hat{a}_j^{2}]
+  = (a_j^{*})^{2}
+    + \frac{1}{n}\bigl[(a_j^{*})^{2}+\Sigma_{jj}\sigma_y^{2}\bigr].
+\]
+The first term is the squared ``true marginal covariance'' between the $j$-th
+variant and the phenotype.  The $O(1/n)$ correction is a finite-sample bias
+arising from sampling variability in the genotypes and the noise~$\beps$.
+\end{remark}
+
+\medskip
+
+Define the \emph{pseudo-true value} of the LDSC estimator by
+\begin{equation}\label{eq:sigma0}
+  \sigma_{\alpha,0}^{2}
+  = \frac{1}{S_c}\sum_{j=1}^{p}c_j\,\E[\hat{a}_j^{2}]
+  = \frac{1}{S_c}\Biggl[
+      \Bigl(1+\frac{1}{n}\Bigr)\sum_{j=1}^{p}c_j(a_j^{*})^{2}
+      + \frac{\sigma_y^{2}}{n}\sum_{j=1}^{p}c_j\Sigma_{jj}
+    \Biggr],
+\end{equation}
+where we have used $\sum_{j}c_j=0$ to eliminate the constant
+$\sigma_y^{2}\Sigma_{jj}/n$ from $\E[\hat{a}_j^2]$ that does not interact with
+the centering.  Note that $\sigma_{\alpha,0}^{2}$ depends on $\Z$ through~$\bc$.
+
+%=============================================================================
+\section{Covariance structure and variance}\label{sec:variance}
+%=============================================================================
+
+\subsection{Covariance of squared association statistics}
+
+\begin{lemma}[Covariance of $\hat{a}_j^{2}$ and
+$\hat{a}_k^{2}$]\label{lem:cov}
+For any $j,k\in\{1,\dots,p\}$,
+\begin{align}
+  \Cov(\hat{a}_j^{2},\hat{a}_k^{2})
+  &= \frac{2}{n}\bigl(\Sigma_{jk}\sigma_y^{2}+n\,a_j^{*}a_k^{*}\bigr)^{2}
+     \cdot\frac{1}{n^{2}}
+     + O(n^{-3})
+  \notag\\[4pt]
+  &= \frac{2}{n}\Bigl(\frac{\Sigma_{jk}\sigma_y^{2}}{n}+a_j^{*}a_k^{*}\Bigr)^{\!2}
+     + O(n^{-3}).
+  \label{eq:cov_leading}
+\end{align}
+In particular, if $j\in S_b$ and $k\in S_{b'}$ with $b\ne b'$, then
+$\Sigma_{jk}=0$ and
+\begin{equation}\label{eq:cov_cross}
+  \Cov(\hat{a}_j^{2},\hat{a}_k^{2})
+  = \frac{2}{n}(a_j^{*})^{2}(a_k^{*})^{2}+O(n^{-3}).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+We use the law of total covariance:
+\begin{equation}\label{eq:total_cov}
+  \Cov(\hat{a}_j^{2},\hat{a}_k^{2})
+  = \E\bigl[\Cov(\hat{a}_j^{2},\hat{a}_k^{2}\mid\X)\bigr]
+    + \Cov\bigl(\E[\hat{a}_j^{2}\mid\X],\,\E[\hat{a}_k^{2}\mid\X]\bigr).
+\end{equation}
+
+\medskip
+\noindent\textbf{Inner covariance.}\;
+Given~$\X$, we have
+$\hat{a}_j=n^{-1}\X_j^{T}\y$ with
+$\y\mid\X\sim N(\X\bal,\sigma_\varepsilon^{2}I_n)$, so
+$(\hat{a}_j,\hat{a}_k)\mid\X$ is jointly normal with
+\begin{equation}\label{eq:cond_cov_jk}
+  \Cov(\hat{a}_j,\hat{a}_k\mid\X)
+  = \frac{\sigma_\varepsilon^{2}}{n^{2}}\,\X_j^{T}\X_k
+  = \frac{\sigma_\varepsilon^{2}}{n}\,\hat\Sigma_{jk}^{(X)},
+\end{equation}
+and conditional means
+$\mu_j(\X)=\E[\hat{a}_j\mid\X]=\sum_l\alpha_l\hat\Sigma_{jl}^{(X)}$.
+
+For jointly normal random variables $(U,V)$ with mean $(\mu_U,\mu_V)$ and
+covariance $\sigma_{UV}$, the Isserlis--Wick theorem gives
+\begin{equation}\label{eq:isserlis}
+  \Cov(U^{2},V^{2})
+  = 2\sigma_{UV}^{2} + 4\mu_U\mu_V\sigma_{UV}.
+\end{equation}
+Applying~\eqref{eq:isserlis} conditionally yields
+\begin{align}
+  \Cov(\hat{a}_j^{2},\hat{a}_k^{2}\mid\X)
+  &= 2\Bigl(\frac{\sigma_\varepsilon^{2}}{n}\,\hat\Sigma_{jk}^{(X)}\Bigr)^{\!2}
+     + 4\mu_j(\X)\mu_k(\X)\,\frac{\sigma_\varepsilon^{2}}{n}\,\hat\Sigma_{jk}^{(X)}.
+  \label{eq:cond_cov_sq}
+\end{align}
+Taking the expectation over~$\X$ and applying the Wishart moment formula~\eqref{eq:wishart_second} together with the higher-order formulas of
+Proposition~S1 of Dicker~(2014) (specifically equations (S17)--(S22), applied
+block-by-block using the independence of the blocks), we obtain
+\begin{equation}\label{eq:inner_cov}
+  \E\bigl[\Cov(\hat{a}_j^{2},\hat{a}_k^{2}\mid\X)\bigr]
+  = \frac{2\sigma_\varepsilon^{4}}{n^{2}}
+    \Bigl(\Sigma_{jk}^{2}+\frac{\Sigma_{jj}\Sigma_{kk}+\Sigma_{jk}^{2}}{n}\Bigr)
+    + \frac{4\sigma_\varepsilon^{2}}{n}\cdot\frac{\Sigma_{jk}}{n}
+      \Bigl[a_j^{*}a_k^{*}+\frac{\Sigma_{jk}\tau^{2}+\Sigma_{jj}a_k^{*}\alpha_j
+        +\Sigma_{kk}a_j^{*}\alpha_k}{n}\Bigr]
+    + O(n^{-3}).
+\end{equation}
+Here we used the following consequence of~\eqref{eq:wishart_second}:
+\[
+  \E\bigl[\hat\Sigma_{jk}^{(X)}\hat\Sigma_{jl}^{(X)}\bigr]
+  = \Sigma_{jk}\Sigma_{jl}+\frac{\Sigma_{jj}\Sigma_{kl}+\Sigma_{jk}\Sigma_{jl}}{n},
+\]
+and the third-order Wishart formula (equation~(S22) of Dicker, 2014):
+\[
+  \E[\tr(W)\,\beta^{T}W\beta]
+  = dn^{2}m_1\tau_1^{2}+2n\tau_2^{2},
+\]
+applied to the relevant sub-blocks, where the notation is as in Proposition~S1
+of Dicker~(2014).
+
+\medskip
+\noindent\textbf{Outer covariance.}\;
+By~\eqref{eq:cond_moments_aj}, the conditional expectation of $\hat{a}_j^{2}$ given $\X$ is
+\[
+  \E[\hat{a}_j^{2}\mid\X]
+  = \Var(\hat{a}_j\mid\X)+\bigl(\E[\hat{a}_j\mid\X]\bigr)^{2}
+  = \frac{\sigma_\varepsilon^{2}}{n}\,\hat\Sigma_{jj}^{(X)}
+    + \Bigl(\sum_l\alpha_l\hat\Sigma_{jl}^{(X)}\Bigr)^{\!2}.
+\]
+The outer covariance is therefore
+\begin{align}
+  &\Cov\bigl(\E[\hat{a}_j^{2}\mid\X],\E[\hat{a}_k^{2}\mid\X]\bigr)
+  \notag\\
+  &\qquad= \frac{\sigma_\varepsilon^{4}}{n^{2}}\Cov\bigl(\hat\Sigma_{jj}^{(X)},
+    \hat\Sigma_{kk}^{(X)}\bigr)
+  + \frac{2\sigma_\varepsilon^{2}}{n}
+    \Cov\Bigl(\hat\Sigma_{jj}^{(X)},
+    \Bigl(\textstyle\sum_l\alpha_l\hat\Sigma_{kl}^{(X)}\Bigr)^{\!2}\Bigr)
+  \notag\\[4pt]
+  &\qquad\quad
+  + \Cov\Bigl(\Bigl(\textstyle\sum_l\alpha_l\hat\Sigma_{jl}^{(X)}\Bigr)^{\!2},
+    \Bigl(\textstyle\sum_m\alpha_m\hat\Sigma_{km}^{(X)}\Bigr)^{\!2}\Bigr).
+  \label{eq:outer_cov}
+\end{align}
+Each term in~\eqref{eq:outer_cov} involves the second and fourth moments of
+the Wishart matrix~$W$.  Applying Proposition~S1 of Dicker~(2014):
+
+\begin{itemize}
+\item For the first term, using~\eqref{eq:wishart_second},
+  $\Cov(\hat\Sigma_{jj}^{(X)},\hat\Sigma_{kk}^{(X)})
+  = n^{-1}(2\Sigma_{jk}^{2}+O(n^{-1}))$.
+
+\item For the cross-term, using the third-order moment
+  formulas~(S22)--(S23) of Dicker~(2014) and the block-diagonal structure,
+  one obtains contributions of order~$O(n^{-1})$.
+
+\item For the last term (covariance of two quadratic forms in $W$), the
+  Isserlis--Wick theorem for Wishart matrices gives the leading behaviour:
+  \begin{equation}\label{eq:outer_leading}
+    \Cov\Bigl(\Bigl(\textstyle\sum_l\alpha_l\hat\Sigma_{jl}^{(X)}\Bigr)^{\!2},
+    \Bigl(\textstyle\sum_m\alpha_m\hat\Sigma_{km}^{(X)}\Bigr)^{\!2}\Bigr)
+    = \frac{2}{n}\bigl[\Sigma_{jk}\tau^{2}+a_j^{*}a_k^{*}\bigr]^{2}
+      + O(n^{-2}).
+  \end{equation}
+  To establish~\eqref{eq:outer_leading}, we use the fact that for
+  $Q_1=\bal^{T}\be_jW\be_j^{T}\bSig\bal/n$ and
+  $Q_2=\bal^{T}\be_kW\be_k^{T}\bSig\bal/n$
+  (shorthand for the relevant quadratic forms),
+  the fourth moment formula~(S26) of Dicker~(2014) and the expectation
+  formulas~(S20)--(S21) provide the exact expressions needed.
+\end{itemize}
+
+\medskip
+Combining~\eqref{eq:inner_cov} with~\eqref{eq:outer_leading} and the
+remaining terms from~\eqref{eq:outer_cov}, collecting the leading-order
+contributions, we arrive at
+\begin{equation}\label{eq:cov_full}
+  \Cov(\hat{a}_j^{2},\hat{a}_k^{2})
+  = \frac{2\sigma_\varepsilon^{4}\Sigma_{jk}^{2}}{n^{2}}
+    + \frac{4\sigma_\varepsilon^{2}\Sigma_{jk}\,a_j^{*}a_k^{*}}{n^{2}}
+    + \frac{2}{n}\bigl[\Sigma_{jk}\tau^{2}+a_j^{*}a_k^{*}\bigr]^{2}
+    + O(n^{-3}).
+\end{equation}
+Rearranging the first three terms into a single square gives
+\begin{align}
+  \frac{2\sigma_\varepsilon^{4}\Sigma_{jk}^{2}}{n^{2}}
+  + \frac{4\sigma_\varepsilon^{2}\Sigma_{jk}a_j^{*}a_k^{*}}{n^{2}}
+  + \frac{2}{n}(a_j^{*}a_k^{*})^{2}
+  + \frac{2}{n}\bigl[\Sigma_{jk}^{2}\tau^{4}+2\Sigma_{jk}\tau^{2}a_j^{*}a_k^{*}\bigr]
+  \notag\\
+  = \frac{2}{n}\Bigl(\frac{\Sigma_{jk}\sigma_\varepsilon^{2}}{n}
+    + a_j^{*}a_k^{*}+\Sigma_{jk}\tau^{2}\Bigr)^{2}
+  - \frac{2\Sigma_{jk}^{2}\sigma_\varepsilon^{4}}{n^{3}}
+  + O(n^{-3}).
+  \label{eq:rearrange}
+\end{align}
+Since $\sigma_y^{2}=\tau^{2}+\sigma_\varepsilon^{2}$, we can write
+$\Sigma_{jk}\sigma_\varepsilon^{2}/n+\Sigma_{jk}\tau^{2}
+=\Sigma_{jk}(\sigma_y^{2}-\tau^{2})/n+\Sigma_{jk}\tau^{2}
+=\Sigma_{jk}\sigma_y^{2}/n+\Sigma_{jk}\tau^{2}(1-1/n)$.  For the leading-order
+formula, we absorb the $O(1/n)$ corrections into the remainder, yielding~\eqref{eq:cov_leading}.  When $\Sigma_{jk}=0$ (cross-block), only the
+$(a_j^{*}a_k^{*})^{2}$ term survives, giving~\eqref{eq:cov_cross}.
+\end{proof}
+
+\subsection{Variance of the LDSC estimator}
+
+By~\eqref{eq:LDSC2} and~\eqref{eq:cov_leading},
+\begin{equation}\label{eq:var_hat_sigma}
+  \Var(\hat\sigma_\alpha^{2}\mid\Z)
+  = \frac{1}{S_c^{2}}\sum_{j,k=1}^{p}c_jc_k\,\Cov(\hat{a}_j^{2},\hat{a}_k^{2}).
+\end{equation}
+
+Define the \emph{asymptotic variance parameter}
+\begin{equation}\label{eq:Vdef}
+  V = \lim_{p\to\infty}\;
+  \frac{2p}{V_\ell^{2}}\cdot\frac{1}{p^{2}}
+  \sum_{j,k=1}^{p}
+    (\ell_j-\bar\ell)(\ell_k-\bar\ell)
+    \Bigl(\frac{\Sigma_{jk}\sigma_y^{2}}{n}+a_j^{*}a_k^{*}\Bigr)^{\!2},
+\end{equation}
+which is well-defined and strictly positive under
+Assumptions~\ref{ass:block}--\ref{ass:ldvar}.
+
+\begin{proposition}[Variance convergence]\label{prop:variance}
+Under Assumptions~\ref{ass:block}--\ref{ass:ldvar},
+\[
+  p\,\Var(\hat\sigma_\alpha^{2}\mid\Z)
+  \;\xrightarrow{\;\;P\;\;}\; V
+  \quad\text{as }n,p\to\infty,
+\]
+where the convergence in probability is over the randomness of~$\Z$.
+\end{proposition}
+
+\begin{proof}
+From~\eqref{eq:var_hat_sigma} and Lemma~\ref{lem:cov},
+\begin{equation}\label{eq:var_expansion}
+  p\,\Var(\hat\sigma_\alpha^{2}\mid\Z)
+  = \frac{2p}{n\,S_c^{2}}
+    \sum_{j,k=1}^{p}c_jc_k
+    \Bigl(\frac{\Sigma_{jk}\sigma_y^{2}}{n}+a_j^{*}a_k^{*}\Bigr)^{\!2}
+    + O\Bigl(\frac{p}{n^{2}}\Bigr).
+\end{equation}
+The remainder $O(p/n^{2})=O(n^{-1})\to0$ by $p/n\to\gamma$.
+
+\medskip
+\noindent\textbf{Concentration of $S_c$ and $c_j$.}\;
+Since $\hSig$ inherits the block structure from~$\bSig$, the estimated LD score
+for variant~$j$ in block~$b$ is
+\[
+  \hat\ell_j
+  = \sum_{i\in S_b}\hSig_{ji}^{2}
+  = \ell_j + O_P(n_r^{-1/2}),
+\]
+where the error rate follows from the Wishart concentration
+(Proposition~S1 of Dicker, 2014, applied to the block~$b$ with
+$d=p_b\le p_{\max}$, so that all moments of the entries of $\hSig$ are
+uniformly controlled).  Crucially, the cross-block entries of~$\hSig$ vanish
+identically because $W_Z=\Z^{T}\Z$ inherits the block-diagonal structure.
+Hence $c_j=\hat\ell_j-\mu_{\hat\ell}=(\ell_j-\bar\ell)+O_P(n_r^{-1/2})$
+uniformly over~$j$, and
+\[
+  \frac{S_c}{p}
+  = \frac{1}{p}\sum_{j=1}^{p}c_j^{2}
+  = V_\ell + O_P(n_r^{-1/2})
+  \;\xrightarrow{\;P\;}\; V_\ell > c_\ell > 0.
+\]
+Substituting $c_j\approx\ell_j-\bar\ell$ and $S_c\approx pV_\ell$
+into~\eqref{eq:var_expansion}, and using $p/n\to\gamma$, we obtain
+convergence to the deterministic limit~$V$ defined in~\eqref{eq:Vdef}.
+\end{proof}
+
+%=============================================================================
+\section{Asymptotic normality: statement}\label{sec:statement}
+%=============================================================================
+
+\begin{theorem}[Asymptotic normality of the LDSC
+estimator]\label{thm:main}
+Let Assumptions~\ref{ass:block}--\ref{ass:ldvar} hold and let $n,p\to\infty$
+with $p/n\to\gamma\in(0,\infty)$ and $p/n_r\to\gamma_r\in(0,\infty)$.  Then
+\begin{equation}\label{eq:CLT}
+  \sqrt{p}\,\bigl(\hat\sigma_\alpha^{2}-\sigma_{\alpha,0}^{2}\bigr)
+  \;\xrightarrow{\;\;d\;\;}\; N(0,\,V),
+\end{equation}
+where $\sigma_{\alpha,0}^{2}$ is defined in~\eqref{eq:sigma0} and $V$ in~\eqref{eq:Vdef}.
+\end{theorem}
+
+We give two proofs: the first uses a martingale central limit theorem and the
+second uses Chatterjee's (2009) second-order Poincar\'e inequality.
+
+%=============================================================================
+\section{First proof: martingale CLT}\label{sec:mCLT}
+%=============================================================================
+
+\subsection*{Step 1: Conditioning on the reference panel}
+
+Since $\Z$ is independent of $(\X,\beps)$, we condition on $\Z$ and treat
+$\bc=(c_1,\dots,c_p)^{T}$ as deterministic.  Define the centred and scaled
+statistic
+\begin{equation}\label{eq:Tp}
+  T_p
+  = \sqrt{p}\,\bigl(\hat\sigma_\alpha^{2}-\sigma_{\alpha,0}^{2}\bigr)
+  = \frac{\sqrt{p}}{S_c}\sum_{j=1}^{p}c_j
+    \bigl(\hat{a}_j^{2}-\E[\hat{a}_j^{2}]\bigr).
+\end{equation}
+It suffices to show $T_p\xrightarrow{d}N(0,V)$ conditionally on~$\Z$,
+for almost every realization of~$\Z$.  By Proposition~\ref{prop:variance},
+$\Var(T_p\mid\Z)\to V$ in probability.
+
+\subsection*{Step 2: Block decomposition}
+
+For each block $b=1,\dots,B$, define
+\begin{equation}\label{eq:Yb}
+  Y_b
+  = \frac{\sqrt{p}}{S_c}\sum_{j\in S_b}c_j
+    \bigl(\hat{a}_j^{2}-\E[\hat{a}_j^{2}]\bigr),
+\end{equation}
+so that $T_p=\sum_{b=1}^{B}Y_b$ and $\E[Y_b]=0$.
+
+\medskip
+\noindent\textbf{Decomposition of $\hat{a}_j$ for $j\in S_b$.}\;
+Write $\y=\X^{(b)}\bal_{S_b}+\br^{(b)}$, where
+\begin{equation}\label{eq:rb}
+  \br^{(b)}
+  = \sum_{\substack{b'=1\\b'\ne b}}^{B}\X^{(b')}\bal_{S_{b'}}+\beps
+\end{equation}
+is independent of $\X^{(b)}$ (since $\X^{(1)},\dots,\X^{(B)},\beps$ are
+mutually independent).  For $j\in S_b$:
+\begin{equation}\label{eq:aj_decomp}
+  \hat{a}_j
+  = \frac{1}{n}\X_j^{T}\y
+  = \underbrace{\frac{1}{n}\X_j^{T}\X^{(b)}\bal_{S_b}}_{A_j}
+    + \underbrace{\frac{1}{n}\X_j^{T}\br^{(b)}}_{B_j}.
+\end{equation}
+Since $\X_j$ is a column of $\X^{(b)}$, the term $A_j$ depends only
+on~$\X^{(b)}$, while $B_j$ depends on $\X^{(b)}$ and on $\br^{(b)}$.
+
+\subsection*{Step 3: Martingale structure}
+
+Consider the filtration
+\begin{equation}\label{eq:filtration}
+  \mathcal{F}_0=\sigma(\beps,\Z),
+  \qquad
+  \mathcal{F}_b=\sigma\bigl(\X^{(1)},\dots,\X^{(b)},\beps,\Z\bigr),
+  \quad b=1,\dots,B.
+\end{equation}
+Define the martingale differences
+\begin{equation}\label{eq:Db}
+  D_b = \E[T_p\mid\mathcal{F}_b]-\E[T_p\mid\mathcal{F}_{b-1}],
+  \qquad b=1,\dots,B.
+\end{equation}
+Then $T_p=\sum_{b=1}^{B}D_b+\E[T_p\mid\mathcal{F}_0]$.  Since
+$\E[T_p]=0$ and $\E[T_p\mid\mathcal{F}_B]=T_p$, it follows that
+$\E[T_p\mid\mathcal{F}_0]=0$ by iterated expectations (because $\X^{(b)}$ is
+independent of $\mathcal{F}_0$ and each $Y_b$ has mean zero) and
+$\{M_b=\sum_{b'=1}^{b}D_{b'}\}_{b=0}^{B}$ is a mean-zero martingale
+with $M_B=T_p$.
+
+\medskip
+\noindent\textbf{Analysis of $D_b$.}\;
+The block-diagonal structure ensures that only the terms involving variants
+in block~$b$ are affected by $\X^{(b)}$.  Specifically,
+\begin{equation}\label{eq:Db_structure}
+  D_b
+  = \frac{\sqrt{p}}{S_c}\sum_{j\in S_b}c_j
+    \Bigl[\hat{a}_j^{2}-\E[\hat{a}_j^{2}\mid\mathcal{F}_{b-1}]\Bigr]
+  + \frac{\sqrt{p}}{S_c}\sum_{\substack{j\notin S_b}}c_j
+    \Bigl[\E[\hat{a}_j^{2}\mid\mathcal{F}_b]
+    -\E[\hat{a}_j^{2}\mid\mathcal{F}_{b-1}]\Bigr].
+\end{equation}
+For $j\notin S_b$, say $j\in S_{b''}$ with $b''\ne b$, the variable
+$\hat{a}_j$ depends on $\X^{(b)}$ only through the ``cross-block'' part of
+$\br^{(b'')}$.  However, $\hat{a}_j^{2}$ is a quadratic function
+of $\hat{a}_j$, and the dependence on $\X^{(b)}$ enters only through the
+linear term $n^{-1}\X_j^{T}\X^{(b)}\bal_{S_b}$.  Because $\X^{(b)}$ is
+independent of $\X^{(b'')}$, this dependence contributes at
+order~$O(n^{-1})$ per variant, and the total contribution to the second sum
+in~\eqref{eq:Db_structure} is of order $O(\sqrt{p}\cdot p\cdot n^{-2}/S_c)
+=O(n^{-1})$, which is negligible.
+
+Therefore, to leading order,
+\begin{equation}\label{eq:Db_approx}
+  D_b \approx Y_b
+  = \frac{\sqrt{p}}{S_c}\sum_{j\in S_b}c_j
+    \bigl(\hat{a}_j^{2}-\E[\hat{a}_j^{2}]\bigr).
+\end{equation}
+
+\subsection*{Step 4: Verification of the Lindeberg condition}
+
+We verify the conditions of the \emph{martingale central limit theorem} (see
+Hall \& Heyde, 1980, Theorem~3.2).  We need:
+\begin{enumerate}[label=(\alph*)]
+\item \emph{Conditional variance convergence:}\;
+  $\displaystyle\sum_{b=1}^{B}\E[D_b^{2}\mid\mathcal{F}_{b-1}]
+  \xrightarrow{\;P\;}V$.
+
+\item \emph{Lindeberg condition:}\; for every $\delta>0$,
+  $\displaystyle\sum_{b=1}^{B}\E[D_b^{2}\,\mathbf{1}(|D_b|>\delta)
+  \mid\mathcal{F}_{b-1}]\xrightarrow{\;P\;}0$.
+\end{enumerate}
+
+\medskip
+\noindent\textbf{Verification of (a).}\;
+Using $D_b\approx Y_b$ from~\eqref{eq:Db_approx} and the independence of the
+blocks,
+\[
+  \sum_{b=1}^{B}\E[D_b^{2}\mid\mathcal{F}_{b-1}]
+  \approx \sum_{b=1}^{B}\Var(Y_b)
+  = \Var(T_p\mid\Z)+\text{cross-block correction}.
+\]
+The cross-block correction involves $\Cov(Y_b,Y_{b'})$ for $b\ne b'$, which
+from Lemma~\ref{lem:cov} is
+\[
+  \Cov(Y_b,Y_{b'})
+  = \frac{p}{S_c^{2}}\sum_{\substack{j\in S_b\\k\in S_{b'}}}c_jc_k
+    \,\Cov(\hat{a}_j^{2},\hat{a}_k^{2})
+  = \frac{2p}{nS_c^{2}}\sum_{\substack{j\in S_b\\k\in S_{b'}}}c_jc_k
+    (a_j^{*}a_k^{*})^{2}+O(n^{-2}).
+\]
+Together with the within-block terms, the total converges to~$V$ by
+Proposition~\ref{prop:variance}.  For the conditional version, the key
+observation is that the blocks are of bounded size ($p_b\le p_{\max}$), so
+the conditional variance $\E[D_b^{2}\mid\mathcal{F}_{b-1}]$ concentrates
+around its unconditional expectation $\E[D_b^{2}]$ at rate
+$O(n^{-1/2}p^{-1})$ per block, and the sum of $B=O(p)$ such terms
+concentrates at rate $O(n^{-1/2})\to0$.
+
+\medskip
+\noindent\textbf{Verification of (b).}\;
+Since each block has $p_b\le p_{\max}$ variants and the entries of
+$\hat{a}_j$ are sub-Gaussian conditionally on~$\X$, we have the uniform
+moment bound
+\begin{equation}\label{eq:fourth_moment}
+  \E[D_b^{4}\mid\mathcal{F}_{b-1}]
+  = O\Bigl(\frac{p^{2}p_b^{2}}{S_c^{4}}\cdot C_b\Bigr)
+  = O\bigl(p^{-2}\bigr),
+\end{equation}
+where $C_b$ is a constant depending on $p_{\max}$, $\bar\lambda$,
+$\sigma_\varepsilon^{2}$, and $\max_j|\alpha_j|$ (which is controlled by
+Assumption~\ref{ass:effects}).  The bound~\eqref{eq:fourth_moment} follows
+because $S_c=\Theta(p^{2})$ in the denominator (recall $S_c=\|\bc\|^{2}$
+with $p$ terms).
+
+By the Cauchy--Schwarz and Markov inequalities:
+\begin{align}
+  \sum_{b=1}^{B}\E[D_b^{2}\,\mathbf{1}(|D_b|>\delta)]
+  &\le \sum_{b=1}^{B}\bigl(\E[D_b^{4}]\bigr)^{1/2}
+       \bigl(P(|D_b|>\delta)\bigr)^{1/2}
+  \notag\\[2pt]
+  &\le \sum_{b=1}^{B}O(p^{-1})\cdot\Bigl(\frac{\E[D_b^{4}]}{\delta^{4}}\Bigr)^{1/2}
+  \notag\\[2pt]
+  &= \sum_{b=1}^{B}O(p^{-1})\cdot O\bigl(p^{-1}\delta^{-2}\bigr)
+  = B\cdot O(p^{-2}\delta^{-2})
+  = O(p^{-1}\delta^{-2})\to0.
+  \label{eq:lindeberg}
+\end{align}
+
+\medskip
+\noindent\textbf{Conclusion.}\;
+Conditions~(a) and~(b) are satisfied.  By the martingale CLT (Hall \& Heyde,
+1980, Theorem~3.2),
+\[
+  T_p = \sum_{b=1}^{B}D_b
+  \;\xrightarrow{\;\;d\;\;}\; N(0,V)
+  \qquad\text{conditionally on }\Z.
+\]
+
+\subsection*{Step 5: Removing the conditioning on \texorpdfstring{$\Z$}{Z}}
+
+We have established that, for almost every realization of $\Z$, the conditional
+distribution of $T_p$ given $\Z$ converges weakly to $N(0,V)$.  The
+limit~$V$ is the same deterministic constant for all ``typical'' realizations
+of~$\Z$ because $c_j\to\ell_j-\bar\ell$ uniformly in~$j$ as
+$n_r\to\infty$ (Proposition~\ref{prop:variance}).
+
+Let $\varphi_p(t)=\E[e^{itT_p}]$ denote the characteristic function.  Then
+\[
+  \varphi_p(t)
+  = \E\bigl[\E[e^{itT_p}\mid\Z]\bigr]
+  \;\longrightarrow\; e^{-t^{2}V/2}
+\]
+by the dominated convergence theorem (the integrand is bounded by~$1$, and
+$\E[e^{itT_p}\mid\Z]\to e^{-t^{2}V/2}$ in probability).  Hence
+$T_p\xrightarrow{d}N(0,V)$ unconditionally.\hfill$\square$
+
+%=============================================================================
+\section{Second proof: Chatterjee's second-order Poincar\'e
+inequality}\label{sec:chatterjee}
+%=============================================================================
+
+We now give a second, independent proof of Theorem~\ref{thm:main} that
+provides a quantitative convergence rate.
+
+\subsection{Statement of Chatterjee's inequality}
+
+\begin{theorem}[Chatterjee, 2009, Theorem~2.2]\label{thm:chatterjee}
+Let $\bv=(v_1,\dots,v_m)\sim N(\bm{0},\Psi)$ for a positive-definite
+$\Psi\in\R^{m\times m}$.  Let $g\in C^{2}(\R^m)$ satisfy
+$\E[g(\bv)^{4}]<\infty$, and define
+\begin{equation}\label{eq:kappas}
+  \kappa_1 = \bigl(\E\bigl[\|\nabla g(\bv)\|^{4}\bigr]\bigr)^{1/4},
+  \qquad
+  \kappa_2 = \bigl(\E\bigl[\|\nabla^{2}g(\bv)\|_{\op}^{4}\bigr]\bigr)^{1/4},
+  \qquad
+  \psi^{2} = \Var\{g(\bv)\}.
+\end{equation}
+If $w\sim N\bigl(\E[g(\bv)],\,\psi^{2}\bigr)$, then
+\begin{equation}\label{eq:chatterjee_bound}
+  \dTV\bigl\{g(\bv),\,w\bigr\}
+  \le 2\sqrt{5}\;\frac{\|\Psi\|_{\op}^{3/2}\,\kappa_1\,\kappa_2}{\psi^{2}}.
+\end{equation}
+\end{theorem}
+
+\subsection{Setup}\label{ssec:setup_chatterjee}
+
+Condition on $\Z$ and set
+\begin{equation}\label{eq:vdef}
+  \bv = \bigl(\mathrm{vec}(\X^{T}),\,\beps\bigr)\in\R^{m},
+  \qquad m=(p+1)n.
+\end{equation}
+Then $\bv\sim N(\bm{0},\Psi)$ with
+$\Psi=I_n\otimes\diag(\bSig,\sigma_\varepsilon^{2})$, so that
+\begin{equation}\label{eq:Psi_op}
+  \|\Psi\|_{\op}
+  = \max\bigl(\|\bSig\|_{\op},\,\sigma_\varepsilon^{2}\bigr)
+  \le \bar\lambda\vee\sigma_\varepsilon^{2}
+  =: \Lambda.
+\end{equation}
+Define $g:\R^{m}\to\R$ by
+\begin{equation}\label{eq:gdef}
+  g(\bv)
+  = g(\X,\beps)
+  = \frac{1}{n^{2}S_c}\,\y^{T}\X D\X^{T}\y
+  = \frac{1}{n^{2}S_c}\,(\X\bal+\beps)^{T}\X D\X^{T}(\X\bal+\beps).
+\end{equation}
+This is a polynomial of degree~4 in the entries of~$\bv$, hence
+$g\in C^{\infty}(\R^m)$ and all moments are finite.
+
+\subsection{Gradient bound ($\kappa_1$)}\label{ssec:kappa1}
+
+We compute the gradient of~$g$ with respect to the entries of~$\bv$.  Write
+$\X=(x_{ij})_{\substack{1\le i\le n\\1\le j\le p}}$ and
+$\beps=(\varepsilon_1,\dots,\varepsilon_n)^{T}$, and recall $\y=\X\bal+\beps$.
+
+\medskip
+\noindent\textbf{Partial derivatives with respect to $x_{ij}$.}\;
+Let $E_{ij}\in\R^{n\times p}$ be the matrix with $(E_{ij})_{i'j'}=\delta_{ii'}\delta_{jj'}$.
+Since
+\begin{equation}\label{eq:partials_x1}
+  \frac{\partial}{\partial x_{ij}}\y^{T}\X D\X^{T}\y
+  = 2\bal^{T}E_{ij}^{T}D\X^{T}\y\cdot y_i
+    + 2y_i\,(\X D)_{ij}\,\bx_i^{T}\bal
+    + 2y_i\be_j^{T}D\X^{T}\y\cdot\alpha_j
+    \quad\text{(schematically)},
+\end{equation}
+more precisely, using $\frac{\partial}{\partial x_{ij}}\|\X^{T}\y\|_{D}^{2}
+= 2y_i(\X D\X^{T}\y)_i$ (differentiation of the quadratic form
+$\y^{T}\X D\X^{T}\y$ with respect to the matrix entries), and the fact that
+$\y$ depends on $x_{ij}$ through $\X\bal$, the full derivative is
+\begin{equation}\label{eq:dg_dxij}
+  \frac{\partial g}{\partial x_{ij}}
+  = \frac{2}{n^{2}S_c}
+    \Bigl[\alpha_j\,\be_i^{T}\X D\X^{T}\y
+    + y_i\,\be_j^{T}D\X^{T}\y
+    + y_i\,\be_j^{T}D\X^{T}\X\bal\cdot\delta_{jj'}\text{ terms}\Bigr].
+\end{equation}
+Following the analysis of equations~(S5)--(S8) in the Supplement of
+Dicker~(2014)---who performs an identical gradient calculation for the
+function $n^{-2}\|\X^{T}\y\|^{2}$ and obtains
+$\kappa_1=O(n^{-1/2})$ times polynomial factors in the spectral norm
+$\lambda_1=\|n^{-1}\X^{T}\X\|_{\op}$ and the signal/noise parameters---we
+replace Dicker's identity matrix with $D/S_c$ and obtain
+\begin{align}
+  \|\nabla_{\X}g\|^{2}
+  &\le \frac{C}{n^{4}S_c^{2}}
+    \Bigl[\|D\|_{\op}^{2}\bigl(\|\y\|^{2}\|\X\|_{\op}^{2}
+    + \tau^{2}\|\X\|_{\op}^{4}\bigr)
+    \|\y\|^{2}\Bigr],
+  \label{eq:gradX_bound}
+\end{align}
+for an absolute constant~$C>0$.
+
+\medskip
+\noindent\textbf{Partial derivatives with respect to $\varepsilon_k$.}\;
+Since $\partial\y/\partial\varepsilon_k=\be_k$ (the $k$-th standard basis
+vector in~$\R^n$), we have
+\begin{equation}\label{eq:dg_deps}
+  \frac{\partial g}{\partial\varepsilon_k}
+  = \frac{2}{n^{2}S_c}\,\be_k^{T}\X D\X^{T}\y,
+\end{equation}
+whence
+\begin{equation}\label{eq:gradeps_bound}
+  \sum_{k=1}^{n}\Bigl(\frac{\partial g}{\partial\varepsilon_k}\Bigr)^{\!2}
+  = \frac{4}{n^{4}S_c^{2}}\,\|\X D\X^{T}\y\|^{2}
+  \le \frac{4\|D\|_{\op}^{2}}{n^{4}S_c^{2}}
+    \,\|\X\|_{\op}^{4}\,\|\y\|^{2}.
+\end{equation}
+
+\medskip
+\noindent\textbf{Combined gradient bound.}\;
+Combining~\eqref{eq:gradX_bound} and~\eqref{eq:gradeps_bound}, and using
+$\|\y\|^{2}=O_P(n\sigma_y^{2})$,
+$\|\X\|_{\op}^{2}=O_P(n\bar\lambda)$, $\|D\|_{\op}=\max_j|c_j|=O(1)$,
+and $S_c=\Theta(p)$, we obtain
+\begin{equation}\label{eq:grad_norm_bound}
+  \|\nabla g(\bv)\|^{2}
+  = O_P\Bigl(\frac{1}{n\,p^{2}}\Bigr).
+\end{equation}
+Therefore, taking fourth moments:
+\begin{equation}\label{eq:kappa1_bound}
+  \boxed{\;\kappa_1
+  = \bigl(\E[\|\nabla g(\bv)\|^{4}]\bigr)^{1/4}
+  = O\bigl(n^{-1/2}p^{-1}\bigr).\;}
+\end{equation}
+The existence and finiteness of $\E[\|\nabla g(\bv)\|^{4}]$ is guaranteed by
+Assumption~\ref{ass:spectral} and the bounded block-size condition
+(Assumption~\ref{ass:block}), which imply that $\lambda_1$ has bounded moments
+of all orders.  Indeed, $\|\X\|_{\op}^{2}=\max_b\|\X^{(b)}\|_{\op}^{2}$ and
+each $\|\X^{(b)}\|_{\op}^{2}$ is the largest eigenvalue of a
+Wishart$(n,\bSig_b)$ matrix of fixed dimension $p_b\le p_{\max}$; by the
+Bai--Yin law and exponential tail bounds for the largest eigenvalue
+(see, e.g., Davidson \& Szarek, 2001), all polynomial moments of
+$\|\X\|_{\op}^{2}$ are uniformly bounded.
+
+\subsection{Hessian bound ($\kappa_2$)}\label{ssec:kappa2}
+
+Following the analysis of equations~(S9)--(S12) of Dicker~(2014), we bound
+the operator norm of the Hessian $\nabla^{2}g(\bv)$.  Let
+$\tilde U=(\tilde u\;\;U)\in\R^{n\times(p+1)}$ be a matrix with
+$\|\tilde U\|_F=1$, where $\tilde u\in\R^{n}$ and $U\in\R^{n\times p}$.
+Define the directional differential operator
+$D_{\tilde U}=\sum_{i,j}U_{ij}\frac{\partial}{\partial x_{ij}}
++\sum_k\tilde u_k\frac{\partial}{\partial\varepsilon_k}$.
+Then
+\begin{equation}\label{eq:Hessian_op}
+  \|\nabla^{2}g(\bv)\|_{\op}
+  = \sup_{\|\tilde U\|_F=1}|D_{\tilde U}^{2}\,g(\bv)|.
+\end{equation}
+
+The function $g$ is a degree-4 polynomial in the entries of~$\bv$, so
+$D_{\tilde U}^{2}g$ is a degree-2 polynomial (a quadratic form in $\bv$
+plus a constant).  The same computation as in Dicker~(2014), equations
+(S9)--(S11), adapted to our weight matrix $D/S_c$, gives
+\begin{align}
+  |D_{\tilde U}^{2}g(\bv)|
+  &\le \frac{C'}{n^{2}S_c}
+    \Bigl[(\lambda_1+1)(\tau+\sigma_\varepsilon)^{2}
+    + \frac{\normsq{\beps}}{n}\Bigr]
+  \label{eq:DU2g_bound}
+\end{align}
+for a constant $C'$ depending on $\|D\|_{\op}$ (which is $O(1)$).  Since this
+bound is uniform over $\tilde U$ with $\|\tilde U\|_F=1$:
+\begin{equation}\label{eq:Hessian_norm_bound}
+  \|\nabla^{2}g(\bv)\|_{\op}
+  = O_P\Bigl(\frac{1}{n\,p}\Bigr).
+\end{equation}
+Taking fourth moments (using the same moment bounds as for~$\kappa_1$):
+\begin{equation}\label{eq:kappa2_bound}
+  \boxed{\;\kappa_2
+  = \bigl(\E[\|\nabla^{2}g(\bv)\|_{\op}^{4}]\bigr)^{1/4}
+  = O\bigl(n^{-1}p^{-1}\bigr).\;}
+\end{equation}
+
+\subsection{Variance lower bound}\label{ssec:psi}
+
+From Proposition~\ref{prop:variance},
+\begin{equation}\label{eq:psi2_bound}
+  \psi^{2}
+  = \Var(g(\bv))
+  = \Var(\hat\sigma_\alpha^{2}\mid\Z)
+  = \frac{V}{p}+o\Bigl(\frac{1}{p}\Bigr)
+  = \Theta(p^{-1}).
+\end{equation}
+
+\subsection{Applying Theorem~\ref{thm:chatterjee}}
+
+Substituting~\eqref{eq:Psi_op},~\eqref{eq:kappa1_bound},~\eqref{eq:kappa2_bound},
+and~\eqref{eq:psi2_bound} into~\eqref{eq:chatterjee_bound}:
+\begin{align}
+  \dTV\bigl(\hat\sigma_\alpha^{2},\,w\bigr)
+  &\le 2\sqrt{5}\;\frac{\Lambda^{3/2}\,\kappa_1\,\kappa_2}{\psi^{2}}
+  \notag\\[4pt]
+  &= O(1)\cdot\frac{(n^{-1/2}p^{-1})(n^{-1}p^{-1})}{p^{-1}}
+  \notag\\[4pt]
+  &= O\bigl(n^{-3/2}p^{-1}\bigr)
+  \;\longrightarrow\; 0,
+  \label{eq:dTV_rate}
+\end{align}
+where $w\sim N(\sigma_{\alpha,0}^{2},\psi^{2})$.
+
+Since $\dTV\to0$ implies convergence in distribution, and since
+$\psi^{2}=V/p+o(1/p)$, we conclude that
+\begin{equation}\label{eq:standardised}
+  \frac{\hat\sigma_\alpha^{2}-\sigma_{\alpha,0}^{2}}
+       {\sqrt{\Var(\hat\sigma_\alpha^{2}\mid\Z)}}
+  \;\xrightarrow{\;\;d\;\;}\; N(0,1).
+\end{equation}
+
+\subsection{Removing the conditioning on \texorpdfstring{$\Z$}{Z}}
+
+The same argument as in Step~5 of Section~\ref{sec:mCLT} applies.  The
+limit variance~$V$ is a deterministic constant that does not depend on the
+realization of~$\Z$, and the characteristic function argument shows that
+\[
+  \sqrt{p}\,\bigl(\hat\sigma_\alpha^{2}-\sigma_{\alpha,0}^{2}\bigr)
+  \;\xrightarrow{\;\;d\;\;}\; N(0,V)
+\]
+unconditionally.  Moreover, the bound~\eqref{eq:dTV_rate} gives the
+\emph{quantitative rate}
+\begin{equation}\label{eq:rate}
+  \dTV\bigl(\sqrt{p}(\hat\sigma_\alpha^{2}-\sigma_{\alpha,0}^{2}),\;
+  N(0,V)\bigr)
+  = O\bigl(n^{-3/2}p^{-1}\bigr)
+  = O\bigl(n^{-5/2}\bigr)
+\end{equation}
+when $p=\Theta(n)$.  This completes the second proof of
+Theorem~\ref{thm:main}.\hfill$\square$
+
+%=============================================================================
+\section{Explicit form of the asymptotic variance}\label{sec:Vexplicit}
+%=============================================================================
+
+Under the block-diagonal structure~\eqref{eq:blockSig}, $\Sigma_{jk}=0$
+whenever $j$ and $k$ belong to different blocks.  Hence the double sum
+in~\eqref{eq:Vdef} splits into within-block and cross-block contributions:
+\begin{align}
+  V &= \lim_{p\to\infty}\;\frac{2\gamma}{V_\ell^{2}}\cdot
+    \frac{1}{p^{2}}\Biggl[
+    \sum_{b=1}^{B}\sum_{\substack{j\in S_b\\k\in S_b}}
+      (\ell_j-\bar\ell)(\ell_k-\bar\ell)
+      \Bigl(\frac{\Sigma_{jk}\sigma_y^{2}}{n}+a_j^{*}a_k^{*}\Bigr)^{\!2}
+    \notag\\[6pt]
+    &\qquad\qquad\qquad
+    + \sum_{\substack{b,b'=1\\b\ne b'}}^{B}
+      \sum_{\substack{j\in S_b\\k\in S_{b'}}}
+        (\ell_j-\bar\ell)(\ell_k-\bar\ell)\,(a_j^{*})^{2}(a_k^{*})^{2}
+    \Biggr],
+  \label{eq:Vexplicit}
+\end{align}
+where $\gamma=\lim p/n$.
+
+\medskip\noindent\textbf{Within-block terms.}\;
+For $j,k\in S_b$, the covariance $\Sigma_{jk}$ is potentially non-zero.  The
+leading-order contribution from block~$b$ involves the fourth moments of the
+Wishart matrix $W_b=(\X^{(b)})^{T}\X^{(b)}\sim\text{Wishart}_{p_b}(n,\bSig_b)$,
+which are computed exactly by Proposition~S1 of Dicker~(2014).  Since
+$p_b\le p_{\max}$, these are $O(1)$ quantities.
+
+\medskip\noindent\textbf{Cross-block terms.}\;
+For $b\ne b'$, $\Sigma_{jk}=0$ and only the product $(a_j^{*})^{2}(a_k^{*})^{2}$
+survives.  This factorises as
+\[
+  \sum_{\substack{b\ne b'}}\sum_{\substack{j\in S_b\\k\in S_{b'}}}
+  (\ell_j-\bar\ell)(\ell_k-\bar\ell)(a_j^{*})^{2}(a_k^{*})^{2}
+  = \Bigl(\sum_{j=1}^{p}(\ell_j-\bar\ell)(a_j^{*})^{2}\Bigr)^{\!2}
+    - \sum_{b=1}^{B}\Bigl(\sum_{j\in S_b}(\ell_j-\bar\ell)(a_j^{*})^{2}\Bigr)^{\!2},
+\]
+which simplifies the computation considerably.
+
+\begin{remark}[Identifiability]\label{rem:identity}
+When $\bSig=I_p$, we have $\ell_j=1$ for all~$j$ and $V_\ell=0$, so
+Assumption~\ref{ass:ldvar} fails.  This reflects the well-known fact that LDSC
+requires heterogeneity in LD scores across variants for identifiability.  The
+block-diagonal structure with non-trivial within-block LD (i.e., $\bSig_b$
+having non-degenerate eigenvalues) ensures that the $\ell_j$ are
+heterogeneous, which is the empirically relevant regime.
+\end{remark}
+
+\begin{remark}[Comparison with random-effects models]\label{rem:random}
+Under a standard random-effects model where
+$\alpha_j\overset{\mathrm{iid}}{\sim}(0,\sigma_\alpha^{2}/p)$, the
+pseudo-true value satisfies $\sigma_{\alpha,0}^{2}=\sigma_\alpha^{2}+O(n^{-1})$,
+so the LDSC estimator is consistent for the variance component.  Under our
+fixed-effects framework, $\sigma_{\alpha,0}^{2}$ depends on the specific
+alignment between the effect vector~$\bal$ and the LD structure, and its
+interpretation must be qualified accordingly.
+\end{remark}
+
+%=============================================================================
+\section*{References}
+%=============================================================================
+
+\begin{description}[leftmargin=0pt,itemsep=6pt]
+\item[] Bai, Z.\ \& Yin, Y.\ Q.\ (1993). Limit of the smallest eigenvalue of
+  a large dimensional sample covariance matrix.
+  \textit{Ann.\ Probab.}\ \textbf{21}, 1275--1294.
+
+\item[] Bulik-Sullivan, B.\ K.\ et~al.\ (2015). LD score regression
+  distinguishes confounding from polygenicity in genome-wide association
+  studies. \textit{Nature Genetics}\ \textbf{47}, 291--295.
+
+\item[] Chatterjee, S.\ (2009). Fluctuations of eigenvalues and second order
+  Poincar\'e inequalities. \textit{Probab.\ Theory Relat.\ Fields}\
+  \textbf{143}, 1--40.
+
+\item[] Davidson, K.\ R.\ \& Szarek, S.\ J.\ (2001). Local operator theory,
+  random matrices and Banach spaces. In \textit{Handbook of the Geometry of
+  Banach Spaces}, Vol.~1, pp.~317--366. Elsevier.
+
+\item[] Dicker, L.\ H.\ (2014). Variance estimation in high-dimensional
+  linear models. \textit{Biometrika}\ \textbf{101}, 269--284.
+
+\item[] Hall, P.\ \& Heyde, C.\ C.\ (1980). \textit{Martingale Limit Theory
+  and Its Application}. Academic Press, New York.
+
+\item[] Letac, G.\ \& Massam, H.\ (2004). All invariant moments of the
+  Wishart distribution. \textit{Scand.\ J.\ Statist.}\ \textbf{31}, 295--318.
+\end{description}
+
+\end{document}

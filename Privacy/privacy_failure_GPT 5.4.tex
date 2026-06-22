@@ -1,0 +1,707 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{assumption}{Assumption}
+\newtheorem{remark}{Remark}
+
+\newcommand{\D}{D}
+\newcommand{\R}{\mathbb R}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Law}{\operatorname{Law}}
+\newcommand{\esssup}{\operatorname*{ess\,sup}}
+\newcommand{\KL}{D_{\mathrm{KL}}}
+\newcommand{\dd}{\,\mathrm d}
+
+\title{A Formal Bound on the Suboptimality of zCDP Accounting under Heterogeneous Composition}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem Setup}
+
+Consider a heterogeneous composition of mechanisms
+\[
+M=(M_1,\dots,M_n),
+\]
+where each mechanism uses the same noise family \(\nu\), possibly with different
+scales or sensitivities. Suppose that each \(M_i\) satisfies \(\rho_i\)-zCDP, so
+that the usual zCDP composition theorem gives the total privacy parameter
+\[
+\rho=\sum_{i=1}^n \rho_i.
+\]
+The goal is to quantify the suboptimality of this scalar accounting rule relative
+to the exact Renyi privacy curve.
+
+Throughout this note, we use the convention that a mechanism is \(\rho\)-zCDP if,
+for every order \(\alpha>1\),
+\[
+D_\alpha(P\|Q)\le \rho\alpha,
+\]
+where \(P,Q\) are the output laws of the mechanism on neighboring datasets.
+Under this normalization, define the zCDP accounting defect at order \(\alpha\) by
+\[
+\Gamma_{n,\nu}(\alpha)
+:=
+\rho\alpha-D_\alpha(P\|Q).
+\]
+Equivalently, because Renyi divergence tensorizes over product distributions, one
+may also write
+\[
+\Gamma_{n,\nu}(\alpha)
+:=
+\alpha\sum_{i=1}^n\rho_i-
+\sum_{i=1}^n D_\alpha(P_i\|Q_i).
+\]
+The purpose of the results below is to give lower bounds on
+\(\Gamma_{n,\nu}(\alpha)\) as a function of the number of compositions \(n\), the
+allocation \((\rho_1,\dots,\rho_n)\), and the noise law \(\nu\).
+
+\section{Assumptions}
+
+We work under the following standing assumptions.
+
+\begin{assumption}[Independent additive composition]
+\label{ass:additive-composition}
+For each coordinate \(i\), the two output laws of \(M_i\) on a neighboring pair of
+datasets are
+\[
+P_i=\Law(Z_i+\theta_i),
+\qquad
+Q_i=\Law(Z_i),
+\]
+where \(Z_i\sim \nu_{s_i}\), and the random variables \(Z_1,\dots,Z_n\) are
+independent. The distributions \(\nu_{s_i}\) belong to a common noise family
+\(\nu\), possibly with different scales \(s_i\). Thus the joint output laws are
+\[
+P=\bigotimes_{i=1}^n P_i,
+\qquad
+Q=\bigotimes_{i=1}^n Q_i.
+\]
+\end{assumption}
+
+\begin{assumption}[Absolute continuity and finite Renyi divergences]
+\label{ass:regularity}
+For every coordinate \(i\), assume
+\[
+P_i\ll Q_i,
+\qquad
+Q_i\ll P_i,
+\]
+and
+\[
+D_\alpha(P_i\|Q_i)<\infty
+\qquad
+\text{for all } \alpha>1.
+\]
+\end{assumption}
+
+\begin{remark}
+The absolute-continuity and finiteness assumptions hold for many smooth additive
+noise families with everywhere positive densities. Centering and symmetry of
+\(\nu\) are not needed for the tensorization identity, but they are useful when
+one wants local expansions of the per-coordinate Renyi curve in terms of the
+shift size. In particular, symmetry typically removes odd-order terms in the
+small-shift expansion.
+\end{remark}
+
+\section{Exact Tensorization of the Renyi Curve}
+
+\begin{lemma}[Tensorization of Renyi divergence]
+\label{lem:tensorization}
+Under Assumptions~\ref{ass:additive-composition} and~\ref{ass:regularity}, for
+every \(\alpha>1\),
+\[
+D_\alpha(P\|Q)
+=
+\sum_{i=1}^n D_\alpha(P_i\|Q_i).
+\]
+\end{lemma}
+
+\begin{proof}
+By definition,
+\[
+D_\alpha(P\|Q)
+=
+\frac{1}{\alpha-1}
+\log \int
+\left(\frac{\dd P}{\dd Q}\right)^\alpha \dd Q.
+\]
+Since \(P=\bigotimes_i P_i\) and \(Q=\bigotimes_i Q_i\), we have
+\[
+\frac{\dd P}{\dd Q}(x_1,\dots,x_n)
+=
+\prod_{i=1}^n \frac{\dd P_i}{\dd Q_i}(x_i).
+\]
+Therefore,
+\[
+\begin{aligned}
+\int
+\left(\frac{\dd P}{\dd Q}\right)^\alpha \dd Q
+&=
+\int
+\prod_{i=1}^n
+\left(\frac{\dd P_i}{\dd Q_i}(x_i)\right)^\alpha
+\prod_{i=1}^n \dd Q_i(x_i) \\
+&=
+\prod_{i=1}^n
+\int
+\left(\frac{\dd P_i}{\dd Q_i}\right)^\alpha \dd Q_i.
+\end{aligned}
+\]
+Taking logarithms and dividing by \(\alpha-1\) gives
+\[
+D_\alpha(P\|Q)
+=
+\sum_{i=1}^n D_\alpha(P_i\|Q_i),
+\]
+as claimed.
+\end{proof}
+
+\section{The Exact zCDP Accounting Defect}
+
+For each coordinate define its exact zCDP radius by
+\[
+\bar\rho_i
+:=
+\sup_{\beta>1}\frac{D_\beta(P_i\|Q_i)}{\beta}.
+\]
+If a mechanism is certified using a possibly non-minimal zCDP parameter
+\(\rho_i\), then necessarily
+\[
+\rho_i\ge \bar\rho_i.
+\]
+
+\begin{theorem}[Exact zCDP accounting defect under heterogeneous composition]
+\label{thm:zcdp-defect-composition}
+Under Assumptions~\ref{ass:additive-composition} and~\ref{ass:regularity}, let
+\(P=\bigotimes_i P_i\) and \(Q=\bigotimes_i Q_i\). Suppose each coordinate is
+certified as \(\rho_i\)-zCDP, where \(\rho_i\ge \bar\rho_i\). Then for every
+\(\alpha>1\),
+\[
+\Gamma_{n,\nu}(\alpha)
+:=
+\alpha\sum_{i=1}^n\rho_i-D_\alpha(P\|Q)
+\]
+satisfies the exact identity
+\[
+\Gamma_{n,\nu}(\alpha)
+=
+\alpha\sum_{i=1}^n(\rho_i-\bar\rho_i)
++
+\sum_{i=1}^n
+\Bigl\{\alpha\bar\rho_i-D_\alpha(P_i\|Q_i)\Bigr\}.
+\]
+In particular,
+\[
+\Gamma_{n,\nu}(\alpha)\ge 0.
+\]
+If each coordinate is calibrated to its exact zCDP radius, namely
+\(\rho_i=\bar\rho_i\), then
+\[
+\Gamma_{n,\nu}(\alpha)
+=
+\sum_{i=1}^n
+\Bigl\{\alpha\rho_i-D_\alpha(P_i\|Q_i)\Bigr\}.
+\]
+Moreover, \(\Gamma_{n,\nu}(\alpha)=0\) for every allocation
+\((\rho_1,\dots,\rho_n)\) and every \(\alpha>1\) if every coordinate has a linear
+Gaussian-type Renyi curve
+\[
+D_\alpha(P_i\|Q_i)=\alpha\rho_i
+\qquad
+\text{for all } \alpha>1.
+\]
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{lem:tensorization},
+\[
+D_\alpha(P\|Q)
+=
+\sum_{i=1}^n D_\alpha(P_i\|Q_i).
+\]
+Therefore,
+\[
+\begin{aligned}
+\Gamma_{n,\nu}(\alpha)
+&=
+\alpha\sum_{i=1}^n \rho_i
+-
+\sum_{i=1}^n D_\alpha(P_i\|Q_i) \\
+&=
+\alpha\sum_{i=1}^n(\rho_i-\bar\rho_i)
++
+\sum_{i=1}^n
+\Bigl\{\alpha\bar\rho_i-D_\alpha(P_i\|Q_i)\Bigr\}.
+\end{aligned}
+\]
+Since
+\[
+\bar\rho_i
+=
+\sup_{\beta>1}\frac{D_\beta(P_i\|Q_i)}{\beta},
+\]
+we have, for every fixed \(\alpha>1\),
+\[
+D_\alpha(P_i\|Q_i)
+\le
+\alpha\bar\rho_i.
+\]
+Thus each term
+\[
+\alpha\bar\rho_i-D_\alpha(P_i\|Q_i)
+\]
+is nonnegative. Also \(\rho_i-\bar\rho_i\ge 0\). Hence
+\[
+\Gamma_{n,\nu}(\alpha)\ge 0.
+\]
+If \(\rho_i=\bar\rho_i\), the first sum vanishes, giving
+\[
+\Gamma_{n,\nu}(\alpha)
+=
+\sum_{i=1}^n
+\Bigl\{\alpha\rho_i-D_\alpha(P_i\|Q_i)\Bigr\}.
+\]
+Finally, if
+\[
+D_\alpha(P_i\|Q_i)=\alpha\rho_i
+\qquad
+\text{for all } i \text{ and all } \alpha>1,
+\]
+then each summand is zero, so
+\[
+\Gamma_{n,\nu}(\alpha)=0
+\]
+for every \(\alpha>1\). This is the Gaussian-type equality case. Indeed, for an
+additive Gaussian mechanism with shift sensitivity \(\Delta_i\) and variance
+\(\sigma_i^2\), one has
+\[
+D_\alpha(P_i\|Q_i)
+=
+\frac{\alpha\Delta_i^2}{2\sigma_i^2}
+=
+\alpha\rho_i,
+\]
+where
+\[
+\rho_i=\frac{\Delta_i^2}{2\sigma_i^2}.
+\]
+\end{proof}
+
+\section{Noise-Dependent Per-Coordinate Defect}
+
+For a fixed noise family \(\nu\), define the per-coordinate envelope defect at
+Renyi order \(\alpha>1\) by
+\[
+g_\nu(\alpha;r)
+:=
+\alpha r-D_\alpha(P_{\nu,r}\|Q_{\nu,r}),
+\]
+where \((P_{\nu,r},Q_{\nu,r})\) denotes a neighboring pair calibrated so that the
+exact zCDP radius is \(r\). With this notation, under exact calibration,
+\[
+\Gamma_{n,\nu}(\alpha)
+=
+\sum_{i=1}^n g_\nu(\alpha;\rho_i).
+\]
+Thus the accounting defect is additive across coordinates, but the summand is
+not linear in \(\rho_i\). The dependence on the allocation is therefore governed
+by the shape of \(r\mapsto g_\nu(\alpha;r)\).
+
+\begin{assumption}[Local non-Gaussian envelope defect]
+\label{ass:local-defect}
+Fix \(\alpha>1\). Assume that the noise family \(\nu\) has a calibrated
+per-coordinate defect satisfying the following local expansion: there exist
+constants \(r_0>0\), \(c_\nu(\alpha)>0\), and \(C_\nu(\alpha)<\infty\) such that,
+for every \(0\le r\le r_0\),
+\[
+g_\nu(\alpha;r)
+\ge
+c_\nu(\alpha)r^2-C_\nu(\alpha)r^3.
+\]
+Equivalently, for sufficiently small \(r\),
+\[
+g_\nu(\alpha;r)
+\gtrsim_\nu r^2.
+\]
+The constant \(c_\nu(\alpha)\) is the leading non-Gaussian curvature defect of
+the Renyi curve relative to its zCDP envelope. For Gaussian noise,
+\[
+g_\nu(\alpha;r)\equiv 0,
+\]
+so \(c_\nu(\alpha)=0\).
+\end{assumption}
+
+\begin{remark}[Interpretation through privacy-loss cumulants]
+Let
+\[
+L_t(x)
+=
+\log\frac{\dd P_t}{\dd Q_t}(x)
+\]
+be the privacy-loss random variable, and let
+\[
+K_t(\lambda)
+=
+\log \E_{Q_t}\exp\{\lambda L_t\}
+\]
+be its cumulant generating function. Then
+\[
+D_\alpha(P_t\|Q_t)
+=
+\frac{K_t(\alpha)}{\alpha-1}.
+\]
+The exact zCDP radius is
+\[
+r(t)
+=
+\sup_{\beta>1}
+\frac{K_t(\beta)}{\beta(\beta-1)}.
+\]
+Therefore
+\[
+g_\nu(\alpha;r(t))
+=
+\alpha r(t)-\frac{K_t(\alpha)}{\alpha-1}.
+\]
+Assumption~\ref{ass:local-defect} states that, after calibration by the exact
+zCDP radius, the cumulant generating function lies strictly below its best
+quadratic zCDP envelope by an amount of order at least \(r^2\). Gaussian privacy
+loss is the exceptional case in which the cumulant generating function is exactly
+quadratic and the defect vanishes.
+\end{remark}
+
+\section{Allocation-Sensitive Lower Bounds}
+
+\begin{corollary}[Allocation-sensitive lower bound]
+\label{cor:allocation-lower-bound}
+Suppose the assumptions of Theorem~\ref{thm:zcdp-defect-composition} hold and
+each coordinate is calibrated to its exact zCDP radius:
+\[
+\rho_i=\bar\rho_i.
+\]
+Assume further that Assumption~\ref{ass:local-defect} holds at the fixed order
+\(\alpha>1\), and that
+\[
+0\le \rho_i\le r_*
+:=
+\min\left\{r_0,\frac{c_\nu(\alpha)}{2C_\nu(\alpha)}\right\}
+\]
+for every \(i\). Then
+\[
+\Gamma_{n,\nu}(\alpha)
+\ge
+\frac{c_\nu(\alpha)}{2}
+\sum_{i=1}^n \rho_i^2.
+\]
+Equivalently, writing
+\[
+\rho=\sum_{i=1}^n \rho_i,
+\qquad
+w_i=\frac{\rho_i}{\rho},
+\qquad
+H(w)=\sum_{i=1}^n w_i^2,
+\]
+one has
+\[
+\Gamma_{n,\nu}(\alpha)
+\ge
+\frac{c_\nu(\alpha)}{2}\rho^2H(w).
+\]
+Since
+\[
+H(w)\ge \frac1n,
+\]
+the allocation minimizing the guaranteed defect for fixed total \(\rho\) is the
+uniform allocation
+\[
+\rho_i=\frac{\rho}{n}.
+\]
+In that case,
+\[
+\Gamma_{n,\nu}(\alpha)
+\ge
+\frac{c_\nu(\alpha)}{2}\frac{\rho^2}{n}.
+\]
+More generally, defining the effective number of compositions by
+\[
+n_{\mathrm{eff}}
+:=
+\frac{\rho^2}{\sum_{i=1}^n\rho_i^2}
+=
+\frac1{H(w)},
+\]
+one obtains
+\[
+\Gamma_{n,\nu}(\alpha)
+\ge
+\frac{c_\nu(\alpha)}{2}
+\frac{\rho^2}{n_{\mathrm{eff}}}.
+\]
+\end{corollary}
+
+\begin{proof}
+By Theorem~\ref{thm:zcdp-defect-composition}, under exact calibration,
+\[
+\Gamma_{n,\nu}(\alpha)
+=
+\sum_{i=1}^n g_\nu(\alpha;\rho_i).
+\]
+By Assumption~\ref{ass:local-defect},
+\[
+g_\nu(\alpha;\rho_i)
+\ge
+c_\nu(\alpha)\rho_i^2-C_\nu(\alpha)\rho_i^3.
+\]
+Since
+\[
+\rho_i\le \frac{c_\nu(\alpha)}{2C_\nu(\alpha)},
+\]
+we have
+\[
+C_\nu(\alpha)\rho_i^3
+\le
+\frac{c_\nu(\alpha)}{2}\rho_i^2.
+\]
+Therefore,
+\[
+g_\nu(\alpha;\rho_i)
+\ge
+\frac{c_\nu(\alpha)}{2}\rho_i^2.
+\]
+Summing over \(i\) yields
+\[
+\Gamma_{n,\nu}(\alpha)
+\ge
+\frac{c_\nu(\alpha)}{2}
+\sum_{i=1}^n \rho_i^2.
+\]
+Now write \(\rho_i=\rho w_i\), where \(\sum_i w_i=1\). Then
+\[
+\sum_{i=1}^n \rho_i^2
+=
+\rho^2\sum_{i=1}^n w_i^2
+=
+\rho^2H(w).
+\]
+By Cauchy--Schwarz,
+\[
+\left(\sum_{i=1}^n w_i\right)^2
+\le
+n\sum_{i=1}^n w_i^2.
+\]
+Since \(\sum_i w_i=1\), this gives
+\[
+H(w)=\sum_i w_i^2\ge \frac1n.
+\]
+Equality holds if and only if
+\[
+w_1=\cdots=w_n=\frac1n,
+\]
+equivalently
+\[
+\rho_1=\cdots=\rho_n=\frac{\rho}{n}.
+\]
+Hence, for the uniform allocation,
+\[
+\Gamma_{n,\nu}(\alpha)
+\ge
+\frac{c_\nu(\alpha)}{2}\frac{\rho^2}{n}.
+\]
+Finally, the effective-composition form follows from
+\[
+\sum_{i=1}^n \rho_i^2
+=
+\frac{\rho^2}{n_{\mathrm{eff}}}.
+\]
+\end{proof}
+
+\begin{proposition}[Convex envelope lower bound]
+\label{prop:convex-envelope}
+Assume that, for the noise family \(\nu\) and fixed order \(\alpha>1\), the
+function
+\[
+r\mapsto g_\nu(\alpha;r)
+\]
+is convex on an interval containing \(\rho_1,\dots,\rho_n\). Then, for fixed total
+\(\rho=\sum_i\rho_i\),
+\[
+\Gamma_{n,\nu}(\alpha)
+=
+\sum_{i=1}^n g_\nu(\alpha;\rho_i)
+\ge
+n g_\nu\left(\alpha;\frac{\rho}{n}\right).
+\]
+If, in addition,
+\[
+g_\nu(\alpha;r)
+\ge
+ a_\nu(\alpha)r^p
+\]
+for some \(p\ge 1\), then
+\[
+\Gamma_{n,\nu}(\alpha)
+\ge
+ a_\nu(\alpha)
+\sum_{i=1}^n \rho_i^p.
+\]
+In particular, for \(p=2\),
+\[
+\Gamma_{n,\nu}(\alpha)
+\ge
+ a_\nu(\alpha)\frac{\rho^2}{n}.
+\]
+\end{proposition}
+
+\begin{proof}
+The identity
+\[
+\Gamma_{n,\nu}(\alpha)=\sum_{i=1}^n g_\nu(\alpha;\rho_i)
+\]
+follows from Theorem~\ref{thm:zcdp-defect-composition} under exact calibration.
+If \(g_\nu(\alpha;\cdot)\) is convex, Jensen's inequality gives
+\[
+\frac1n\sum_{i=1}^n g_\nu(\alpha;\rho_i)
+\ge
+ g_\nu\left(\alpha;\frac1n\sum_{i=1}^n \rho_i\right)
+=
+ g_\nu\left(\alpha;\frac{\rho}{n}\right).
+\]
+Multiplying by \(n\) gives
+\[
+\Gamma_{n,\nu}(\alpha)
+\ge
+n g_\nu\left(\alpha;\frac{\rho}{n}\right).
+\]
+If
+\[
+g_\nu(\alpha;r)
+\ge
+ a_\nu(\alpha)r^p,
+\]
+then summing over \(i\) gives
+\[
+\Gamma_{n,\nu}(\alpha)
+\ge
+ a_\nu(\alpha)\sum_{i=1}^n \rho_i^p.
+\]
+For \(p=2\), Cauchy--Schwarz gives
+\[
+\sum_{i=1}^n \rho_i^2
+\ge
+\frac1n\left(\sum_{i=1}^n \rho_i\right)^2
+=
+\frac{\rho^2}{n}.
+\]
+Thus
+\[
+\Gamma_{n,\nu}(\alpha)
+\ge
+ a_\nu(\alpha)\frac{\rho^2}{n}.
+\]
+\end{proof}
+
+\section{Loose Per-Coordinate Calibration}
+
+The previous bounds separate the intrinsic loss caused by replacing the full
+Renyi curve by a scalar zCDP radius from the extrinsic loss caused by certifying a
+coordinate with a loose zCDP parameter.
+
+If \(\rho_i\ge \bar\rho_i\), then Theorem~\ref{thm:zcdp-defect-composition} gives
+\[
+\Gamma_{n,\nu}(\alpha)
+=
+\alpha\sum_{i=1}^n(\rho_i-\bar\rho_i)
++
+\sum_{i=1}^n
+\Bigl\{\alpha\bar\rho_i-D_\alpha(P_i\|Q_i)\Bigr\}.
+\]
+Under the local defect assumption applied to \(\bar\rho_i\), this yields
+\[
+\Gamma_{n,\nu}(\alpha)
+\ge
+\alpha\sum_{i=1}^n(\rho_i-\bar\rho_i)
++
+\frac{c_\nu(\alpha)}{2}
+\sum_{i=1}^n \bar\rho_i^2,
+\]
+provided \(\bar\rho_i\le r_*\) for all \(i\). The first term is calibration loss:
+it is present only because the certified parameter \(\rho_i\) is larger than the
+exact zCDP radius \(\bar\rho_i\). The second term is intrinsic to the noise law
+and measures the departure of the exact Renyi curve from the Gaussian linear
+curve.
+
+\section{Conclusion}
+
+For an independently composed additive mechanism, the exact Renyi curve satisfies
+\[
+D_\alpha(P\|Q)
+=
+\sum_{i=1}^nD_\alpha(P_i\|Q_i).
+\]
+Therefore, under exact per-coordinate zCDP calibration,
+\[
+\boxed{
+\Gamma_{n,\nu}(\alpha)
+=
+\sum_{i=1}^n
+\Bigl\{\alpha\rho_i-D_\alpha(P_i\|Q_i)\Bigr\}.
+}
+\]
+For Gaussian noise,
+\[
+D_\alpha(P_i\|Q_i)=\alpha\rho_i,
+\]
+so
+\[
+\Gamma_{n,\nu}(\alpha)=0
+\]
+for every number of compositions \(n\), every allocation
+\((\rho_1, \dots,\rho_n)\), and every order \(\alpha>1\). Thus Gaussian zCDP
+accounting is exactly tight.
+
+For a non-Gaussian smooth symmetric additive noise family satisfying the local
+curvature-defect assumption,
+\[
+\boxed{
+\Gamma_{n,\nu}(\alpha)
+\gtrsim_\nu
+\sum_{i=1}^n\rho_i^2
+=
+\rho^2\sum_{i=1}^n\left(\frac{\rho_i}{\rho}\right)^2.
+}
+\]
+Equivalently,
+\[
+\boxed{
+\Gamma_{n,\nu}(\alpha)
+\gtrsim_\nu
+\frac{\rho^2}{n_{\mathrm{eff}}},
+\qquad
+n_{\mathrm{eff}}
+=
+\frac{\rho^2}{\sum_i\rho_i^2}.
+}
+\]
+The uniform allocation \(\rho_i=\rho/n\) minimizes the guaranteed defect and gives
+\[
+\Gamma_{n,\nu}(\alpha)
+\gtrsim_\nu
+\frac{\rho^2}{n}.
+\]
+Highly nonuniform allocations decrease \(n_{\mathrm{eff}}\), increase
+\(\sum_i\rho_i^2\), and therefore increase the suboptimality of scalar zCDP
+accounting relative to the exact Renyi privacy curve.
+
+\end{document}

@@ -1,0 +1,734 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,amsthm,amssymb,mathtools,bbm,enumitem,geometry}
+\geometry{margin=1in}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\1}{\mathbf{1}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+
+\title{Asymptotic Upper Bound of a Transfer Learning Estimator}
+
+
+\begin{document}
+\section{Results from the zero-shot prompt.}
+\paragraph{Notation and interpretation of the risk.}
+Let
+\[
+\mathcal R:=\mathcal R(t)\subseteq [p],\qquad q:=|\mathcal R|,\qquad \mathcal U:=\mathcal R^c,
+\]
+and write the covariate as
+\[
+x=(z^\top,u^\top)^\top,\qquad z:=x_{\mathcal R}\in\mathbb R^q,\quad u:=x_{\mathcal U}\in\mathbb R^{p-q}.
+\]
+Partition the covariance matrix as
+\[
+\Sigma=
+\begin{pmatrix}
+\Sigma_{RR}&\Sigma_{RU}\\
+\Sigma_{UR}&\Sigma_{UU}
+\end{pmatrix},
+\qquad \Sigma_{RR}\in\mathbb R^{q\times q}.
+\]
+For the target site, write
+\[
+\beta^{(t)}=
+\begin{pmatrix}
+\beta_R^{(t)}\\
+\beta_U^{(t)}
+\end{pmatrix},
+\qquad
+\beta^{(s)}=
+\begin{pmatrix}
+\beta_R^{(s)}\\
+\beta_U^{(s)}
+\end{pmatrix}.
+\]
+
+The estimator in the statement should use the available source estimator \(\hat\beta^{(s)}\); accordingly we interpret
+\[
+\hat\omega_s^{(t)}=\Phi^{(t)}\hat\beta^{(s)},
+\qquad
+\Phi^{(t)}=\bigl[I_q,\ \Sigma_{RR}^{-1}\Sigma_{RU}\bigr].
+\]
+This is the natural transfer center induced by the source estimate.
+
+Since \(\hat\omega_{\mathrm{TL}}^{(t)}\) depends on the target responses \(Y^{(t)}\) and on \(\hat\beta^{(s)}\), the quantity
+\[
+r^{\mathrm{pred}}\!\bigl(\hat\omega_{\mathrm{TL}}^{(t)}\bigr)
+=
+\mathbb E\!\left[
+\bigl(y^{(t)}-z^\top\hat\omega_{\mathrm{TL}}^{(t)}\bigr)^2
+\,\middle|\,
+X_R^{(t)}
+\right]
+\]
+is still random through the training responses and the source estimator. The standard object in random-design asymptotics is therefore its conditional mean
+\[
+\bar r^{\mathrm{pred}}(\lambda_\omega\mid X_R^{(t)})
+:=
+\mathbb E\!\left[
+r^{\mathrm{pred}}\!\bigl(\hat\omega_{\mathrm{TL}}^{(t)}\bigr)
+\,\middle|\,
+X_R^{(t)}
+\right],
+\]
+where the outer expectation is over the remaining randomness
+(\(Y^{(t)}\), \(\beta^{(t)}\), \(\beta^{(s)}\), \(\hat\beta^{(s)}\)).
+We shall derive a finite-sample exact decomposition for \(\bar r^{\mathrm{pred}}\), then a high-dimensional asymptotic upper bound, and then the oracle choice of \(\lambda_\omega\).
+
+\bigskip
+
+\paragraph{Assumptions.}
+We use the following regularity conditions.
+
+\begin{enumerate}
+\item[(A1)] \textbf{High-dimensional regime.}
+As \(n_t,p\to\infty\),
+\[
+\frac{p}{n_t}\to\gamma\in(0,\infty),
+\qquad
+\frac{q}{p}\to\kappa\in(0,1],
+\qquad
+\frac{q}{n_t}\to\eta:=\kappa\gamma.
+\]
+
+\item[(A2)] \textbf{Covariance regularity.}
+The matrix \(\Sigma\) is positive definite, and there exist constants
+\(0<c_\Sigma<C_\Sigma<\infty\) such that for all \(p\),
+\[
+c_\Sigma\le \lambda_{\min}(\Sigma)\le \lambda_{\max}(\Sigma)\le C_\Sigma.
+\]
+Hence also
+\[
+c_\Sigma\le \lambda_{\min}(\Sigma_{RR})\le \lambda_{\max}(\Sigma_{RR})\le C_\Sigma.
+\]
+
+\item[(A3)] \textbf{Transfer map regularity.}
+There exists a finite constant \(C_\Phi\) such that
+\[
+\|\Phi^{(t)}\|_{\mathrm{op}}^2
+=
+\lambda_{\max}\!\bigl(\Phi^{(t)}(\Phi^{(t)})^\top\bigr)
+\le C_\Phi
+\qquad\text{for all }p.
+\]
+
+\item[(A4)] \textbf{Random coefficients.}
+\[
+\mathbb E[\beta^{(m)}]=0,\qquad
+\mathrm{Var}(\beta^{(m)})=\frac{\alpha_m^2}{p}I_p,\qquad m\in\{s,t\},
+\]
+and
+\[
+\mathrm{Cov}\!\bigl(\beta^{(t)},\beta^{(s)}\bigr)
+=
+\frac{\rho\alpha_t\alpha_s}{p}I_p,
+\qquad -1\le \rho\le 1.
+\]
+
+\item[(A5)] \textbf{Source estimation error.}
+Let
+\[
+e_s:=\hat\beta^{(s)}-\beta^{(s)}.
+\]
+Assume \(e_s\) is independent of the target sample \((X^{(t)},Y^{(t)})\) and of \(\beta^{(t)}\), satisfies \(\mathbb E[e_s]=0\), and
+\[
+\lambda_{\max}\!\left(\mathbb E[e_s e_s^\top]\right)\le \frac{C^U}{p}
+\]
+for a constant \(C^U>0\).
+
+\item[(A6)] \textbf{Noise.}
+The target noise variables \(\varepsilon_i\) are i.i.d., mean zero, variance \(\sigma_\varepsilon^2\), and independent of \(x_i\), \(\beta^{(t)}\), \(\beta^{(s)}\), and \(e_s\).
+
+\item[(A7)] \textbf{Spectral convergence of the observed design.}
+The empirical spectral distribution of
+\[
+S_n:=\frac1{n_t}(X_R^{(t)})^\top X_R^{(t)}
+\]
+converges almost surely to a deterministic compactly supported probability law \(F_\eta\).
+This is automatic, for example, if \(z_i\sim N(0,\Sigma_{RR})\) and the empirical spectral distribution of \(\Sigma_{RR}\) converges, in which case \(F_\eta\) is the corresponding deformed Marchenko--Pastur limit.
+\end{enumerate}
+
+\bigskip
+
+\paragraph{Step 1: the target optimal linear predictor from \(z=x_{\mathcal R}\).}
+
+\begin{lemma}[Optimal observed-feature coefficient]
+Under the Gaussian model,
+\[
+\omega_*^{(t)}:=\arg\min_{\omega\in\mathbb R^q}
+\mathbb E\!\left[(y^{(t)}-z^\top\omega)^2\,\middle|\,\beta^{(t)}\right]
+=
+\Phi^{(t)}\beta^{(t)}
+=
+\beta_R^{(t)}+\Sigma_{RR}^{-1}\Sigma_{RU}\beta_U^{(t)}.
+\]
+Moreover, writing
+\[
+\Sigma_{U\mid R}:=\Sigma_{UU}-\Sigma_{UR}\Sigma_{RR}^{-1}\Sigma_{RU},
+\]
+we have the conditional representation
+\[
+y^{(t)}=z^\top\omega_*^{(t)}+\xi,
+\]
+where \(\xi\) is independent of \(z\) given \(\beta^{(t)}\), with
+\[
+\mathbb E[\xi\mid \beta^{(t)}]=0,
+\qquad
+\mathrm{Var}(\xi\mid \beta^{(t)})
+=
+\tau_t^2(\beta^{(t)})
+:=
+\sigma_\varepsilon^2+(\beta_U^{(t)})^\top\Sigma_{U\mid R}\beta_U^{(t)}.
+\]
+\end{lemma}
+
+\begin{proof}
+Since \((z,u)\) is jointly Gaussian with mean \(0\),
+\[
+\mathbb E[u\mid z]=\Sigma_{UR}\Sigma_{RR}^{-1}z.
+\]
+Therefore
+\[
+\mathbb E[y^{(t)}\mid z,\beta^{(t)}]
+=
+z^\top\beta_R^{(t)}+\mathbb E[u\mid z]^\top\beta_U^{(t)}
+=
+z^\top\Bigl(\beta_R^{(t)}+\Sigma_{RR}^{-1}\Sigma_{RU}\beta_U^{(t)}\Bigr).
+\]
+The coefficient of the conditional mean is therefore \(\omega_*^{(t)}=\Phi^{(t)}\beta^{(t)}\). The decomposition
+\[
+\xi:=y^{(t)}-z^\top\omega_*^{(t)}
+=
+u^\top\beta_U^{(t)}-\mathbb E[u^\top\beta_U^{(t)}\mid z]+\varepsilon
+\]
+has conditional mean zero. Since, conditional on \(\beta^{(t)}\), the Gaussian residual \(u-\mathbb E[u\mid z]\) is independent of \(z\) and has covariance \(\Sigma_{U\mid R}\),
+\[
+\mathrm{Var}(\xi\mid \beta^{(t)})
+=
+(\beta_U^{(t)})^\top\Sigma_{U\mid R}\beta_U^{(t)}+\sigma_\varepsilon^2.
+\]
+This proves the claim.
+\end{proof}
+
+\bigskip
+
+\paragraph{Step 2: closed form of the transfer-ridge estimator.}
+
+Set
+\[
+X:=X_R^{(t)}\in\mathbb R^{n_t\times q},\qquad
+Y:=Y^{(t)}\in\mathbb R^{n_t},\qquad
+S_n:=\frac1{n_t}X^\top X.
+\]
+The estimator is
+\[
+\hat\omega_{\mathrm{TL}}
+=
+\arg\min_{\omega\in\mathbb R^q}
+\left[
+\frac1{n_t}\|Y-X\omega\|_2^2+\lambda_\omega\|\omega-\hat\omega_s\|_2^2
+\right].
+\]
+Its first-order condition gives
+\[
+(S_n+\lambda_\omega I_q)\hat\omega_{\mathrm{TL}}
+=
+\frac1{n_t}X^\top Y+\lambda_\omega \hat\omega_s,
+\]
+hence
+\[
+\hat\omega_{\mathrm{TL}}
+=
+(S_n+\lambda_\omega I_q)^{-1}
+\left(\frac1{n_t}X^\top Y+\lambda_\omega\hat\omega_s\right).
+\]
+Using \(Y=X\omega_*+\xi\), where \(\omega_*=\omega_*^{(t)}\) and
+\(\xi=(\xi_1,\dots,\xi_{n_t})^\top\), we obtain
+\[
+\hat\omega_{\mathrm{TL}}-\omega_*
+=
+-\lambda_\omega A_n(\lambda_\omega)\delta
++
+A_n(\lambda_\omega)\frac1{n_t}X^\top \xi,
+\]
+where
+\[
+A_n(\lambda):=(S_n+\lambda I_q)^{-1},
+\qquad
+\delta:=\omega_*-\hat\omega_s.
+\]
+This is the fundamental bias--variance decomposition.
+
+\bigskip
+
+\paragraph{Step 3: exact finite-sample conditional mean predictive risk.}
+
+\begin{theorem}[Exact decomposition]
+Under (A1)--(A6), for every fixed \(\lambda>0\),
+\[
+\bar r^{\mathrm{pred}}(\lambda\mid X)
+=
+\bar\tau_t^2
++
+\lambda^2\,\mathrm{tr}\!\left\{
+\Sigma_{RR}A_n(\lambda)\,\mathbb E[\delta\delta^\top]\,A_n(\lambda)
+\right\}
++
+\frac{\bar\tau_t^2}{n_t}\,
+\mathrm{tr}\!\left\{
+\Sigma_{RR}A_n(\lambda)S_nA_n(\lambda)
+\right\},
+\]
+where
+\[
+\bar\tau_t^2:=\mathbb E[\tau_t^2(\beta^{(t)})]
+=
+\sigma_\varepsilon^2+\frac{\alpha_t^2}{p}\mathrm{tr}(\Sigma_{U\mid R}).
+\]
+\end{theorem}
+
+\begin{proof}
+For a fresh test point \((z_{\rm new},y_{\rm new})\), conditional on \(\beta^{(t)}\),
+\[
+y_{\rm new}=z_{\rm new}^\top\omega_*+\xi_{\rm new},
+\]
+with \(\xi_{\rm new}\) independent of \(z_{\rm new}\) and of the training sample, and
+\(\mathbb E[\xi_{\rm new}^2\mid\beta^{(t)}]=\tau_t^2(\beta^{(t)})\).
+Hence, conditional on \(X\),
+\[
+r^{\mathrm{pred}}(\hat\omega_{\mathrm{TL}})
+=
+\tau_t^2(\beta^{(t)})
++
+(\hat\omega_{\mathrm{TL}}-\omega_*)^\top
+\Sigma_{RR}
+(\hat\omega_{\mathrm{TL}}-\omega_*).
+\]
+Taking the outer conditional expectation given \(X\) yields
+\[
+\bar r^{\mathrm{pred}}(\lambda\mid X)
+=
+\bar\tau_t^2
++
+\mathbb E\!\left[
+(\hat\omega_{\mathrm{TL}}-\omega_*)^\top
+\Sigma_{RR}
+(\hat\omega_{\mathrm{TL}}-\omega_*)
+\,\middle|\,X
+\right].
+\]
+Insert the identity
+\[
+\hat\omega_{\mathrm{TL}}-\omega_*
+=
+-\lambda A_n(\lambda)\delta
++
+A_n(\lambda)\frac1{n_t}X^\top\xi.
+\]
+Because \(\mathbb E[\delta]=0\) and \(\delta\) is independent of \(\xi\) conditional on \(X\),
+the cross term has mean zero. Therefore
+\[
+\mathbb E\!\left[
+(\hat\omega_{\mathrm{TL}}-\omega_*)^\top
+\Sigma_{RR}
+(\hat\omega_{\mathrm{TL}}-\omega_*)
+\,\middle|\,X
+\right]
+=
+\lambda^2\mathrm{tr}\!\left\{
+\Sigma_{RR}A_n(\lambda)\mathbb E[\delta\delta^\top]A_n(\lambda)
+\right\}
++
+\mathbb E\!\left[
+\Bigl(\frac1{n_t}X^\top\xi\Bigr)^\top
+A_n(\lambda)\Sigma_{RR}A_n(\lambda)
+\Bigl(\frac1{n_t}X^\top\xi\Bigr)
+\,\middle|\,X
+\right].
+\]
+Now conditional on \(X\),
+\[
+\mathrm{Var}\!\left(\frac1{n_t}X^\top\xi\,\middle|\,X\right)
+=
+\frac1{n_t^2}X^\top\mathbb E[\xi\xi^\top]X.
+\]
+Since the \(\xi_i\) are independent, mean zero, and each has variance
+\(\bar\tau_t^2\) after averaging over \(\beta^{(t)}\),
+\[
+\mathbb E[\xi\xi^\top]=\bar\tau_t^2 I_{n_t}.
+\]
+Hence
+\[
+\mathrm{Var}\!\left(\frac1{n_t}X^\top\xi\,\middle|\,X\right)
+=
+\frac{\bar\tau_t^2}{n_t}S_n.
+\]
+Using \(\mathbb E[v^\top Mv]=\mathrm{tr}(M\mathrm{Var}(v))\) for zero-mean \(v\),
+\[
+\mathbb E\!\left[
+\Bigl(\frac1{n_t}X^\top\xi\Bigr)^\top
+A_n(\lambda)\Sigma_{RR}A_n(\lambda)
+\Bigl(\frac1{n_t}X^\top\xi\Bigr)
+\,\middle|\,X
+\right]
+=
+\frac{\bar\tau_t^2}{n_t}
+\mathrm{tr}\!\left\{
+\Sigma_{RR}A_n(\lambda)S_nA_n(\lambda)
+\right\}.
+\]
+This proves the formula.
+\end{proof}
+
+\bigskip
+
+\paragraph{Step 4: control of the transfer mismatch term \(\mathbb E[\delta\delta^\top]\).}
+
+\begin{lemma}[Second-moment bound for the transfer mismatch]
+Define
+\[
+\Delta_{ts}^2:=\alpha_t^2+\alpha_s^2-2\rho\alpha_t\alpha_s.
+\]
+Under (A3)--(A5),
+\[
+\mathbb E[\delta\delta^\top]
+\preceq
+\frac{\Delta_{ts}^2+C^U}{p}\,
+\Phi^{(t)}(\Phi^{(t)})^\top
+\preceq
+\frac{(\Delta_{ts}^2+C^U)C_\Phi}{p}\,I_q.
+\]
+\end{lemma}
+
+\begin{proof}
+By definition,
+\[
+\delta
+=
+\omega_*-\hat\omega_s
+=
+\Phi^{(t)}\beta^{(t)}-\Phi^{(t)}\hat\beta^{(s)}
+=
+\Phi^{(t)}\Bigl[(\beta^{(t)}-\beta^{(s)})-e_s\Bigr].
+\]
+Since \(e_s\) is mean zero and independent of \((\beta^{(t)},\beta^{(s)})\),
+\[
+\mathbb E[\delta\delta^\top]
+=
+\Phi^{(t)}
+\left\{
+\mathrm{Var}(\beta^{(t)}-\beta^{(s)})+\mathbb E[e_s e_s^\top]
+\right\}
+(\Phi^{(t)})^\top.
+\]
+Now
+\[
+\mathrm{Var}(\beta^{(t)}-\beta^{(s)})
+=
+\frac{\alpha_t^2}{p}I_p+\frac{\alpha_s^2}{p}I_p
+-
+2\frac{\rho\alpha_t\alpha_s}{p}I_p
+=
+\frac{\Delta_{ts}^2}{p}I_p.
+\]
+By (A5),
+\[
+\mathbb E[e_s e_s^\top]\preceq \frac{C^U}{p}I_p.
+\]
+Therefore
+\[
+\mathbb E[\delta\delta^\top]
+\preceq
+\frac{\Delta_{ts}^2+C^U}{p}\,
+\Phi^{(t)}(\Phi^{(t)})^\top.
+\]
+The second inequality follows from \(\|\Phi^{(t)}\|_{\mathrm{op}}^2\le C_\Phi\).
+\end{proof}
+
+\bigskip
+
+\paragraph{Step 5: finite-sample upper bound.}
+
+\begin{theorem}[Finite-sample conditional upper bound]
+Under (A1)--(A6), for every \(\lambda>0\),
+\[
+\bar r^{\mathrm{pred}}(\lambda\mid X)
+\le
+\bar\tau_t^2
++
+\frac{(\Delta_{ts}^2+C^U)C_\Phi}{p}\,
+\lambda^2\,
+\mathrm{tr}\!\left\{\Sigma_{RR}A_n(\lambda)^2\right\}
++
+\frac{\bar\tau_t^2}{n_t}\,
+\mathrm{tr}\!\left\{\Sigma_{RR}A_n(\lambda)S_nA_n(\lambda)\right\}.
+\]
+In particular, by \(\lambda_{\max}(\Sigma_{RR})\le C_\Sigma\),
+\[
+\bar r^{\mathrm{pred}}(\lambda\mid X)
+\le
+\bar\tau_t^2
++
+C_\Sigma C_\Phi(\Delta_{ts}^2+C^U)\frac{\lambda^2}{p}\,
+\mathrm{tr}\!\left\{A_n(\lambda)^2\right\}
++
+C_\Sigma\bar\tau_t^2\frac1{n_t}\,
+\mathrm{tr}\!\left\{A_n(\lambda)S_nA_n(\lambda)\right\}.
+\]
+\end{theorem}
+
+\begin{proof}
+Start from the exact decomposition in the previous theorem and use the matrix bound from the lemma:
+\[
+\lambda^2\mathrm{tr}\!\left\{
+\Sigma_{RR}A_n(\lambda)\mathbb E[\delta\delta^\top]A_n(\lambda)
+\right\}
+\le
+\frac{(\Delta_{ts}^2+C^U)C_\Phi}{p}\,
+\lambda^2\,
+\mathrm{tr}\!\left\{\Sigma_{RR}A_n(\lambda)^2\right\}.
+\]
+This gives the first inequality. The second follows from
+\[
+\Sigma_{RR}\preceq C_\Sigma I_q.
+\]
+\end{proof}
+
+\bigskip
+
+\paragraph{Step 6: asymptotic deterministic equivalent.}
+
+Define for \(\lambda>0\),
+\[
+\frac1q\mathrm{tr}\{A_n(\lambda)^2\}\ \xrightarrow{\text{a.s.}}\ v_\eta(\lambda),
+\qquad
+\frac1q\mathrm{tr}\{A_n(\lambda)S_nA_n(\lambda)\}\ \xrightarrow{\text{a.s.}}\ u_\eta(\lambda).
+\]
+Using \(q/p\to\kappa\) and \(q/n_t\to\eta\), the finite-sample upper bound immediately yields:
+
+\begin{theorem}[High-dimensional asymptotic upper bound]
+Under (A1)--(A7), for every fixed \(\lambda>0\),
+\[
+\bar r^{\mathrm{pred}}(\lambda\mid X)
+\le
+\bar\tau_t^2
++
+\kappa\,C_\Sigma C_\Phi(\Delta_{ts}^2+C^U)\,
+\lambda^2 v_\eta(\lambda)
++
+\eta\,C_\Sigma\bar\tau_t^2\,u_\eta(\lambda)
++
+o_{\mathbb P}(1).
+\]
+Equivalently,
+\[
+\limsup_{n_t,p\to\infty}
+\bar r^{\mathrm{pred}}(\lambda\mid X)
+\le
+\bar\tau_t^2
++
+\kappa\,C_\Sigma C_\Phi(\Delta_{ts}^2+C^U)\,
+\lambda^2 v_\eta(\lambda)
++
+\eta\,C_\Sigma\bar\tau_t^2\,u_\eta(\lambda)
+\]
+in probability.
+\end{theorem}
+
+\begin{proof}
+From the preceding theorem,
+\[
+\bar r^{\mathrm{pred}}(\lambda\mid X)
+\le
+\bar\tau_t^2
++
+C_\Sigma C_\Phi(\Delta_{ts}^2+C^U)\frac{\lambda^2}{p}\,
+\mathrm{tr}\{A_n(\lambda)^2\}
++
+C_\Sigma\bar\tau_t^2\frac1{n_t}\,
+\mathrm{tr}\{A_n(\lambda)S_nA_n(\lambda)\}.
+\]
+Now write
+\[
+\frac1p\mathrm{tr}\{A_n(\lambda)^2\}
+=
+\frac{q}{p}\cdot \frac1q\mathrm{tr}\{A_n(\lambda)^2\},
+\qquad
+\frac1{n_t}\mathrm{tr}\{A_n(\lambda)S_nA_n(\lambda)\}
+=
+\frac{q}{n_t}\cdot \frac1q\mathrm{tr}\{A_n(\lambda)S_nA_n(\lambda)\}.
+\]
+By (A1) and (A7),
+\[
+\frac1p\mathrm{tr}\{A_n(\lambda)^2\}
+\to
+\kappa v_\eta(\lambda),
+\qquad
+\frac1{n_t}\mathrm{tr}\{A_n(\lambda)S_nA_n(\lambda)\}
+\to
+\eta u_\eta(\lambda),
+\]
+in probability (indeed almost surely on the event of spectral convergence). Substituting these limits proves the claim.
+\end{proof}
+
+\bigskip
+
+\paragraph{Oracle choice of \(\lambda_\omega\).}
+
+The asymptotic upper bound is minimized by
+\[
+\lambda_\omega^{\mathrm{opt}}
+\in
+\arg\min_{\lambda>0}
+\Bigl\{
+\kappa\,C_\Sigma C_\Phi(\Delta_{ts}^2+C^U)\lambda^2 v_\eta(\lambda)
++
+\eta\,C_\Sigma\bar\tau_t^2\,u_\eta(\lambda)
+\Bigr\}.
+\]
+Since \(u_\eta(\lambda)\) is strictly decreasing in \(\lambda\) and
+\(\lambda^2v_\eta(\lambda)\) is increasing for small \(\lambda\) and bounded as \(\lambda\to\infty\), the objective has the standard bias--variance tradeoff structure and admits at least one minimizer on \((0,\infty)\).
+
+Differentiating,
+\[
+\frac{d}{d\lambda}\Bigl[\lambda^2 v_\eta(\lambda)\Bigr]
+=
+2\lambda v_\eta(\lambda)+\lambda^2 v_\eta'(\lambda),
+\]
+and
+\[
+u_\eta'(\lambda)
+=
+-2\int \frac{x}{(x+\lambda)^3}\,dF_\eta(x)<0.
+\]
+Hence any interior optimizer satisfies the first-order condition
+\[
+\kappa\,C_\Sigma C_\Phi(\Delta_{ts}^2+C^U)
+\Bigl[2\lambda v_\eta(\lambda)+\lambda^2 v_\eta'(\lambda)\Bigr]
++
+\eta\,C_\Sigma\bar\tau_t^2\,u_\eta'(\lambda)
+=0.
+\]
+Equivalently,
+\[
+\kappa\,C_\Phi(\Delta_{ts}^2+C^U)
+\Bigl[2\lambda v_\eta(\lambda)+\lambda^2 v_\eta'(\lambda)\Bigr]
++
+\eta\,\bar\tau_t^2\,u_\eta'(\lambda)
+=0.
+\]
+This equation characterizes the asymptotically optimal regularization level.
+
+\bigskip
+
+\paragraph{Transparent special case: \(\Sigma=I_p\).}
+
+When \(\Sigma=I_p\), the situation becomes especially simple:
+\[
+\Sigma_{RR}=I_q,\qquad \Sigma_{RU}=0,\qquad \Phi^{(t)}=[I_q,0].
+\]
+Thus
+\[
+\omega_*^{(t)}=\beta_R^{(t)},
+\qquad
+\hat\omega_s^{(t)}=\hat\beta_R^{(s)},
+\qquad
+\Sigma_{U\mid R}=I_{p-q},
+\]
+and therefore
+\[
+\bar\tau_t^2
+=
+\sigma_\varepsilon^2+\alpha_t^2\frac{p-q}{p}
+\ \longrightarrow\
+\sigma_\varepsilon^2+\alpha_t^2(1-\kappa).
+\]
+Moreover \(C_\Sigma=C_\Phi=1\), and the asymptotic upper bound reduces to
+\[
+\bar r^{\mathrm{pred}}(\lambda\mid X)
+\le
+\bar\tau_t^2
++
+\kappa(\Delta_{ts}^2+C^U)\lambda^2 v_\eta^{\mathrm{MP}}(\lambda)
++
+\eta\bar\tau_t^2\,u_\eta^{\mathrm{MP}}(\lambda)
++
+o_{\mathbb P}(1),
+\]
+where \(u_\eta^{\mathrm{MP}},v_\eta^{\mathrm{MP}}\) are computed under the Marchenko--Pastur law with aspect ratio \(\eta\). Thus the oracle tuning parameter is
+\[
+\lambda_{\omega,\mathrm{opt}}
+\in
+\arg\min_{\lambda>0}
+\Bigl\{
+\kappa(\Delta_{ts}^2+C^U)\lambda^2 v_\eta^{\mathrm{MP}}(\lambda)
++
+\eta\bar\tau_t^2 u_\eta^{\mathrm{MP}}(\lambda)
+\Bigr\}.
+\]
+
+\bigskip
+
+\paragraph{Interpretation of the bound.}
+
+The bound has three terms:
+\[
+\underbrace{\bar\tau_t^2}_{\text{irreducible error}}
+\;+\;
+\underbrace{
+\kappa\,C_\Sigma C_\Phi(\Delta_{ts}^2+C^U)\lambda^2 v_\eta(\lambda)
+}_{\text{transfer bias / mismatch}}
+\;+\;
+\underbrace{
+\eta\,C_\Sigma\bar\tau_t^2 u_\eta(\lambda)
+}_{\text{estimation variance}}.
+\]
+The quantity
+\[
+\Delta_{ts}^2=\alpha_t^2+\alpha_s^2-2\rho\alpha_t\alpha_s
+\]
+is the intrinsic target--source discrepancy. It is small when the source and target coefficients are strongly aligned (\(\rho\) large), and large when the two sites are poorly matched. The additional term \(C^U\) quantifies source-estimation uncertainty. Thus transfer is beneficial precisely when
+\[
+\Delta_{ts}^2+C^U
+\]
+is small enough that shrinking toward the source center decreases variance more than it introduces transfer bias.
+
+\bigskip
+
+\paragraph{Conclusion.}
+Under the stated assumptions, the transfer-ridge estimator around the source-induced center \(\hat\omega_s^{(t)}=\Phi^{(t)}\hat\beta^{(s)}\) admits the exact conditional mean predictive-risk decomposition
+\[
+\bar r^{\mathrm{pred}}(\lambda\mid X)
+=
+\bar\tau_t^2
++
+\lambda^2\,\mathrm{tr}\!\left\{
+\Sigma_{RR}A_n(\lambda)\,\mathbb E[\delta\delta^\top]\,A_n(\lambda)
+\right\}
++
+\frac{\bar\tau_t^2}{n_t}\,
+\mathrm{tr}\!\left\{
+\Sigma_{RR}A_n(\lambda)S_nA_n(\lambda)
+\right\},
+\]
+and hence the asymptotic upper bound
+\[
+\bar r^{\mathrm{pred}}(\lambda\mid X)
+\le
+\bar\tau_t^2
++
+\kappa\,C_\Sigma C_\Phi(\Delta_{ts}^2+C^U)\lambda^2 v_\eta(\lambda)
++
+\eta\,C_\Sigma\bar\tau_t^2u_\eta(\lambda)
++
+o_{\mathbb P}(1).
+\]
+The asymptotically optimal regularization level is the minimizer of the deterministic equivalent on the right-hand side, equivalently the solution of the displayed first-order equation.
+
+\end{document}

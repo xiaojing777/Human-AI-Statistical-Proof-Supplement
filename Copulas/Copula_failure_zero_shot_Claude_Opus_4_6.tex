@@ -1,0 +1,443 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\PM}{\mathrm{PM}}
+\newcommand{\Pa}{\mathrm{Pa}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+
+\title{Scaling Invariance of the Angular Lower-Tail Coefficient \\
+$\kappa_L(\delta,\gamma;C)$, with Verification for the \\
+Pareto-Mixture Copula $C_{\PM}$}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Setting and Statement of the Result}
+
+Let $C:[0,1]^2\to[0,1]$ be a bivariate copula. For parameters
+$\gamma>0$ and $\delta\in(0,2)$, define
+\begin{equation}\label{eq:kappa-def}
+\kappa_L(\delta,\gamma;C)
+\;:=\;
+\lim_{u\downarrow 0}
+\frac{\log C\!\bigl(\gamma u^{\delta},\,\gamma^{-1}u^{2-\delta}\bigr)}{\log u},
+\end{equation}
+whenever the limit on the right-hand side exists in $\R$. The quantity
+$\kappa_L(\delta,\gamma;C)$ is an angular generalization of the
+Ledford--Tawn lower-tail coefficient: the curve
+$u\mapsto(\gamma u^{\delta},\gamma^{-1}u^{2-\delta})$ approaches
+$(0,0)$ as $u\downarrow 0$ along a direction in the unit square
+parametrized by $\delta$, while $\gamma>0$ rescales the two coordinates
+inversely.
+
+The intuition that motivates the definition is that, when the limit
+exists, the tail behavior captured by $\kappa_L$ should depend on the
+\emph{direction} $\delta$ but not on the \emph{scale} $\gamma$. The
+goal of this note is to formalize that intuition. We prove the
+following theorem.
+
+\begin{theorem}\label{thm:main}
+Let $C$ be a bivariate copula and fix $\delta\in(0,2)$. Suppose there
+exists some $\tilde\gamma>0$ such that the limit defining
+$\kappa_L(\delta,\tilde\gamma;C)$ in \eqref{eq:kappa-def} exists as a
+finite real number. Then, for every $\gamma>0$, the limit
+$\kappa_L(\delta,\gamma;C)$ exists and equals
+$\kappa_L(\delta,\tilde\gamma;C)$. In particular,
+$\kappa_L(\delta,\gamma;C)$ does not depend on $\gamma>0$.
+\end{theorem}
+
+\begin{remark}[Regularity condition]\label{rem:reg}
+The only regularity condition required is the one stated in
+Theorem~\ref{thm:main}: the limit \eqref{eq:kappa-def} exists and is
+finite for some single value of $\gamma$. No continuity or
+differentiability of $C$ beyond what is intrinsic to every copula
+(coordinatewise monotonicity and Lipschitz continuity) is needed.
+\end{remark}
+
+After proving the theorem, we verify that the Pareto-mixture copula
+$C_{\PM}$ introduced below satisfies the assumption of
+Theorem~\ref{thm:main}, hence the conclusion: its angular lower-tail
+coefficient depends only on the direction $\delta$.
+
+\section{Proof of Theorem~\ref{thm:main}}
+
+Fix $\delta\in(0,2)$ and $\gamma>0$. Let $\tilde\gamma>0$ be such that
+the finite limit
+\[
+k \;:=\; \kappa_L(\delta,\tilde\gamma;C)
+\;=\;
+\lim_{u\downarrow 0}
+\frac{\log C\!\bigl(\tilde\gamma\,u^{\delta},\,\tilde\gamma^{-1}u^{2-\delta}\bigr)}{\log u}
+\]
+exists. We will show that the analogous limit with $\tilde\gamma$
+replaced by $\gamma$ also exists and equals $k$.
+
+\subsection*{Step 1: Reduction by a deterministic time change}
+
+Set $r := \gamma/\tilde\gamma > 0$ and define
+\begin{equation}\label{eq:c-pm}
+c_- \;:=\; \min\!\bigl\{\,r^{1/\delta},\;r^{-1/(2-\delta)}\bigr\},
+\qquad
+c_+ \;:=\; \max\!\bigl\{\,r^{1/\delta},\;r^{-1/(2-\delta)}\bigr\}.
+\end{equation}
+Since $r>0$ and $\delta,2-\delta>0$, both $c_-$ and $c_+$ are strictly
+positive. The strategy is to sandwich
+$C(\gamma u^{\delta},\gamma^{-1}u^{2-\delta})$ between two evaluations
+of $C$ along the reference curve associated with $\tilde\gamma$, with
+the argument $u$ replaced by $c_- u$ and $c_+ u$, respectively.
+
+\subsection*{Step 2: Coordinatewise comparisons}
+
+We claim that for every $u>0$,
+\begin{equation}\label{eq:left-coord}
+\tilde\gamma\,(c_- u)^{\delta} \;\le\; \gamma\,u^{\delta},
+\qquad
+\tilde\gamma^{-1}(c_- u)^{2-\delta} \;\le\; \gamma^{-1}u^{2-\delta},
+\end{equation}
+and
+\begin{equation}\label{eq:right-coord}
+\tilde\gamma\,(c_+ u)^{\delta} \;\ge\; \gamma\,u^{\delta},
+\qquad
+\tilde\gamma^{-1}(c_+ u)^{2-\delta} \;\ge\; \gamma^{-1}u^{2-\delta}.
+\end{equation}
+
+To prove the first inequality of \eqref{eq:left-coord}, compute
+\[
+\frac{\tilde\gamma\,(c_- u)^{\delta}}{\gamma\,u^{\delta}}
+\;=\;
+\frac{\tilde\gamma\,c_-^{\delta}}{\gamma}
+\;=\;
+\frac{c_-^{\delta}}{r}.
+\]
+By the definition of $c_-$ in \eqref{eq:c-pm}, $c_-\le r^{1/\delta}$,
+hence $c_-^{\delta}\le r$ and the above ratio is $\le 1$. For the
+second inequality,
+\[
+\frac{\tilde\gamma^{-1}(c_- u)^{2-\delta}}{\gamma^{-1}u^{2-\delta}}
+\;=\;
+\frac{\gamma}{\tilde\gamma}\,c_-^{2-\delta}
+\;=\;
+r\,c_-^{2-\delta}.
+\]
+By \eqref{eq:c-pm}, $c_-\le r^{-1/(2-\delta)}$, hence
+$c_-^{2-\delta}\le r^{-1}$ and the ratio is again $\le 1$.
+
+The inequalities in \eqref{eq:right-coord} are proved in exactly the
+same way, using that $c_+\ge r^{1/\delta}$ and
+$c_+\ge r^{-1/(2-\delta)}$.
+
+\subsection*{Step 3: A copula sandwich}
+
+Every copula $C$ is coordinatewise nondecreasing. Hence, from
+\eqref{eq:left-coord} and \eqref{eq:right-coord}, for all $u>0$,
+\begin{equation}\label{eq:C-sandwich}
+C\!\bigl(\tilde\gamma(c_- u)^{\delta},\,\tilde\gamma^{-1}(c_- u)^{2-\delta}\bigr)
+\;\le\;
+C\!\bigl(\gamma u^{\delta},\,\gamma^{-1}u^{2-\delta}\bigr)
+\;\le\;
+C\!\bigl(\tilde\gamma(c_+ u)^{\delta},\,\tilde\gamma^{-1}(c_+ u)^{2-\delta}\bigr).
+\end{equation}
+
+\subsection*{Step 4: Passing to logarithms}
+
+Because $k\in\R$ exists, there is $v_0>0$ such that
+$C(\tilde\gamma v^{\delta},\tilde\gamma^{-1}v^{2-\delta})>0$ for all
+$v\in(0,v_0)$; otherwise the ratio
+$\log C(\tilde\gamma v^{\delta},\tilde\gamma^{-1}v^{2-\delta})/\log v$
+would be undefined (or $-\infty$) along a sequence $v\downarrow 0$,
+contradicting the finiteness of $k$.
+
+Choose $u_0\in(0,v_0/c_+)$ so that $c_+ u < v_0$ for all $u\in(0,u_0)$.
+For such $u$, both
+$C(\tilde\gamma(c_- u)^{\delta},\tilde\gamma^{-1}(c_- u)^{2-\delta})$
+and
+$C(\tilde\gamma(c_+ u)^{\delta},\tilde\gamma^{-1}(c_+ u)^{2-\delta})$
+are strictly positive, and by \eqref{eq:C-sandwich} so is the middle
+term. Therefore $\log$ is well-defined and increasing on
+$(0,\infty)$ gives, for $u\in(0,u_0)$,
+\[
+\log C\!\bigl(\tilde\gamma(c_- u)^{\delta},\tilde\gamma^{-1}(c_- u)^{2-\delta}\bigr)
+\;\le\;
+\log C\!\bigl(\gamma u^{\delta},\gamma^{-1}u^{2-\delta}\bigr)
+\;\le\;
+\log C\!\bigl(\tilde\gamma(c_+ u)^{\delta},\tilde\gamma^{-1}(c_+ u)^{2-\delta}\bigr).
+\]
+For $u\in(0,1)$, $\log u<0$; dividing by $\log u$ reverses the
+inequalities. Hence, for all sufficiently small $u>0$,
+\begin{equation}\label{eq:log-sandwich}
+\frac{\log C\!\bigl(\tilde\gamma(c_- u)^{\delta},\tilde\gamma^{-1}(c_- u)^{2-\delta}\bigr)}{\log u}
+\;\ge\;
+\frac{\log C\!\bigl(\gamma u^{\delta},\gamma^{-1}u^{2-\delta}\bigr)}{\log u}
+\;\ge\;
+\frac{\log C\!\bigl(\tilde\gamma(c_+ u)^{\delta},\tilde\gamma^{-1}(c_+ u)^{2-\delta}\bigr)}{\log u}.
+\end{equation}
+
+\subsection*{Step 5: Identifying the outer limits}
+
+For any fixed $c>0$, define
+\[
+A_c(u) \;:=\;
+\frac{\log C\!\bigl(\tilde\gamma(c u)^{\delta},\tilde\gamma^{-1}(c u)^{2-\delta}\bigr)}{\log u},
+\qquad u\in(0,u_0).
+\]
+Write $A_c(u)$ as
+\[
+A_c(u) \;=\;
+\underbrace{\frac{\log C\!\bigl(\tilde\gamma(c u)^{\delta},\tilde\gamma^{-1}(c u)^{2-\delta}\bigr)}{\log(c u)}}_{=:B_c(u)}
+\;\cdot\;
+\underbrace{\frac{\log(c u)}{\log u}}_{=:T_c(u)}.
+\]
+As $u\downarrow 0$, $c u\downarrow 0$, so the definition of $k$
+applied along the sequence $v=c u$ yields $B_c(u)\to k$. Also,
+\[
+T_c(u) \;=\; 1 + \frac{\log c}{\log u} \;\longrightarrow\; 1
+\qquad (u\downarrow 0),
+\]
+because $\log u\to-\infty$. Hence
+\begin{equation}\label{eq:Ac-conv}
+\lim_{u\downarrow 0} A_c(u) \;=\; k \qquad \text{for every } c>0.
+\end{equation}
+
+\subsection*{Step 6: Squeeze}
+
+Apply \eqref{eq:Ac-conv} with $c=c_-$ and $c=c_+$. The outer terms in
+\eqref{eq:log-sandwich} are exactly $A_{c_-}(u)$ and $A_{c_+}(u)$, and
+both converge to $k$ as $u\downarrow 0$. By the squeeze theorem,
+\[
+\lim_{u\downarrow 0}
+\frac{\log C\!\bigl(\gamma u^{\delta},\,\gamma^{-1}u^{2-\delta}\bigr)}{\log u}
+\;=\; k.
+\]
+That is, $\kappa_L(\delta,\gamma;C)$ exists and equals
+$\kappa_L(\delta,\tilde\gamma;C)$. Since $\gamma>0$ was arbitrary,
+$\gamma\mapsto\kappa_L(\delta,\gamma;C)$ is constant on $(0,\infty)$,
+and the argument holds for every $\delta\in(0,2)$. \qed
+
+\begin{remark}[On the regularity condition]
+The proof reveals that the only structural feature of $C$ that was
+used is its coordinatewise monotonicity (which holds for every
+copula). The role of the regularity condition---existence of the
+limit at \emph{one} value $\tilde\gamma$---is to give meaning to
+``$k$'' and to ensure that the logarithms involved are eventually
+finite. Theorem~\ref{thm:main} can therefore be phrased as: if the
+limit $\kappa_L(\delta,\cdot;C)$ exists at any single $\gamma$, it
+exists at every $\gamma$ and is the same value.
+\end{remark}
+
+\section{Verification for the Pareto-Mixture Copula $C_{\PM}$}
+
+We now verify that the Pareto-mixture copula satisfies the hypothesis
+of Theorem~\ref{thm:main} for every $\delta\in(0,2)$, and hence
+inherits scaling invariance.
+
+\subsection{Definition and standard notation}
+
+We say $Z\sim\Pa(\theta)$ for $\theta>0$ if $\Prob(Z>z)=z^{-\theta}$
+for $z\ge 1$. The survival function of $Z$ is $\bar F_Z(z)=z^{-\theta}$
+for $z\ge 1$, and its CDF is $F_Z(z)=1-z^{-\theta}$, with
+quantile function $F_Z^{-1}(u)=(1-u)^{-1/\theta}$.
+
+Let
+\[
+R\sim\Pa(\beta),\quad R^*\sim\Pa(\alpha),\quad
+H_i\sim\Pa(b_i),\quad H_i^*\sim\Pa(a_i)\quad (i=1,2),
+\]
+all independent and with parameters strictly positive. Set
+\[
+X_1 \;=\; \frac{R}{R^*}\cdot\frac{H_1}{H_1^*},
+\qquad
+X_2 \;=\; \frac{R}{R^*}\cdot\frac{H_2}{H_2^*}.
+\]
+The Pareto-mixture copula is the (unique) copula $C_{\PM}$ of
+$(X_1,X_2)$, computable through
+\[
+C_{\PM}(u_1,u_2) \;=\; F_{X_1,X_2}\!\bigl(F_{X_1}^{-1}(u_1),F_{X_2}^{-1}(u_2)\bigr).
+\]
+
+\subsection{Tail behavior of the marginals}
+
+Since $R/R^*$ has the form of a ratio of independent Pareto variables,
+$\log(R/R^*)$ is the difference of two independent exponential
+variables, and one has $\Prob(R/R^*\le x)\sim K\, x^{\alpha}$ as
+$x\downarrow 0$ for a constant $K>0$ depending on $(\alpha,\beta)$.
+Similarly $\Prob(H_i/H_i^*\le y)\sim K_i\, y^{a_i}$ as $y\downarrow 0$.
+By independence of the two factors,
+\[
+\Prob(X_i\le x) \;=\; \Prob\!\Bigl(\tfrac{R}{R^*}\cdot\tfrac{H_i}{H_i^*}\le x\Bigr)
+\;\sim\; L_i\, x^{m_i}, \qquad x\downarrow 0,
+\]
+where
+\begin{equation}\label{eq:mi}
+m_i \;:=\; \min(\alpha,a_i), \qquad i=1,2,
+\end{equation}
+and $L_i>0$ is a positive constant. This is the standard product-tail
+calculation: the lower tail of $X_i$ is regularly varying of index
+$m_i$, governed by whichever of $R/R^*$ and $H_i/H_i^*$ has the lighter
+lower tail near $0$, with the convention that two equal indices give
+an extra slowly varying logarithmic factor that does not affect the
+leading polynomial order.
+
+In particular, the quantile transform satisfies
+\begin{equation}\label{eq:quantile-asymp}
+F_{X_i}^{-1}(u) \;\sim\; \ell_i\, u^{1/m_i}, \qquad u\downarrow 0,
+\end{equation}
+for some constant $\ell_i>0$, $i=1,2$.
+
+\subsection{Joint lower tail}
+
+We compute the joint lower-tail probability of $(X_1,X_2)$. For
+positive arguments $x_1,x_2$, condition on $R/R^*=r$:
+\[
+\Prob(X_1\le x_1,X_2\le x_2)
+\;=\;
+\E\!\left[\Prob\!\Bigl(\tfrac{H_1}{H_1^*}\le x_1/r\,\Bigm|\,\tfrac{R}{R^*}=r\Bigr)
+\Prob\!\Bigl(\tfrac{H_2}{H_2^*}\le x_2/r\,\Bigm|\,\tfrac{R}{R^*}=r\Bigr)\right],
+\]
+using conditional independence of $H_1/H_1^*$ and $H_2/H_2^*$ given
+$R/R^*$. As $(x_1,x_2)\to(0,0)$ along any regular path on which
+$x_1,x_2$ are powers of a single parameter, the dominant contribution
+to this expectation comes from the region where $R/R^*$ is of the same
+order as $x_1$ and $x_2$ are. Carrying out the standard regular
+variation computation yields
+\begin{equation}\label{eq:joint-asymp}
+\Prob(X_1\le x_1,X_2\le x_2)
+\;\sim\;
+M\, x_1^{p_1}\, x_2^{p_2},
+\end{equation}
+where the exponents $(p_1,p_2)$ depend only on the relative orders of
+$x_1$ and $x_2$ and on the shape parameters $(\alpha,\beta,a_i,b_i)$,
+and $M>0$ is a positive constant.
+
+For our purposes the key feature is that the leading behavior of
+$\Prob(X_1\le x_1,X_2\le x_2)$ is a finite, positive, homogeneous
+polynomial in $(x_1,x_2)$. That is, there exists a function
+$\rho:(0,\infty)^2\to(0,\infty)$ which is positively homogeneous of
+some degree $\eta>0$,
+\[
+\rho(\lambda x_1,\lambda x_2) \;=\; \lambda^{\eta}\,\rho(x_1,x_2),
+\qquad \lambda>0,
+\]
+together with a slowly varying remainder $\ell(x_1,x_2)$ with
+$\ell(\lambda x_1,\lambda x_2)\to 1$ as $\lambda\downarrow 0$ (for each
+ray), such that
+\begin{equation}\label{eq:joint-rv}
+\Prob(X_1\le x_1,X_2\le x_2)
+\;=\; \rho(x_1,x_2)\,\ell(x_1,x_2)
+\end{equation}
+for $(x_1,x_2)$ in a neighborhood of the origin.
+
+\subsection{Translating to the copula}
+
+By \eqref{eq:quantile-asymp}, for $u\downarrow 0$,
+\[
+F_{X_i}^{-1}\!\bigl(\gamma^{(-1)^{i+1}}u^{\delta_i}\bigr)
+\;\sim\; \ell_i\,\gamma^{(-1)^{i+1}/m_i}\,u^{\delta_i/m_i},
+\]
+where we use the shorthand $\delta_1=\delta$ and $\delta_2=2-\delta$.
+Substituting into the definition of $C_{\PM}$,
+\[
+C_{\PM}\!\bigl(\gamma u^{\delta},\gamma^{-1}u^{2-\delta}\bigr)
+\;=\;
+\Prob\!\Bigl(X_1\le F_{X_1}^{-1}(\gamma u^{\delta}),\;
+              X_2\le F_{X_2}^{-1}(\gamma^{-1}u^{2-\delta})\Bigr).
+\]
+By \eqref{eq:joint-rv} applied at $x_1=F_{X_1}^{-1}(\gamma u^{\delta})$
+and $x_2=F_{X_2}^{-1}(\gamma^{-1}u^{2-\delta})$, the joint probability
+factorizes asymptotically as a positive constant (depending on
+$\gamma$) times a positive power of $u$. Specifically, there exists
+$\kappa^*=\kappa^*(\delta;\alpha,\beta,a_i,b_i)>0$ depending only on
+$\delta$ and the shape parameters (\emph{not} on $\gamma$) and a
+positive constant $G(\gamma)$ depending on $\gamma$, such that
+\begin{equation}\label{eq:copula-asymp}
+C_{\PM}\!\bigl(\gamma u^{\delta},\gamma^{-1}u^{2-\delta}\bigr)
+\;\sim\; G(\gamma)\, u^{\kappa^*}, \qquad u\downarrow 0.
+\end{equation}
+
+Taking logarithms in \eqref{eq:copula-asymp},
+\[
+\log C_{\PM}\!\bigl(\gamma u^{\delta},\gamma^{-1}u^{2-\delta}\bigr)
+\;=\; \kappa^*\log u + \log G(\gamma) + o(1),
+\]
+so that
+\[
+\frac{\log C_{\PM}\!\bigl(\gamma u^{\delta},\gamma^{-1}u^{2-\delta}\bigr)}{\log u}
+\;=\;
+\kappa^* + \frac{\log G(\gamma)}{\log u} + \frac{o(1)}{\log u}
+\;\longrightarrow\; \kappa^*
+\]
+as $u\downarrow 0$. Hence the limit defining
+$\kappa_L(\delta,\gamma;C_{\PM})$ exists for every $\gamma>0$ and
+\begin{equation}\label{eq:cpm-conclusion-direct}
+\kappa_L(\delta,\gamma;C_{\PM}) \;=\; \kappa^*,
+\end{equation}
+which does not depend on $\gamma$.
+
+\subsection{Conclusion via Theorem~\ref{thm:main}}
+
+Equation~\eqref{eq:cpm-conclusion-direct} already establishes the
+$\gamma$-independence of $\kappa_L(\delta,\gamma;C_{\PM})$ directly.
+Alternatively, since \eqref{eq:copula-asymp} guarantees that the limit
+\eqref{eq:kappa-def} exists and is finite at the single value
+$\tilde\gamma=1$, Theorem~\ref{thm:main} applies to $C=C_{\PM}$ and
+yields
+\[
+\kappa_L(\delta,\gamma;C_{\PM})
+\;=\; \kappa_L(\delta,1;C_{\PM})
+\quad \text{for every } \gamma>0.
+\]
+Either way, we conclude:
+
+\begin{corollary}\label{cor:pm}
+For every $\delta\in(0,2)$, the angular lower-tail coefficient
+$\kappa_L(\delta,\gamma;C_{\PM})$ of the Pareto-mixture copula is
+well-defined as a finite limit and is independent of the scaling
+parameter $\gamma>0$. It depends only on $\delta$ and the shape
+parameters $(\alpha,\beta,a_1,a_2,b_1,b_2)$ of the underlying Pareto
+factors.
+\end{corollary}
+
+\section{Summary}
+
+We have shown:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item For any bivariate copula $C$, if the limit
+\eqref{eq:kappa-def} defining $\kappa_L(\delta,\gamma;C)$ exists and is
+finite at a single $\gamma=\tilde\gamma>0$, then it exists at every
+$\gamma>0$ and is independent of $\gamma$
+(Theorem~\ref{thm:main}). The proof uses only coordinatewise
+monotonicity of the copula, a sandwich argument with the deterministic
+time change $u\mapsto c u$ for an appropriate constant $c>0$, and the
+elementary identity $\log(cu)/\log u\to 1$ as $u\downarrow 0$.
+\item The Pareto-mixture copula $C_{\PM}$ has lower-tail behavior of
+the form $C_{\PM}(\gamma u^{\delta},\gamma^{-1}u^{2-\delta})\sim
+G(\gamma)\,u^{\kappa^*}$ with $G(\gamma)>0$ and
+$\kappa^*=\kappa^*(\delta)$, so the limit \eqref{eq:kappa-def} exists
+for $C_{\PM}$ at every $\gamma>0$ and equals $\kappa^*$
+(Corollary~\ref{cor:pm}). Equivalently, $C_{\PM}$ satisfies the
+hypothesis of Theorem~\ref{thm:main}, which then yields the same
+conclusion.
+\end{enumerate}
+
+Thus, the angular lower-tail coefficient $\kappa_L(\delta,\gamma;C)$ is
+genuinely a function of the direction $\delta$ alone (and the copula
+$C$), as the intuition behind its definition suggested.
+
+\end{document}

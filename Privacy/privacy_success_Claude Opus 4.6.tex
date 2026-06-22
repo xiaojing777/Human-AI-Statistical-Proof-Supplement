@@ -1,0 +1,168 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\title{Equivalence of R\'enyi DP, $(\varepsilon,\delta)$-DP, and $f$-DP Curves}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Setup and Assumptions}
+
+Consider the additive-noise mechanism $M(x) = A(x) + Z$ with $Z \sim \nu$ centered and symmetric. For neighboring datasets $x, x'$, let
+\[
+P = \mathcal{L}(M(x)), \qquad Q = \mathcal{L}(M(x')).
+\]
+
+We work under the following regularity assumptions, which hold for essentially all noise distributions of practical interest (Gaussian, Laplace, etc.):
+
+\paragraph{(A1)} $P$ and $Q$ are mutually absolutely continuous with densities $p, q$ on $\mathbb{R}^d$.
+
+\paragraph{(A2)} The privacy loss random variable
+\[
+L = \log\frac{p(Y)}{q(Y)}, \qquad Y \sim P,
+\]
+has a distribution with no atoms, and the moment generating function $\mathbb{E}_Q[(p/q)^\alpha]$ is finite for all $\alpha > 1$ in a neighborhood of every $\alpha$ where we evaluate.
+
+\paragraph{(A3)} The three ``DP curves'' are:
+\begin{itemize}
+    \item \textbf{R\'enyi:} $R(\alpha) := D_\alpha(P\|Q) = \frac{1}{\alpha-1}\log \mathbb{E}_Q\!\left[(p/q)^\alpha\right]$, $\alpha > 1$.
+    \item \textbf{$(\varepsilon,\delta)$-DP:} $\delta(\varepsilon) := \sup_{S} \big(P(S) - e^\varepsilon Q(S)\big) = \mathbb{E}_Q\!\left[(p/q - e^\varepsilon)_+\right]$, $\varepsilon > 0$.
+    \item \textbf{$f$-DP:} the trade-off function $T(P,Q)(\alpha) = \inf\{1 - \mathbb{E}_Q[\phi] : \mathbb{E}_P[\phi] \ge \alpha,\ 0\le\phi\le 1\}$, $\alpha\in[0,1]$.
+\end{itemize}
+
+For symmetry, the \emph{symmetric} versions are obtained by also considering $D_\alpha(Q\|P)$, $\delta(\varepsilon)$ computed from the worst of $(P,Q)$ and $(Q,P)$, and $f(\alpha) = \min\{T(P,Q),T(Q,P)\}$. Since $\nu$ is symmetric and $A$ is deterministic, one can check that $P$ and $Q$ are exchangeable up to translation, so the curves for $(P,Q)$ and $(Q,P)$ coincide; we work with the one-sided versions below.
+
+\section{Main Result}
+
+\begin{theorem}
+Under (A1)--(A3), the following three pieces of information are equivalent:
+\begin{enumerate}
+    \item The full R\'enyi DP curve $\{R(\alpha)\}_{\alpha>1}$.
+    \item The full $(\varepsilon,\delta)$-DP curve $\{\delta(\varepsilon)\}_{\varepsilon>0}$.
+    \item The full $f$-DP curve $\{f(\alpha)\}_{\alpha\in[0,1]}$.
+\end{enumerate}
+More precisely, each curve determines the distribution of the privacy loss random variable $L$ under $Q$, and hence determines the other two curves.
+\end{theorem}
+
+The proof has two parts: first we show (2) $\Leftrightarrow$ (3) via classical convex-duality arguments (this is well known, but we include it for completeness), and then we establish the new content: (1) $\Leftrightarrow$ (2).
+
+\section{The Privacy Loss Distribution as a Common Sufficient Statistic}
+
+Let $L = \log(p/q)$ viewed as a random variable, and let
+\[
+\mu(t) := Q(L \le t), \qquad \tilde\mu(t) := P(L \le t)
+\]
+be its CDFs under $Q$ and $P$ respectively. A standard change of measure gives
+\begin{equation}
+\tilde\mu(\mathrm{d}t) = e^{t}\,\mu(\mathrm{d}t), \tag{$\star$}
+\end{equation}
+because $\frac{\mathrm{d}P}{\mathrm{d}Q} = e^L$ $Q$-almost surely. Consequently $\mu$ alone determines $\tilde\mu$.
+
+\begin{lemma}
+Each of the three DP curves is a functional of $\mu$ alone.
+\end{lemma}
+
+\begin{proof}
+Using $(\star)$:
+\begin{itemize}
+    \item $\mathbb{E}_Q[(p/q)^\alpha] = \int e^{\alpha t}\,\mu(\mathrm{d}t)$, so $R(\alpha) = \frac{1}{\alpha-1}\log \int e^{\alpha t}\mu(\mathrm{d}t)$.
+    \item $\delta(\varepsilon) = \mathbb{E}_Q[(e^L - e^\varepsilon)_+] = \int (e^t - e^\varepsilon)_+\,\mu(\mathrm{d}t)$.
+    \item By the Neyman--Pearson lemma, the trade-off function $f$ is determined by the distribution of $L$ under $P$ and $Q$, hence by $\mu$ via $(\star)$. \qedhere
+\end{itemize}
+\end{proof}
+
+Thus to prove the theorem it suffices to show that \textbf{each curve uniquely determines $\mu$.}
+
+\section{$(\varepsilon,\delta)$-DP Curve $\Leftrightarrow$ Privacy Loss Distribution}
+
+\begin{proposition}
+Under (A1)--(A2), the function $\varepsilon \mapsto \delta(\varepsilon)$ uniquely determines $\mu$.
+\end{proposition}
+
+\begin{proof}
+From $(\star)$,
+\[
+\delta(\varepsilon) = \int_\varepsilon^\infty (e^t - e^\varepsilon)\,\mu(\mathrm{d}t) = \int_\varepsilon^\infty e^t\,\mu(\mathrm{d}t) - e^\varepsilon\, \mu([\varepsilon,\infty)).
+\]
+
+Differentiating in $\varepsilon$ (legitimate since (A2) ensures the integrand is absolutely continuous and $\mu$ has no atoms), we obtain
+\[
+\frac{\mathrm{d}\delta}{\mathrm{d}\varepsilon}(\varepsilon) = -e^\varepsilon\,\mu([\varepsilon,\infty)) \quad\Longleftrightarrow\quad \mu([\varepsilon,\infty)) = -e^{-\varepsilon}\,\delta'(\varepsilon).
+\]
+
+For $\varepsilon < 0$ (extending the curve in the natural way), the same computation yields $\mu$ on $(-\infty,0)$ as well; alternatively, $(\star)$ implies $\mu((-\infty,-\varepsilon]) = e^{-\varepsilon}\tilde\mu((-\infty,-\varepsilon])$, which by the symmetry of the problem can be read off from the curve for $(Q,P)$. Either way, $\mu$ is fully recovered from $\delta(\cdot)$.
+
+Conversely, $\mu$ determines $\delta$ by Lemma 1.
+\end{proof}
+
+The equivalence $(2) \Leftrightarrow (3)$ is the well-known Dong--Roth--Su correspondence: the trade-off function $f$ is the Legendre-type dual of the $(\varepsilon,\delta)$ curve,
+\[
+f(\alpha) = \sup_{\varepsilon \ge 0}\big(1 - \delta(\varepsilon) - e^\varepsilon \alpha\big),
+\]
+and this transform is an involution on convex DP curves. We omit the details.
+
+\section{R\'enyi DP Curve $\Leftrightarrow$ Privacy Loss Distribution}
+
+This is the substantive content of the theorem.
+
+\begin{proposition}
+Under (A1)--(A2), the function $\alpha \mapsto R(\alpha)$ on $(1,\infty)$ uniquely determines $\mu$.
+\end{proposition}
+
+\begin{proof}
+Define the moment generating function of $\mu$:
+\[
+\Phi(\alpha) := \int_{\mathbb{R}} e^{\alpha t}\,\mu(\mathrm{d}t), \qquad \alpha > 1.
+\]
+
+By Lemma 1, $R(\alpha) = \frac{1}{\alpha-1}\log \Phi(\alpha)$, so $\Phi(\alpha) = \exp\big((\alpha-1) R(\alpha)\big)$ is determined on $(1,\infty)$.
+
+\medskip
+\noindent\textit{Step 1: Extension to a strip.} Assumption (A2) and H\"older's inequality imply $\Phi$ is finite on an open interval containing $(1,\infty)$. Moreover, $\Phi$ extends to a holomorphic function on the strip $\{z \in \mathbb{C} : 1 < \operatorname{Re}(z) < \alpha_{\max}\}$ for any $\alpha_{\max}$ in the interior of the domain of finiteness, because $\partial_z e^{zt} = t e^{zt}$ is bounded by $|t| e^{(\operatorname{Re} z) t}$, which is $\mu$-integrable on compact substrips.
+
+\medskip
+\noindent\textit{Step 2: Identification by analytic continuation.} Suppose $\mu_1, \mu_2$ are two probability measures on $\mathbb{R}$ both consistent with the same R\'enyi curve $R$. Their MGFs $\Phi_1, \Phi_2$ agree on $(1,\infty)$, hence by the identity theorem for holomorphic functions, they agree on the entire common strip of analyticity.
+
+\medskip
+\noindent\textit{Step 3: Uniqueness of $\mu$ from MGF on a strip.} Pick any $\alpha_0 > 1$ in the interior of this strip. The function $h \mapsto \Phi_j(\alpha_0 + ih)$ is the Fourier transform of the finite measure $e^{\alpha_0 t}\mu_j(\mathrm{d}t)$. Since $\Phi_1 \equiv \Phi_2$ on the vertical line $\operatorname{Re}(z) = \alpha_0$, the Fourier transforms of these two finite measures coincide. By Fourier uniqueness,
+\[
+e^{\alpha_0 t}\mu_1(\mathrm{d}t) = e^{\alpha_0 t}\mu_2(\mathrm{d}t),
+\]
+and dividing by the strictly positive factor $e^{\alpha_0 t}$ gives $\mu_1 = \mu_2$.
+\end{proof}
+
+\begin{corollary}
+Combining Propositions 1 and 2 with the $(\varepsilon,\delta) \Leftrightarrow f$-DP correspondence, all three DP curves carry exactly the same information, namely the law of the privacy loss random variable under $Q$. Hence each one determines the other two.
+\end{corollary}
+
+\section{Remarks on Regularity and Failure Modes}
+
+Both directions of the equivalence rely crucially on (A2). The following two points clarify the scope.
+
+\paragraph{(i) Need for the full range $\alpha > 1$.} Knowing $R(\alpha)$ only on a finite interval $(1,\alpha_0)$ is \emph{not} sufficient in general: a bounded set of moments does not determine a distribution with unbounded support. The proof of Proposition 2 uses that the R\'enyi curve is known on an interval containing a \emph{limit point inside its analyticity domain}, which yields the MGF on a full strip via analytic continuation.
+
+\paragraph{(ii) Why $(\star)$ suffices for both directions.} The key structural fact is that the privacy loss random variable's distribution under $Q$ is a complete sufficient statistic for the dominated pair $(P,Q)$ as far as DP-style hypothesis testing is concerned. This is the underlying reason --- visible in the trade-off function literature --- why all three curves are equivalent.
+
+\paragraph{(iii) Symmetric additive mechanisms.} For the mechanism $M(x) = A(x) + Z$ with $Z$ symmetric, $P$ and $Q$ differ by a translation $\Delta = A(x') - A(x)$, so $L = \log\frac{\nu(y)}{\nu(y-\Delta)}$ under $Y \sim P$. Symmetry of $\nu$ implies $\mu$ and $\tilde\mu$ are related by $\tilde\mu(t) = 1 - \mu(-t)$, recovering the standard symmetry of the $f$-DP curve $f(\alpha) = f^{-1}(\alpha)$.
+
+\section{Conclusion}
+
+\paragraph{Answer to the problem.} \emph{Yes, and yes.} Under standard regularity (A1)--(A3) --- which is satisfied by all common additive-noise mechanisms such as Gaussian and Laplace --- the full exact R\'enyi DP curve, the full exact $(\varepsilon,\delta)$-DP curve, and the full exact $f$-DP curve are pairwise equivalent: each one uniquely determines the privacy loss random variable's distribution and hence the other two curves. The implications hold in \textbf{both} directions; there is no informational asymmetry among the three formalisms when the curves are known exactly and in full.
+
+The conversion maps are explicit:
+\[
+\mu([\varepsilon,\infty)) = -e^{-\varepsilon}\delta'(\varepsilon), \qquad \Phi(\alpha) = e^{(\alpha-1)R(\alpha)} = \int e^{\alpha t}\mu(\mathrm{d}t),
+\]
+with $\mu$ then yielding $f$ via the Neyman--Pearson lemma applied to the likelihood ratio $e^L$.
+
+\end{document}

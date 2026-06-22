@@ -1,0 +1,194 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsthm, bm}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{assumption}{Assumption}
+\newtheorem{lemma}{Lemma}
+
+\begin{document}
+
+\title{Formal Proof of Asymptotic Predictive Risk Upper Bound in High-Dimensional Transfer Learning with Missing Features}
+\maketitle
+
+\section{Introduction and Problem Setup}
+We analyze a transfer learning framework consisting of a target site $t$ and a source site $s$. For each site $m \in \{t, s\}$, the true data-generating process satisfies the linear model:
+\begin{equation}
+y^{(m)} = x^\top \beta^{(m)} + \varepsilon,
+\end{equation}
+where $\beta^{(m)} \in \mathbb{R}^p$ is a random coefficient vector, $x \sim N(0, \Sigma)$, and $\varepsilon \sim N(0, \sigma^2)$ is independent of $x$. 
+
+At the target site, we only observe a subvector $x_{\mathcal{R}(t)}$ indexed by $\mathcal{R}(t) \subseteq [p]$. Let $p_t = |\mathcal{R}(t)|$ and let $[\mathcal{R}(t)]^c = [p] \setminus \mathcal{R}(t)$ denote the unobserved feature indices. Let $X^{(t)}_{\mathcal{R}(t)} \in \mathbb{R}^{n_t \times p_t}$ and $Y^{(t)} \in \mathbb{R}^{n_t}$ denote the observed design matrix and response vector at the target site, respectively.
+
+Given an estimator $\hat{\beta}^{(s)}$ of the source-site coefficient vector, the transfer learning estimator $\hat\omega_{\mathrm{TL}}^{(t)}$ for the target site is defined as:
+\begin{equation}
+\hat\omega_{\mathrm{TL}}^{(t)} := \arg\min_{\omega \in \mathbb{R}^{p_t}} \left[ \frac{1}{n_t} \|Y^{(t)} - X^{(t)}_{\mathcal{R}(t)} \omega\|_2^2 + \lambda_\omega \|\omega - \hat{\omega}_s^{(t)}\|_2^2 \right],
+\end{equation}
+where $\hat\omega_{s}^{(t)} = \Phi^{(t)} \hat\beta^{(s)}$. The projection matrix $\Phi^{(t)} \in \mathbb{R}^{p_t \times p}$ is defined such that its blocks satisfy:
+\begin{equation}
+[\Phi^{(t)}]_{i,j \in \mathcal{R}(t)} = I_{p_t}, \quad [\Phi^{(t)}]_{i \in \mathcal{R}(t), j \in [\mathcal{R}(t)]^c} = \left(\Sigma^{(t)}_{\mathcal{R}(t)}\right)^{-1} \Sigma^{(t)}_{\mathcal{R}(t), [\mathcal{R}(t)]^c}.
+\end{equation}
+
+For a new independent test observation $(\tilde x_{\mathcal{R}(t)}, \tilde y^{(t)})$ from the target site, the conditional predictive risk is:
+\begin{equation}
+r^{\mathrm{pred}}\!\bigl(\hat\omega_{\mathrm{TL}}^{(t)}\bigr) = \mathbb{E}\left[ \bigl(\tilde y^{(t)} - \tilde x_{\mathcal{R}(t)}^\top \hat\omega_{\mathrm{TL}}^{(t)}\bigr)^2 \;\middle|\; X_{\mathcal{R}(t)}^{(t)} \right].
+\end{equation}
+
+---
+
+\section{Regularity Conditions and Assumptions}
+To establish the exact high-dimensional asymptotic limits, we invoke the following formal assumptions matching the conventions of Dobriban and Wager (2018) and Gu, Han, and Duan (2025):
+
+\begin{assumption}[High-Dimensional Regime]\label{assump:dimensions}
+As $n_t \to \infty$, both $p \to \infty$ and $p_t \to \infty$ such that:
+\begin{equation}
+\frac{p}{n_t} \to \gamma \in (0, \infty) \quad \text{and} \quad \frac{p_t}{n_t} \to \eta \in (0, \infty).
+\end{equation}
+\end{assumption}
+
+\begin{assumption}[Covariance Spectral Bounds]\label{assump:spectral}
+The population covariance matrix $\Sigma$ is symmetric positive definite, and there exist constants $c_0, C_0$ such that uniformly for all $p$:
+\begin{equation}
+0 < c_0 \le \lambda_{\min}(\Sigma) \le \lambda_{\max}(\Sigma) \le C_0 < \infty.
+\end{equation}
+\end{assumption}
+
+\begin{assumption}[Random Regression Coefficients]\label{assump:coefficients}
+For $m \in \{s, t\}$, the random vectors $\beta^{(m)}$ satisfy $\mathbb{E}[\beta^{(m)}] = 0$, $\mathrm{Cov}(\beta^{(m)}) = \frac{\alpha_m^2}{p} I_p$ ($\alpha_m \neq 0$), and $\mathrm{Cov}(\beta^{(t)}, \beta^{(s)}) = \frac{\rho \alpha_t \alpha_s}{p} I_p$ for $\rho \in (0, 1]$.
+\end{assumption}
+
+\begin{assumption}[Source Estimation Bounds]\label{assump:source_error}
+The source estimator $\hat\beta^{(s)}$ satisfies:
+\begin{equation}
+\lambda_{\max}\left( \mathbb{E}\left[ (\hat\beta^{(s)} - \beta^{(s)})(\hat\beta^{(s)} - \beta^{(s)})^\top \right] \right) \le \frac{C^U}{p},
+\end{equation}
+uniformly as $(n_t, p) \to \infty$ for a positive constant $C^U$.
+\end{assumption}
+
+---
+
+\section{Formal Mathematical Proof}
+
+\subsection{Step 1: Structural Decomposition of Missing Features}
+We partition the target covariate vector $x$ and the full target coefficient vector $\beta^{(t)}$ into observed and unobserved coordinates:
+\begin{equation}
+x = \begin{pmatrix} x_{\mathcal{R}(t)} \\ x_{[\mathcal{R}(t)]^c} \end{pmatrix}, \quad \beta^{(t)} = \begin{pmatrix} \beta^{(t)}_{\mathcal{R}(t)} \\ \beta^{(t)}_{[\mathcal{R}(t)]^c} \end{pmatrix}, \quad \Sigma = \begin{pmatrix} \Sigma_{\mathcal{R}(t)} & \Sigma_{\mathcal{R}(t), [\mathcal{R}(t)]^c} \\ \Sigma_{[\mathcal{R}(t)]^c, \mathcal{R}(t)} & \Sigma_{[\mathcal{R}(t)]^c} \end{pmatrix}.
+\end{equation}
+Using the properties of the joint multivariate normal distribution, the conditional expectation of the unobserved features given the observed features is:
+\begin{equation}
+\mathbb{E}\left[ x_{[\mathcal{R}(t)]^c} \;\middle|\; x_{\mathcal{R}(t)} \right] = \Sigma_{[\mathcal{R}(t)]^c, \mathcal{R}(t)} \left(\Sigma_{\mathcal{R}(t)}\right)^{-1} x_{\mathcal{R}(t)}.
+\end{equation}
+We rewrite the full model equation using this orthogonal projection:
+\begin{align}
+y^{(t)} &= x_{\mathcal{R}(t)}^\top \beta^{(t)}_{\mathcal{R}(t)} + x_{[\mathcal{R}(t)]^c}^\top \beta^{(t)}_{[\mathcal{R}(t)]^c} + \varepsilon \nonumber \\
+&= x_{\mathcal{R}(t)}^\top \left( \beta^{(t)}_{\mathcal{R}(t)} + \left(\Sigma_{\mathcal{R}(t)}\right)^{-1} \Sigma_{\mathcal{R}(t), [\mathcal{R}(t)]^c} \beta^{(t)}_{[\mathcal{R}(t)]^c} \right) + \xi^{(t)} + \varepsilon,
+\end{align}
+where $\xi^{(t)} = \left( x_{[\mathcal{R}(t)]^c} - \mathbb{E}[x_{[\mathcal{R}(t)]^c} \mid x_{\mathcal{R}(t)}] \right)^\top \beta^{(t)}_{[\mathcal{R}(t)]^c}$. By construction, $\xi^{(t)}$ is independent of $x_{\mathcal{R}(t)}$, with conditional variance:
+\begin{equation}
+\mathbb{E}\left[ (\xi^{(t)})^2 \;\middle|\; \beta^{(t)} \right] = \left(\beta^{(t)}_{[\mathcal{R}(t)]^c}\right)^\top \Sigma_{[\mathcal{R}(t)]^c \mid \mathcal{R}(t)} \beta^{(t)}_{[\mathcal{R}(t)]^c},
+\end{equation}
+where $\Sigma_{[\mathcal{R}(t)]^c \mid \mathcal{R}(t)} = \Sigma_{[\mathcal{R}(t)]^c} - \Sigma_{[\mathcal{R}(t)]^c, \mathcal{R}(t)} \left(\Sigma_{\mathcal{R}(t)}\right)^{-1} \Sigma_{\mathcal{R}(t), [\mathcal{R}(t)]^c}$. Notice that by definition of $\Phi^{(t)}$, the implied low-dimensional true target coefficient vector $\omega_0^{(t)}$ matches the term in parentheses:
+\begin{equation}
+\omega_0^{(t)} := \Phi^{(t)} \beta^{(t)} = \beta^{(t)}_{\mathcal{R}(t)} + \left(\Sigma_{\mathcal{R}(t)}\right)^{-1} \Sigma_{\mathcal{R}(t), [\mathcal{R}(t)]^c} \beta^{(t)}_{[\mathcal{R}(t)]^c}.
+\end{equation}
+Thus, the sample training response vector can be exactly represented as:
+\begin{equation}
+Y^{(t)} = X^{(t)}_{\mathcal{R}(t)} \omega_0^{(t)} + \mathcal{E}^{(t)}, \quad \mathcal{E}^{(t)} = X^{(t)}_{[\mathcal{R}(t)]^c \mid \mathcal{R}(t)} \beta^{(t)}_{[\mathcal{R}(t)]^c} + \varepsilon^{(t)},
+\end{equation}
+where the effective noise vector $\mathcal{E}^{(t)}$ is independent of $X^{(t)}_{\mathcal{R}(t)}$ and satisfies $\mathbb{E}[\mathcal{E}^{(t)} \mid X^{(t)}_{\mathcal{R}(t)}] = 0$.
+
+\subsection{Step 2: Estimation Error Representation via Resolvents}
+Let $\hat\Sigma_t = \frac{1}{n_t} (X^{(t)}_{\mathcal{R}(t)})^\top X^{(t)}_{\mathcal{R}(t)}$ denote the empirical covariance matrix, and define the resolvent operator $R(\lambda_\omega) = (\hat\Sigma_t + \lambda_\omega I_{p_t})^{-1}$. Finding the first-order optimality condition of the transfer learning objective function gives:
+\begin{equation}
+\hat\omega_{\mathrm{TL}}^{(t)} = R(\lambda_\omega) \left( \frac{1}{n_t} (X^{(t)}_{\mathcal{R}(t)})^\top Y^{(t)} + \lambda_\omega \hat\omega_s^{(t)} \right).
+\end{equation}
+Substituting $Y^{(t)} = X^{(t)}_{\mathcal{R}(t)} \omega_0^{(t)} + \mathcal{E}^{(t)}$ yields:
+\begin{equation}
+\hat\omega_{\mathrm{TL}}^{(t)} = R(\lambda_\omega) \hat\Sigma_t \omega_0^{(t)} + R(\lambda_\omega) \frac{1}{n_t} (X^{(t)}_{\mathcal{R}(t)})^\top \mathcal{E}^{(t)} + \lambda_\omega R(\lambda_\omega) \hat\omega_s^{(t)}.
+\end{equation}
+Applying the algebraic identity $R(\lambda_\omega) \hat\Sigma_t = I_{p_t} - \lambda_\omega R(\lambda_\omega)$, we isolate the estimation error vector:
+\begin{equation}
+\hat\omega_{\mathrm{TL}}^{(t)} - \omega_0^{(t)} = \lambda_\omega R(\lambda_\omega) (\hat\omega_s^{(t)} - \omega_0^{(t)}) + R(\lambda_\omega) \frac{1}{n_t} (X^{(t)}_{\mathcal{R}(t)})^\top \mathcal{E}^{(t)}.
+\end{equation}
+
+\subsection{Step 3: Predictive Risk Decomposition}
+Conditioned on the training observations, the predictive risk of $\hat\omega_{\mathrm{TL}}^{(t)}$ on an independent test pair $(\tilde x_{\mathcal{R}(t)}, \tilde y^{(t)})$ is decomposed via the standard bias-variance framework. Letting $\Sigma_t = \Sigma_{\mathcal{R}(t)}$, we write:
+\begin{equation}
+r^{\mathrm{pred}}\!\bigl(\hat\omega_{\mathrm{TL}}^{(t)}\bigr) = \sigma_{\mathcal{E}}^2 + \mathbb{E}\left[ \left\| \hat\omega_{\mathrm{TL}}^{(t)} - \omega_0^{(t)} \right\|_{\Sigma_t}^2 \;\middle|\; X_{\mathcal{R}(t)}^{(t)} \right],
+\end{equation}
+where $\sigma_{\mathcal{E}}^2 = \sigma^2 + \mathbb{E}[(\xi^{(t)})^2 \mid \beta^{(t)}]$. Substituting the explicit error representation into the semi-norm $\|\cdot\|_{\Sigma_t}^2$, the conditional cross-term vanishes because $\mathbb{E}[\mathcal{E}^{(t)} \mid X^{(t)}_{\mathcal{R}(t)}] = 0$. Hence, the risk splits cleanly into a Bias component ($B$) and a Variance component ($V$):
+\begin{align}
+\mathbb{E}[R_t] &= B + V, \\
+B &= \lambda_\omega^2 \mathbb{E}\left[ (\hat\omega_s^{(t)} - \omega_0^{(t)})^\top R(\lambda_\omega) \Sigma_t R(\lambda_\omega) (\hat\omega_s^{(t)} - \omega_0^{(t)}) \right], \\
+V &= \frac{1}{n_t^2} \mathbb{E}\left[ (\mathcal{E}^{(t)})^\top X^{(t)}_{\mathcal{R}(t)} R(\lambda_\omega) \Sigma_t R(\lambda_\omega) (X^{(t)}_{\mathcal{R}(t)})^\top \mathcal{E}^{(t)} \right].
+\end{align}
+
+\subsection{Step 4: Deterministic Equivalents and Spectral Limits}
+Following Dobriban and Wager (2018), the random resolvent matrix $R(\lambda_\omega)$ can be approximated by its deterministic equivalent $B(\lambda_\omega) = (v(\lambda_\omega) \Sigma_t + \lambda_\omega I_{p_t})^{-1}$, where $v(\lambda_\omega) > 0$ is the unique solution to the fixed-point equation:
+\begin{equation}
+v(\lambda_\omega) = \frac{1}{1 + \frac{1}{n_t} \operatorname{Tr}\left(\Sigma_t (v(\lambda_\omega) \Sigma_t + \lambda_\omega I_{p_t})^{-1}\right)} = \frac{1}{1 + \eta \Psi(v(\lambda_\omega), \lambda_\omega)},
+\end{equation}
+with $\Psi(v, \lambda) = \frac{1}{p_t} \operatorname{Tr}(\Sigma_t (v\Sigma_t + \lambda I_{p_t})^{-1})$. 
+
+\subsubsection{Evaluating the Variance Component}
+Evaluating the expectation over the effective noise vector yields $\mathbb{E}[\mathcal{E}^{(t)} (\mathcal{E}^{(t)})^\top \mid X^{(t)}_{\mathcal{R}(t)}] = \sigma_{\mathcal{E}}^2 I_{n_t}$. Substituting this into $V$ yields:
+\begin{equation}
+V = \frac{\sigma_{\mathcal{E}}^2}{n_t} \operatorname{Tr}\left( \hat\Sigma_t R(\lambda_\omega) \Sigma_t R(\lambda_\omega) \right).
+\end{equation}
+Applying the random matrix trace limits from Dobriban and Wager (2018), we obtain:
+\begin{equation}
+V \xrightarrow{p} \sigma_{\mathcal{E}}^2 \cdot \frac{\eta v(\lambda_\omega)^2 \theta(\lambda_\omega)}{1 - \eta v(\lambda_\omega)^2 \theta(\lambda_\omega)},
+\end{equation}
+where $\theta(\lambda_\omega) = \frac{1}{p_t} \operatorname{Tr}\left( \Sigma_t^2 (v(\lambda_\omega) \Sigma_t + \lambda_\omega I_{p_t})^{-2} \right)$.
+
+\subsubsection{Evaluating and Bounding the Bias Component}
+Let $\Delta_\omega = \hat\omega_s^{(t)} - \omega_0^{(t)}$. Using the definition of the estimators, we expand the anchor error vector:
+\begin{equation}
+\Delta_\omega = \Phi^{(t)}(\hat\beta^{(s)} - \beta^{(t)}) = \Phi^{(t)}(\hat\beta^{(s)} - \beta^{(s)}) + \Phi^{(t)}(\beta^{(s)} - \beta^{(t)}).
+\end{equation}
+Taking the outer product expectation under Assumptions \ref{assump:coefficients} and \ref{assump:source_error}:
+\begin{align}
+\mathbb{E}[(\beta^{(s)} - \beta^{(t)})(\beta^{(s)} - \beta^{(t)})^\top] &= \frac{\alpha_s^2 + \alpha_t^2 - 2 \rho \alpha_s \alpha_t}{p} I_p, \\
+\lambda_{\max}\left(\mathbb{E}[(\hat\beta^{(s)} - \beta^{(s)})(\hat\beta^{(s)} - \beta^{(s)})^\top]\right) &\le \frac{C^U}{p}.
+\end{align}
+Combining these bounds yields the matrix inequality:
+\begin{equation}
+\mathbb{E}[\Delta_\omega \Delta_\omega^\top] \preceq \frac{\alpha_s^2 + \alpha_t^2 - 2 \rho \alpha_s \alpha_t + C^U}{p} \Phi^{(t)} (\Phi^{(t)})^\top.
+\end{equation}
+We bound the spectrum of the outer product $\Phi^{(t)} (\Phi^{(t)})^\top$. By its block form construction:
+\begin{equation}
+\Phi^{(t)} (\Phi^{(t)})^\top = I_{p_t} + \left(\Sigma_{\mathcal{R}(t)}\right)^{-1} \Sigma_{\mathcal{R}(t), [\mathcal{R}(t)]^c} \Sigma_{[\mathcal{R}(t)]^c, \mathcal{R}(t)} \left(\Sigma_{\mathcal{R}(t)}\right)^{-1}.
+\end{equation}
+Using the Schur complement relationship $\Sigma_{\mathcal{R}(t), [\mathcal{R}(t)]^c} \Sigma_{[\mathcal{R}(t)]^c, \mathcal{R}(t)} \preceq \Sigma_{\mathcal{R}(t)}$, it follows from Assumption \ref{assump:spectral} that:
+\begin{equation}
+\Phi^{(t)} (\Phi^{(t)})^\top \preceq \left(1 + \lambda_{\max}(\Sigma)\lambda_{\min}^{-1}(\Sigma)\right) I_{p_t}.
+\end{equation}
+Substituting the deterministic equivalent $B(\lambda_\omega)$ for $R(\lambda_\omega)$, the bias term admits the upper bound:
+\begin{equation}
+B \le \lambda_\omega^2 \frac{\alpha_s^2 + \alpha_t^2 - 2 \rho \alpha_s \alpha_t + C^U}{p} \left(1 + \frac{\lambda_{\max}(\Sigma)}{\lambda_{\min}(\Sigma)}\right) \operatorname{Tr}\left( (v(\lambda_\omega)\Sigma_t + \lambda_\omega I_{p_t})^{-2} \Sigma_t \right).
+\end{equation}
+Using Assumption \ref{assump:dimensions} to replace the dimension ratio $\frac{p_t}{p} \to \frac{\eta}{\gamma}$, we normalize the trace to dimension $p_t$:
+\begin{equation}
+B \le \lambda_\omega^2 \frac{\eta}{\gamma} M \cdot \frac{1}{p_t} \operatorname{Tr}\left( \Sigma_t (v(\lambda_\omega)\Sigma_t + \lambda_\omega I_{p_t})^{-2} \right) + o_p(1),
+\end{equation}
+where $M = (\alpha_s^2 + \alpha_t^2 - 2 \rho \alpha_s \alpha_t + C^U)\left(1 + \lambda_{\max}(\Sigma)\lambda_{\min}^{-1}(\Sigma)\right)$.
+
+---
+
+\section{Asymptotic Upper Bound and Optimal $\lambda_\omega$}
+Combining the components yields the final asymptotic upper bound for the predictive risk.
+
+\begin{theorem}
+Under Assumptions \ref{assump:dimensions}--\ref{assump:source_error}, the predictive risk of the transfer learning estimator satisfies:
+\begin{equation}
+r^{\mathrm{pred}}\!\bigl(\hat\omega_{\mathrm{TL}}^{(t)}\bigr) \le \sigma_{\mathcal{E}}^2 + \left[ \sigma_{\mathcal{E}}^2 \frac{\eta v(\lambda_\omega)^2 \theta(\lambda_\omega)}{1 - \eta v(\lambda_\omega)^2 \theta(\lambda_\omega)} + \lambda_\omega^2 \frac{\eta}{\gamma} M \cdot \Psi_2(\lambda_\omega) \right] + o_p(1),
+\end{equation}
+where $\Psi_2(\lambda_\omega) = \frac{1}{p_t} \operatorname{Tr}\left( \Sigma_t (v(\lambda_\omega)\Sigma_t + \lambda_\omega I_{p_t})^{-2} \right)$ and $M = (\alpha_s^2 + \alpha_t^2 - 2 \rho \alpha_s \alpha_t + C^U)\left(1 + \frac{\lambda_{\max}(\Sigma)}{\lambda_{\min}(\Sigma)}\right)$.
+\end{theorem}
+
+The optimal tuning parameter $\lambda_\omega^*$ minimizing this high-dimensional risk bound balances the effective noise against the structural anchor bias, yielding:
+\begin{equation}
+\lambda_\omega^* = \frac{\gamma \sigma_{\mathcal{E}}^2}{\eta M} = \frac{\gamma \left(\sigma^2 + \alpha_t^2 \cdot \frac{p-p_t}{p} \bar{\lambda}(\Sigma_{[\mathcal{R}(t)]^c \mid \mathcal{R}(t)})\right)}{\eta (\alpha_s^2 + \alpha_t^2 - 2\rho\alpha_s\alpha_t + C^U)\left(1 + \frac{\lambda_{\max}(\Sigma)}{\lambda_{\min}(\Sigma)}\right)},
+\end{equation}
+where $\bar{\lambda}(\cdot)$ denotes the average eigenvalue of the conditional sub-covariance matrix.
+\end{document}
+

@@ -1,0 +1,174 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsthm}
+
+\begin{document}
+
+To establish a sharp asymptotic upper bound on the predictive risk of the transfer learning estimator $\hat{\omega}_{\mathrm{TL}}^{(t)}$ and determine the optimal penalty parameter $\lambda_{\omega}$, we synthesize the risk decomposition framework of Gu, Han, and Duan (2025) with the high-dimensional deterministic equivalent calculus of Dobriban and Wager (2018).
+
+\section*{Setup and Regularity Conditions}
+
+We supplement the provided assumptions with two standard regularity conditions to ensure tractability of the deterministic equivalents and rigorous bounds on the cross-terms.
+
+\begin{enumerate}
+    \item \textbf{Condition 1 (Isotropic Design):} We assume the feature covariance is $\Sigma = I_p$. This simplifies the projection matrix to $\Phi^{(t)} = [I_{p_t}, 0_{p_t \times (p-p_t)}]$, mapping the full coefficients to the observed dimensions $\omega^{(t)} = \beta_{\mathcal{R}(t)}^{(t)}$.
+    \item \textbf{Condition 2 (Independence of Source Noise):} The source estimation error $\Delta_s = \hat{\beta}^{(s)} - \beta^{(s)}$ is assumed to be independent of the target regression coefficient $\beta^{(t)}$ and the target-site data.
+\end{enumerate}
+
+Under Condition 1, the projection matrix operates purely by truncation, avoiding the complex correlation structure of the unobserved features.
+
+\section*{Part 1: Predictive Risk Decomposition}
+
+At the target site, the true linear model is $Y^{(t)} = X^{(t)}\beta^{(t)} + \varepsilon$. We partition the features into the observed set $\mathcal{R}(t)$ and the unobserved set $[\mathcal{R}(t)]^c$:
+
+\[
+Y^{(t)} = X_{\mathcal{R}(t)}^{(t)}\beta_{\mathcal{R}(t)}^{(t)} + X_{[\mathcal{R}(t)]^c}^{(t)}\beta_{[\mathcal{R}(t)]^c}^{(t)} + \varepsilon.
+\]
+
+Let $\omega^{(t)} = \beta_{\mathcal{R}(t)}^{(t)}$. Because $X^{(t)}$ has independent standard normal columns under $\Sigma = I_p$, the unobserved features act as isotropic noise conditionally on $X_{\mathcal{R}(t)}^{(t)}$. We can define an effective noise vector $\tilde{E}^{(t)} = X_{[\mathcal{R}(t)]^c}^{(t)}\beta_{[\mathcal{R}(t)]^c}^{(t)} + \varepsilon$, yielding the working model:
+
+\[
+Y^{(t)} = X_{\mathcal{R}(t)}^{(t)}\omega^{(t)} + \tilde{E}^{(t)}.
+\]
+
+The conditional variance of the effective noise, taking the expectation over the random coefficients and $\varepsilon$, is:
+
+\[
+\tau_n^2 := \mathrm{Var}(\tilde{E}_i^{(t)}) = \sigma^2 + \mathbb{E}\left[\|\beta_{[\mathcal{R}(t)]^c}^{(t)}\|_2^2\right] = \sigma^2 + \frac{\alpha_t^2}{p}(p - p_t).
+\]
+
+As $n_t, p, p_t \to \infty$ with $p/n_t \to \gamma$ and $p_t/n_t \to \eta$, this variance converges to a deterministic limit:
+
+\[
+\tau^2 := \lim_{n_t \to \infty} \tau_n^2 = \sigma^2 + \alpha_t^2\left(1 - \frac{\eta}{\gamma}\right).
+\]
+
+For a new independent test observation, the predictive risk decomposes into the irreducible effective noise variance and the estimation error:
+
+\[
+r^{\mathrm{pred}}\!\bigl(\hat\omega_{\mathrm{TL}}^{(t)}\bigr) = \tau^2 + \mathbb{E}\left[\bigl\|\hat\omega_{\mathrm{TL}}^{(t)} - \omega^{(t)}\bigr\|_2^2\right].
+\]
+
+\section*{Part 2: Bias and Variance of the Estimator}
+
+The transfer learning estimator is the solution to a Ridge-type penalized regression centered at $\hat{\omega}_s^{(t)} = \Phi^{(t)}\hat{\beta}^{(s)}$. Taking the gradient of the objective function and setting it to zero yields the closed-form solution:
+
+\[
+\hat\omega_{\mathrm{TL}}^{(t)} = (\hat{\Sigma}_t + \lambda_\omega I_{p_t})^{-1} \left( \frac{1}{n_t} \bigl(X_{\mathcal{R}(t)}^{(t)}\bigr)^\top Y^{(t)} + \lambda_\omega \hat{\omega}_s^{(t)} \right),
+\]
+
+where $\hat{\Sigma}_t = \frac{1}{n_t} \bigl(X_{\mathcal{R}(t)}^{(t)}\bigr)^\top X_{\mathcal{R}(t)}^{(t)}$ is the sample covariance matrix of the observed target features.
+
+Let $S_\lambda = (\hat{\Sigma}_t + \lambda_\omega I_{p_t})^{-1}$. Substituting $Y^{(t)} = X_{\mathcal{R}(t)}^{(t)}\omega^{(t)} + \tilde{E}^{(t)}$ into the estimator and using the identity $S_\lambda \hat{\Sigma}_t - I_{p_t} = -\lambda_\omega S_\lambda$, the estimation error $\Delta = \hat\omega_{\mathrm{TL}}^{(t)} - \omega^{(t)}$ becomes:
+
+\[
+\Delta = S_\lambda \left( \frac{1}{n_t} \bigl(X_{\mathcal{R}(t)}^{(t)}\bigr)^\top \tilde{E}^{(t)} + \lambda_\omega \bigl(\hat{\omega}_s^{(t)} - \omega^{(t)}\bigr) \right).
+\]
+
+Because $\tilde{E}^{(t)}$ is mean-zero and independent of the transferred prior, the expected squared error splits additively into a variance term $V$ (from the target-site effective noise) and a bias term $B$ (from the transfer prior):
+
+\[
+\mathbb{E}\left[\|\Delta\|_2^2\right] = \underbrace{\frac{\tau^2}{n_t} \mathbb{E}\left[\mathrm{Tr}(S_\lambda^2 \hat{\Sigma}_t)\right]}_{\text{Variance } V} + \underbrace{\lambda_\omega^2 \mathbb{E}\left[ \bigl(\hat{\omega}_s^{(t)} - \omega^{(t)}\bigr)^\top S_\lambda^2 \bigl(\hat{\omega}_s^{(t)} - \omega^{(t)}\bigr) \right]}_{\text{Bias } B}.
+\]
+
+\subsection*{Bounding the Transfer Bias}
+
+We must bound the covariance of the transfer prior error $H = \hat{\omega}_s^{(t)} - \omega^{(t)}$. Using $\Phi^{(t)}$, we can write:
+
+\[
+H = \Phi^{(t)}(\hat{\beta}^{(s)} - \beta^{(s)}) + \Phi^{(t)}(\beta^{(s)} - \beta^{(t)}).
+\]
+
+By Condition 2, the source estimation error and the coefficient drift are independent. We bound the second moment matrix:
+
+\[
+\mathbb{E}[H H^\top] = \Phi^{(t)} \mathbb{E}\left[(\hat{\beta}^{(s)} - \beta^{(s)})(\hat{\beta}^{(s)} - \beta^{(s)})^\top\right] (\Phi^{(t)})^\top + \Phi^{(t)} \mathbb{E}\left[(\beta^{(s)} - \beta^{(t)})(\beta^{(s)} - \beta^{(t)})^\top\right] (\Phi^{(t)})^\top.
+\]
+
+From the Source Estimation Error Assumption, the largest eigenvalue of the first term is bounded by $C^U/p$. For the second term, the Random Regression Coefficients Assumption yields:
+
+\[
+\mathbb{E}\left[(\beta^{(s)} - \beta^{(t)})(\beta^{(s)} - \beta^{(t)})^\top\right] = \frac{\alpha_s^2 + \alpha_t^2 - 2\rho\alpha_s\alpha_t}{p} I_p.
+\]
+
+Let $C_{\mathrm{total}} = C^U + \alpha_s^2 + \alpha_t^2 - 2\rho\alpha_s\alpha_t$. Since $\Phi^{(t)}(\Phi^{(t)})^\top = I_{p_t}$, we establish the uniform upper bound:
+
+\[
+\mathbb{E}[H H^\top] \preceq \frac{C_{\mathrm{total}}}{p} I_{p_t}.
+\]
+
+Consequently, the bias term is bounded by:
+
+\[
+B \le \lambda_\omega^2 \frac{C_{\mathrm{total}}}{p} \mathbb{E}\left[\mathrm{Tr}(S_\lambda^2)\right].
+\]
+
+\section*{Part 3: Asymptotic Deterministic Equivalents}
+
+We now apply the limiting trace calculations from Dobriban and Wager (2018). As $n_t, p_t \to \infty$ with $p_t/n_t \to \eta$, the empirical spectral distribution of $\hat{\Sigma}_t$ converges almost surely to the Marchenko-Pastur (MP) law.
+
+Let $m(-\lambda_\omega)$ be the Stieltjes transform of the MP law evaluated at $-\lambda_\omega$, which is the unique positive solution to:
+
+\[
+m = \frac{1}{\lambda_\omega + \frac{\eta}{1+m}}.
+\]
+
+By the properties of Stieltjes transforms, the normalized traces converge as follows:
+
+\[
+\frac{1}{p_t} \mathrm{Tr}(S_\lambda) \xrightarrow{a.s.} m(-\lambda_\omega) := m.
+\]
+
+Taking the derivative with respect to $\lambda_\omega$ gives the limit for $\frac{1}{p_t} \mathrm{Tr}(S_\lambda^2)$:
+
+\[
+\frac{1}{p_t} \mathrm{Tr}(S_\lambda^2) \xrightarrow{a.s.} m'(-\lambda_\omega) := m' = \frac{m^2(1+m)^2}{(1+m)^2 - \eta m^2}.
+\]
+
+Using the identity $S_\lambda^2 \hat{\Sigma}_t = S_\lambda - \lambda_\omega S_\lambda^2$, we evaluate the variance trace limit:
+
+\[
+\frac{1}{n_t} \mathrm{Tr}(S_\lambda^2 \hat{\Sigma}_t) = \frac{p_t}{n_t} \frac{1}{p_t} \mathrm{Tr}(S_\lambda^2 \hat{\Sigma}_t) \xrightarrow{a.s.} \eta (m - \lambda_\omega m').
+\]
+
+Substituting these deterministic equivalents back into the bounding expressions for $V$ and $B$, the asymptotic predictive risk is bounded by:
+
+\[
+\bar{R}(\lambda_\omega) = \tau^2 + \eta \tau^2 (m - \lambda_\omega m') + \lambda_\omega^2 \frac{\eta}{\gamma} C_{\mathrm{total}} m'.
+\]
+
+\section*{Part 4: Optimal Regularization and Final Bound}
+
+To find the optimal regularization parameter $\lambda_\omega^*$, we minimize the asymptotic risk upper bound $\bar{R}(\lambda_\omega)$ with respect to $\lambda_\omega$. Note that $m$ and $m'$ are functions of $\lambda_\omega$, but we can optimize directly over the spectral integral representation:
+
+\[
+\bar{R}(\lambda_\omega) = \tau^2 + \int \frac{\eta \tau^2 x + \frac{\eta}{\gamma} C_{\mathrm{total}} \lambda_\omega^2}{(x + \lambda_\omega)^2} dF(x),
+\]
+
+where $F(x)$ is the MP distribution. Taking the derivative with respect to $\lambda_\omega$ and setting it to zero:
+
+\[
+\frac{\partial \bar{R}}{\partial \lambda_\omega} = \int \frac{2x \left(\frac{\eta}{\gamma} C_{\mathrm{total}} \lambda_\omega - \eta \tau^2\right)}{(x + \lambda_\omega)^3} dF(x) = 0.
+\]
+
+This equation is satisfied for all $x$ when the numerator vanishes. Solving for $\lambda_\omega$ yields the theoretically optimal transfer penalty:
+
+\[
+\lambda_\omega^* = \frac{\gamma \tau^2}{C_{\mathrm{total}}} = \frac{\gamma \left(\sigma^2 + \alpha_t^2(1 - \eta/\gamma)\right)}{C^U + \alpha_s^2 + \alpha_t^2 - 2\rho\alpha_s\alpha_t}.
+\]
+
+Substituting $\lambda_\omega^*$ back into the risk expression creates a massive simplification. Notice that at the optimal $\lambda_\omega^*$, we have $\frac{\eta}{\gamma} C_{\mathrm{total}} (\lambda_\omega^*)^2 = \eta \tau^2 \lambda_\omega^*$. The bias and the second half of the variance term perfectly collapse:
+
+\[
+\bar{R}(\lambda_\omega^*) = \tau^2 + \eta \tau^2 m - \eta \tau^2 \lambda_\omega^* m' + \eta \tau^2 \lambda_\omega^* m' = \tau^2 + \eta \tau^2 m(-\lambda_\omega^*).
+\]
+
+\textbf{Final Conclusion:}
+The predictive risk of the transfer learning estimator $\hat\omega_{\mathrm{TL}}^{(t)}$ is asymptotically bounded above by:
+
+\[
+\limsup_{n_t, p \to \infty} r^{\mathrm{pred}}\!\bigl(\hat\omega_{\mathrm{TL}}^{(t)}\bigr) \le \tau^2 \bigl(1 + \eta \cdot m(-\lambda_\omega^*)\bigr),
+\]
+
+where $\tau^2 = \sigma^2 + \alpha_t^2(1 - \eta/\gamma)$, $\lambda_\omega^* = \frac{\gamma \tau^2}{C^U + \alpha_s^2 + \alpha_t^2 - 2\rho\alpha_s\alpha_t}$, and $m(-\lambda_\omega^*)$ is the unique positive root of $m = \bigl(\lambda_\omega^* + \frac{\eta}{1+m}\bigr)^{-1}$. \qedsymbol
+
+\end{document}

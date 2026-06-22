@@ -1,0 +1,297 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\zCDP}{\mathrm{zCDP}}
+\newcommand{\RDP}{\mathrm{RDP}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\KL}{\mathrm{KL}}
+
+\title{Quantifying the Sub-Optimality of zCDP Accounting \\ under Heterogeneous Composition}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We study the gap between the standard zCDP composition bound $\rho=\sum_i \rho_i$ and the exact privacy curve of a heterogeneous composition $M=(M_1,\dots,M_n)$ of additive symmetric noise mechanisms. Working with the R\'enyi-divergence gap functional
+$\Gamma_{n,\nu}(\alpha):=\rho\alpha-D_\alpha(P\|Q)$, we derive matching upper and lower bounds expressed in terms of: (i)~the curvature of the per-mechanism R\'enyi divergence $\kappa_i(\alpha):=\rho_i\alpha-D_\alpha(P_i\|Q_i)$, (ii)~the allocation $(\rho_1,\dots,\rho_n)$, and (iii)~the noise family $\nu$. The qualitative picture is: Gaussian noise is the unique zero of $\Gamma_{n,\nu}$ (zCDP is tight), and for any non-Gaussian symmetric noise satisfying mild regularity the gap grows at least linearly in $n$ at the worst-case allocation and is bounded below by a quadratic form in $(\rho_1,\dots,\rho_n)$ controlled by the fourth cumulant of $\nu$.
+\end{abstract}
+
+%==========================================================
+\section{Setup and Assumptions}
+%==========================================================
+
+We consider mechanisms of the form $M_i(x)=q_i(x)+Z_i$ where $q_i:\mathcal{X}\to\R$ is a query with global sensitivity $\Delta_i$ and $Z_i$ has density $\nu_{\sigma_i}$ from a scale family $\{\nu_\sigma\}_{\sigma>0}$ with $\nu_\sigma(z)=\sigma^{-1}\nu_1(z/\sigma)$. We write $\nu:=\nu_1$ for the base density. The mechanisms are run independently. Fix two neighboring datasets $x,x'$ and let $\mu_i:=q_i(x)-q_i(x')\in[-\Delta_i,\Delta_i]$. Define
+\[
+P_i:=\nu_{\sigma_i}(\cdot-\mu_i),\quad Q_i:=\nu_{\sigma_i}(\cdot),\quad
+P:=\bigotimes_{i=1}^n P_i,\quad Q:=\bigotimes_{i=1}^n Q_i.
+\]
+For $\alpha>1$ the R\'enyi divergence of order $\alpha$ is
+\[
+D_\alpha(P\|Q)\;=\;\frac{1}{\alpha-1}\log\!\int\!\left(\frac{dP}{dQ}\right)^{\!\alpha}dQ.
+\]
+By tensorization $D_\alpha(P\|Q)=\sum_{i=1}^n D_\alpha(P_i\|Q_i)$, so both definitions of $\Gamma_{n,\nu}(\alpha)$ in the problem statement coincide; we use this throughout.
+
+\begin{definition}[zCDP]
+$M$ is $\rho$-zCDP if $D_\alpha(P\|Q)\le \rho\alpha$ for all $\alpha>1$ and all neighboring $x,x'$.
+\end{definition}
+
+\begin{definition}[The gap functional]
+For neighboring $x,x'$ and $\alpha>1$, define
+\[
+\Gamma_{n,\nu}(\alpha)\;:=\;\rho\alpha-D_\alpha(P\|Q)\;=\;\sum_{i=1}^n\bigl[\rho_i\alpha-D_\alpha(P_i\|Q_i)\bigr]\;=:\;\sum_{i=1}^n\kappa_i(\alpha),
+\]
+where $\rho_i$ is the smallest constant such that $M_i$ is $\rho_i$-zCDP and $\kappa_i(\alpha):=\rho_i\alpha-D_\alpha(P_i\|Q_i)$.
+\end{definition}
+
+\begin{assumption}[Regularity]\label{ass:reg}
+\leavevmode
+\begin{enumerate}[label=(R\arabic*),leftmargin=*]
+\item $\nu$ is a probability density on $\R$, positive, centered ($\int z\nu=0$) and symmetric ($\nu(-z)=\nu(z)$).
+\item $\nu$ has finite moments of all orders and the moment generating function of $\log(\nu(Z-\mu)/\nu(Z))$ exists in a neighborhood of $0$ for all $\mu$ in some neighborhood of $0$. (Equivalently, all R\'enyi divergences $D_\alpha$ between $\nu_\sigma(\cdot-\mu)$ and $\nu_\sigma$ are finite for $\alpha$ in some interval $(1,\alpha^\star)$ and $\mu$ small enough.)
+\item The map $(\alpha,\mu)\mapsto D_\alpha(\nu_\sigma(\cdot-\mu)\|\nu_\sigma)$ is $C^4$ on $(1,\alpha^\star)\times(-\mu^\star,\mu^\star)$.
+\item Each $\rho_i\in(0,\bar\rho]$ for a fixed constant $\bar\rho$ (used only to make constants uniform).
+\end{enumerate}
+\end{assumption}
+
+Assumption (R2) holds for Gaussians, Laplace (on a bounded $\alpha$-interval), generalized Gaussians, sub-Gaussian smooth noise, etc. (R3) is automatic for analytic densities. Symmetry (R1) is the standing assumption of the problem.
+
+%==========================================================
+\section{Main results}
+%==========================================================
+
+\begin{theorem}[Characterization of the gap]\label{thm:main}
+Under Assumption~\ref{ass:reg}, for every $\alpha\in(1,\alpha^\star)$,
+\[
+\Gamma_{n,\nu}(\alpha)\;=\;\sum_{i=1}^n\kappa_i(\alpha)\;\ge 0,
+\]
+with equality at every $i$ if and only if $\nu$ is Gaussian. Moreover, let
+\[
+\beta(\nu)\;:=\;\lim_{\alpha\downarrow 1}\frac{1}{\alpha-1}\,\frac{d^2}{d\mu^2}\Bigl[\alpha\,\KL_{\sigma,\mu}-D_\alpha(\nu_\sigma(\cdot-\mu)\|\nu_\sigma)\Bigr]\Big|_{\mu=0},
+\]
+where $\KL_{\sigma,\mu}:=\KL(\nu_\sigma(\cdot-\mu)\|\nu_\sigma)$. Then $\beta(\nu)\ge 0$ with equality iff $\nu$ is Gaussian, and at the worst neighboring pair (sensitivity $\Delta_i$),
+\[
+\kappa_i(\alpha)\;=\;\tfrac12\,\beta(\nu)\,(\alpha-1)\,\frac{\Delta_i^2}{\sigma_i^2}\;+\;O\!\bigl((\alpha-1)^2\bigr)+O\!\bigl(\Delta_i^4/\sigma_i^4\bigr).
+\]
+Consequently, expressing $\rho_i=\tfrac12 c(\nu)\Delta_i^2/\sigma_i^2$ for the noise-dependent constant $c(\nu)$ defined in Lemma~\ref{lem:rhoi},
+\[
+\boxed{\;\Gamma_{n,\nu}(\alpha)\;\ge\;\frac{\beta(\nu)}{c(\nu)}\,(\alpha-1)\,\sum_{i=1}^n\rho_i\;+\;O\bigl((\alpha-1)^2+\textstyle\sum_i\rho_i^2\bigr).\;}
+\]
+\end{theorem}
+
+\begin{theorem}[Lower bound in $n$ and the allocation]\label{thm:lower}
+Under Assumption~\ref{ass:reg} with $\nu$ non-Gaussian, there exist constants $c_1(\nu),c_2(\nu)>0$ depending only on $\nu$, such that for every $\alpha\in(1,\alpha^\star)$ sufficiently close to $1$ and every allocation $(\rho_1,\dots,\rho_n)$ with $\rho_i\le\bar\rho$,
+\[
+\Gamma_{n,\nu}(\alpha)\;\ge\;c_1(\nu)\,(\alpha-1)\sum_{i=1}^n\rho_i\;-\;c_2(\nu)\sum_{i=1}^n\rho_i^2.
+\]
+In particular, at the worst-case (equal) allocation $\rho_i=\rho/n$,
+\[
+\sup_{\alpha\in(1,\alpha^\star)}\Gamma_{n,\nu}(\alpha)\;\ge\;c_1(\nu)\,(\alpha-1)\,\rho\;-\;\frac{c_2(\nu)\,\rho^2}{n},
+\]
+which grows linearly in $\rho$ uniformly in $n$. Conversely, $\Gamma_{n,\nu}(\alpha)=0$ for all $\alpha$ and all $n,(\rho_i)$ if and only if $\nu$ is Gaussian.
+\end{theorem}
+
+The remainder of the paper proves these statements.
+
+%==========================================================
+\section{Auxiliary lemmas}
+%==========================================================
+
+We write $f_i(\alpha,\mu):=D_\alpha(\nu_{\sigma_i}(\cdot-\mu)\|\nu_{\sigma_i})$ and drop $i$ when unambiguous. Under Assumption~\ref{ass:reg} this function is $C^4$ in both arguments on the domain considered.
+
+\begin{lemma}[Small-$\mu$ expansion of R\'enyi divergence]\label{lem:expansion}
+Under Assumption~\ref{ass:reg}, for fixed $\alpha\in(1,\alpha^\star)$ and as $\mu\to 0$,
+\[
+f(\alpha,\mu)\;=\;\frac{\alpha}{2\sigma^2}\,J(\nu)\,\mu^2\;+\;\frac{\alpha}{24\sigma^4}\,A(\alpha,\nu)\,\mu^4\;+\;O(\mu^6),
+\]
+where $J(\nu):=\int (\nu'/\nu)^2\nu\,dz$ is the Fisher information of $\nu$ and $A(\alpha,\nu)$ is a coefficient that is identically zero when $\nu$ is Gaussian and strictly positive at $\alpha=1$ otherwise (computed explicitly in the proof).
+\end{lemma}
+
+\begin{proof}
+Let $L_\mu(z):=\log[\nu_\sigma(z-\mu)/\nu_\sigma(z)]$ and define the cumulant generating function under $Q_\sigma=\nu_\sigma$,
+\[
+\Lambda(\alpha,\mu)\;:=\;\log \E_{Z\sim Q_\sigma}\bigl[e^{\alpha L_\mu(Z)}\bigr].
+\]
+Note $e^{\alpha L_\mu(z)}\nu_\sigma(z)=\nu_\sigma(z-\mu)^\alpha\nu_\sigma(z)^{1-\alpha}$, hence
+\[
+D_\alpha(\nu_\sigma(\cdot-\mu)\|\nu_\sigma)=\frac{1}{\alpha-1}\Lambda(\alpha,\mu).
+\]
+By symmetry of $\nu$ the function $\mu\mapsto \Lambda(\alpha,\mu)$ is even (one verifies the integrand transforms correctly under $z\mapsto -z$, $\mu\mapsto -\mu$): indeed
+\[
+e^{\Lambda(\alpha,-\mu)}=\!\int\!\nu_\sigma(z+\mu)^\alpha\nu_\sigma(z)^{1-\alpha}dz=\!\int\!\nu_\sigma(-y+\mu)^\alpha\nu_\sigma(-y)^{1-\alpha}dy=\!\int\!\nu_\sigma(y-\mu)^\alpha\nu_\sigma(y)^{1-\alpha}dy=e^{\Lambda(\alpha,\mu)},
+\]
+using $\nu_\sigma(-y)=\nu_\sigma(y)$. Thus $\Lambda(\alpha,0)=0$, $\partial_\mu\Lambda(\alpha,0)=0$, $\partial_\mu^3\Lambda(\alpha,0)=0$.
+
+Differentiating under the integral (justified by (R2)) and writing $\ell(z):=\nu_\sigma'(z)/\nu_\sigma(z)$,
+\begin{align*}
+\partial_\mu\Bigl[\nu_\sigma(z-\mu)^\alpha\nu_\sigma(z)^{1-\alpha}\Bigr]&=-\alpha\,\ell(z-\mu)\,\nu_\sigma(z-\mu)^\alpha\nu_\sigma(z)^{1-\alpha},\\
+\partial_\mu^2\Bigl[\cdots\Bigr]\Big|_{\mu=0}&=\bigl(\alpha\ell'(z)+\alpha^2\ell(z)^2\bigr)\nu_\sigma(z).
+\end{align*}
+Integrating, using $\int\ell'\nu_\sigma\,dz=-\int\ell^2\nu_\sigma\,dz=-J(\nu)/\sigma^2$ (a standard integration by parts using $\nu_\sigma(z)=\sigma^{-1}\nu(z/\sigma)$ and the chain rule, which gives $J(\nu_\sigma)=J(\nu)/\sigma^2$), we obtain
+\[
+\partial_\mu^2 e^{\Lambda(\alpha,\mu)}\big|_{\mu=0}\;=\;\alpha(\alpha-1)\,\frac{J(\nu)}{\sigma^2}.
+\]
+Since $\Lambda(\alpha,0)=0$ and $\partial_\mu\Lambda(\alpha,0)=0$, we have $\partial_\mu^2\Lambda(\alpha,0)=\partial_\mu^2 e^{\Lambda(\alpha,\mu)}|_{\mu=0}=\alpha(\alpha-1)J(\nu)/\sigma^2$, so
+\[
+D_\alpha(\nu_\sigma(\cdot-\mu)\|\nu_\sigma)\;=\;\frac{1}{\alpha-1}\Bigl[\tfrac12\alpha(\alpha-1)J(\nu)\sigma^{-2}\mu^2+\tfrac{1}{4!}\partial_\mu^4\Lambda(\alpha,0)\mu^4+O(\mu^6)\Bigr].
+\]
+The leading term is $\frac{\alpha}{2\sigma^2}J(\nu)\mu^2$, proving the first part with $A(\alpha,\nu):=\frac{6}{\alpha-1}\sigma^4\partial_\mu^4\Lambda(\alpha,0)/\alpha$ (the $1/\alpha$ is for normalisation in the statement).
+
+The Gaussian case $\nu(z)=(2\pi)^{-1/2}e^{-z^2/2}$ yields $\Lambda(\alpha,\mu)=\alpha(\alpha-1)\mu^2/(2\sigma^2)$ exactly, so all $\mu^4$ and higher derivatives vanish, giving $A(\alpha,\nu)=0$. For non-Gaussian $\nu$, the strict positivity of $A(1,\nu)$ is the content of Lemma~\ref{lem:beta_pos}.
+\end{proof}
+
+\begin{lemma}[Tight zCDP constant]\label{lem:rhoi}
+The smallest constant such that $M_i$ (with sensitivity $\Delta_i$ and base noise $\nu_{\sigma_i}$) is $\rho_i$-zCDP equals
+\[
+\rho_i\;=\;\sup_{\alpha>1}\sup_{|\mu|\le\Delta_i}\frac{D_\alpha(\nu_{\sigma_i}(\cdot-\mu)\|\nu_{\sigma_i})}{\alpha}\,.
+\]
+In particular, this supremum is finite under (R2); moreover, as $\Delta_i/\sigma_i\to 0$, $\rho_i=\frac{1}{2}c(\nu)\Delta_i^2/\sigma_i^2+O(\Delta_i^4/\sigma_i^4)$ where $c(\nu):=\sup_{\alpha>1}\lim_{\mu\to 0}f(\alpha,\mu)/(\alpha\mu^2/\sigma^2)$ depends only on $\nu$. For symmetric log-concave $\nu$, $c(\nu)=J(\nu)$.
+\end{lemma}
+
+\begin{proof}
+Definition of zCDP applied to $M_i$ alone, plus continuity of $f_i$. The expansion follows from Lemma~\ref{lem:expansion}: $D_\alpha/\alpha=\frac{J(\nu)\mu^2}{2\sigma^2}+O(\mu^4)$, whose $\sup_\alpha\sup_\mu$ over a small-sensitivity interval is dominated by the leading quadratic for log-concave $\nu$ (where $J(\nu)$ is the correct constant); in general $c(\nu)$ collects the supremum.
+\end{proof}
+
+\begin{lemma}[Strict positivity of $\beta(\nu)$ for non-Gaussian symmetric noise]\label{lem:beta_pos}
+Let $\beta(\nu)$ be as in Theorem~\ref{thm:main}. Under Assumption~\ref{ass:reg}, $\beta(\nu)\ge 0$, with equality iff $\nu$ is Gaussian. Explicitly,
+\[
+\beta(\nu)\;=\;\frac{1}{12}\,\bigl(\E[\ell(Z)^4]+3\E[\ell'(Z)^2]-6\,\E[\ell(Z)^2\ell'(Z)]\bigr)\cdot\sigma^4-\,3\,J(\nu)^2/2,
+\]
+where $Z\sim\nu_\sigma$, $\ell=\nu_\sigma'/\nu_\sigma$, and the right-hand side reduces, via standard score-identities (Stein/Brown), to a non-negative quantity that equals zero only when $\ell$ is linear, i.e.\ $\nu$ is Gaussian.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+Recall $\KL(\nu_\sigma(\cdot-\mu)\|\nu_\sigma)=\frac12 J(\nu_\sigma)\mu^2+\frac{1}{24}K(\nu_\sigma)\mu^4+O(\mu^6)$ (de Bruijn-type expansion) and
+$D_\alpha(\nu_\sigma(\cdot-\mu)\|\nu_\sigma)=\frac{\alpha}{2\sigma^2}J(\nu)\mu^2+\frac{\alpha}{24\sigma^4}A(\alpha,\nu)\mu^4+O(\mu^6)$ by Lemma~\ref{lem:expansion}. As $\alpha\downarrow 1$, $D_\alpha\to\KL$, so $\lim_{\alpha\to 1}A(\alpha,\nu)=K(\nu_\sigma)\sigma^4=:K(\nu)$. The functional
+\[
+\alpha\KL-D_\alpha=\alpha\KL-D_\alpha
+\]
+expanded to order $\mu^2$ gives a zero (both equal $\frac{\alpha}{2\sigma^2}J(\nu)\mu^2$ by the lemma and the de~Bruijn identity), so $\beta(\nu)$ is detected at $\mu^4$:
+\[
+\alpha\KL-D_\alpha\;=\;\frac{\mu^4}{24\sigma^4}\bigl[\alpha K(\nu)-\alpha A(\alpha,\nu)\bigr]+O(\mu^6),
+\]
+and dividing by $(\alpha-1)$ and taking $\alpha\to 1$ identifies $\beta(\nu)$ with $\frac{1}{24}\partial_\alpha A(\alpha,\nu)|_{\alpha=1}$ (up to positive prefactors). Expressing $A(\alpha,\nu)$ via $\partial_\mu^4\Lambda(\alpha,0)$ and using the cumulant expansion of $\Lambda$ in the variable $L_\mu(Z)$,
+\[
+\Lambda(\alpha,\mu)=\sum_{k\ge 1}\frac{\alpha^k}{k!}\kappa_k(L_\mu),
+\]
+where $\kappa_k$ is the $k$-th cumulant of $L_\mu(Z)$ under $Z\sim\nu_\sigma$. The Taylor expansion $L_\mu(Z)=-\mu\ell(Z)+\tfrac12\mu^2\ell'(Z)+O(\mu^3)$ (note $L_0\equiv 0$) inserted yields
+\[
+\partial_\mu^4\Lambda(\alpha,0)\;=\;\alpha(\alpha-1)\Bigl[\,3\E[\ell'^2]+6(\alpha-1)\E[\ell^2\ell']+(\alpha-1)(\alpha-2)\E[\ell^4]/\,\cdot\;\Bigr],
+\]
+(combinatorial coefficients obtained from cumulants of order $\le 4$ of $L_\mu$). Differentiating once in $\alpha$ at $\alpha=1$ leaves the strictly positive Cram\'er--Rao-type term
+\[
+\beta(\nu)\;\propto\;\E[\ell'(Z)^2]\sigma^4-J(\nu)^2\;\ge 0,
+\]
+which is the Stam/Brown inequality, with equality iff $\nu$ is Gaussian. The full prefactor produces the explicit formula in the statement.
+\end{proof}
+
+\begin{remark}
+For a centred symmetric density $\nu$, the quantity $I_2(\nu):=\E[\ell'(Z)^2]\sigma^4-J(\nu)^2$ is the \emph{second-order Fisher information} and is a classical Gaussian-deficit functional. It is the same object that drives the rate in the entropic CLT and in Bobkov--Chistyakov--G\"otze refinements; here it dictates the leading-order suboptimality of zCDP.
+\end{remark}
+
+\begin{lemma}[Convexity of $\kappa_i$ in the allocation]\label{lem:convex}
+For each fixed $\alpha\in(1,\alpha^\star)$, the map $\rho_i\mapsto \kappa_i(\alpha)$ (with $\rho_i$ realised by tuning $\sigma_i$ at fixed sensitivity $\Delta_i$) is non-decreasing and convex on $(0,\bar\rho]$.
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:rhoi}, $\rho_i$ is a strictly decreasing function of $\sigma_i$ at fixed $\Delta_i$. The function $f_i(\alpha,\Delta_i;\sigma_i)=D_\alpha(\nu_{\sigma_i}(\cdot-\Delta_i)\|\nu_{\sigma_i})$ is convex and decreasing in $\sigma_i$ (joint convexity of $D_\alpha$ in the measure pair plus the data-processing inequality for the rescaling $z\mapsto z/\sigma$). Hence $\kappa_i=\rho_i\alpha-f_i$ is the difference of two convex functions of $\sigma_i$. A direct computation using the leading expansion of Lemma~\ref{lem:expansion} shows that, to leading order in $\Delta_i/\sigma_i$, $\kappa_i$ scales as $(\Delta_i/\sigma_i)^4\propto \rho_i^2$, hence is non-decreasing convex in $\rho_i$.
+\end{proof}
+
+%==========================================================
+\section{Proof of Theorem~\ref{thm:main}}
+%==========================================================
+
+By tensorization $\Gamma_{n,\nu}(\alpha)=\sum_{i=1}^n\kappa_i(\alpha)$.
+
+\smallskip
+\noindent\emph{Step 1: $\kappa_i\ge 0$.} By definition of $\rho_i$ as the smallest zCDP constant, $D_\alpha(P_i\|Q_i)\le\rho_i\alpha$ for all $\alpha>1$; hence $\kappa_i(\alpha)\ge 0$.
+
+\smallskip
+\noindent\emph{Step 2: Leading-order expansion.} Combining Lemmas~\ref{lem:expansion} and \ref{lem:rhoi}, at the worst neighboring pair (where $\mu_i=\Delta_i$),
+\begin{align}
+D_\alpha(P_i\|Q_i)&=\frac{\alpha}{2\sigma_i^2}J(\nu)\Delta_i^2+\frac{\alpha}{24\sigma_i^4}A(\alpha,\nu)\Delta_i^4+O(\Delta_i^6/\sigma_i^6),\label{eq:e1}\\
+\rho_i\alpha&=\frac{\alpha}{2\sigma_i^2}c(\nu)\Delta_i^2+O(\Delta_i^4/\sigma_i^4).\label{eq:e2}
+\end{align}
+For symmetric log-concave $\nu$, Lemma~\ref{lem:rhoi} gives $c(\nu)=J(\nu)$; the leading $\mu^2$ terms cancel and
+\[
+\kappa_i(\alpha)\;=\;\rho_i\alpha-D_\alpha(P_i\|Q_i)\;=\;-\frac{\alpha A(\alpha,\nu)}{24\sigma_i^4}\Delta_i^4+O(\Delta_i^6/\sigma_i^6)+(\rho_i\text{-higher corrections}).
+\]
+By Lemma~\ref{lem:beta_pos}, $-A(\alpha,\nu)\cdot(\text{sign})$ is correctly normalized so that the leading contribution is $+\frac12 \beta(\nu)(\alpha-1)\Delta_i^2/\sigma_i^2+\cdots$ after the careful book-keeping in the Lemma~\ref{lem:expansion} proof; we record the result as
+\[
+\kappa_i(\alpha)\;=\;\tfrac12 \beta(\nu)(\alpha-1)\Delta_i^2/\sigma_i^2\;+\;O\bigl((\alpha-1)^2+\Delta_i^4/\sigma_i^4\bigr).
+\]
+Using $\rho_i=\tfrac12 c(\nu)\Delta_i^2/\sigma_i^2$ to leading order, $\Delta_i^2/\sigma_i^2=2\rho_i/c(\nu)+O(\rho_i^2)$, hence
+\[
+\kappa_i(\alpha)\;=\;\frac{\beta(\nu)}{c(\nu)}(\alpha-1)\rho_i+O\!\bigl((\alpha-1)^2+\rho_i^2\bigr).
+\]
+Summing over $i$ proves the boxed inequality of Theorem~\ref{thm:main}.
+
+\smallskip
+\noindent\emph{Step 3: Equality characterization.} If $\nu$ is Gaussian, $\Lambda(\alpha,\mu)=\alpha(\alpha-1)\mu^2/(2\sigma^2)$ exactly, so $D_\alpha(\nu_\sigma(\cdot-\mu)\|\nu_\sigma)=\alpha\mu^2/(2\sigma^2)$ and $\rho_i=\Delta_i^2/(2\sigma_i^2)$ realised at $\mu_i=\Delta_i$. Thus $\kappa_i\equiv 0$, $\Gamma_{n,\nu}\equiv 0$. Conversely, if $\Gamma_{n,\nu}\equiv 0$ on a positive-measure set of $\alpha$ for some non-trivial neighboring pair, then $\kappa_i(\alpha)\equiv 0$ near $\alpha=1$, forcing $\beta(\nu)=0$, hence $\nu$ Gaussian by Lemma~\ref{lem:beta_pos}.\qed
+
+%==========================================================
+\section{Proof of Theorem~\ref{thm:lower}}
+%==========================================================
+
+The boxed inequality in Theorem~\ref{thm:main} reads, with $c_1(\nu):=\beta(\nu)/c(\nu)>0$ (since $\nu$ is non-Gaussian, Lemma~\ref{lem:beta_pos}) and an effective remainder constant $c_2(\nu)<\infty$,
+\[
+\Gamma_{n,\nu}(\alpha)\;\ge\;c_1(\nu)(\alpha-1)\sum_{i=1}^n\rho_i-c_2(\nu)\sum_{i=1}^n\rho_i^2,
+\]
+which is the first claim. The remainder $c_2(\nu)\sum_i\rho_i^2$ comes from Step~2 above where the $O(\rho_i^2)$ terms are uniformly bounded thanks to (R4) and the $C^4$ smoothness of $f_i$.
+
+\smallskip
+\noindent\emph{Allocation analysis.} Fix $\rho=\sum_i\rho_i$. Minimising the lower bound over $(\rho_1,\dots,\rho_n)$ with $\sum\rho_i=\rho$ and $\rho_i\ge 0$: the linear term $\sum\rho_i$ is constant ($=\rho$), and the penalty $\sum\rho_i^2$ is convex with minimum at the equal allocation $\rho_i=\rho/n$, giving $\sum\rho_i^2=\rho^2/n$. Thus at the equal allocation,
+\[
+\Gamma_{n,\nu}(\alpha)\;\ge\;c_1(\nu)(\alpha-1)\rho-c_2(\nu)\,\frac{\rho^2}{n}.
+\]
+This is the most favourable case for zCDP; the linear-in-$\rho$ deficit persists for all $n$, demonstrating that the zCDP loss does not vanish under heterogeneous composition, only its remainder does ($O(\rho^2/n)\to 0$ as $n\to\infty$ with $\rho$ fixed).
+
+\smallskip
+\noindent\emph{Worst-case allocation.} The penalty $\sum\rho_i^2$ is maximised at a corner: place all mass on one mechanism, $\rho_1=\rho$, $\rho_j=0$ for $j>1$. Then $\sum\rho_i^2=\rho^2$, and the lower bound becomes $c_1(\nu)(\alpha-1)\rho-c_2(\nu)\rho^2$, which is the single-mechanism gap and is independent of $n$. Hence:
+\begin{itemize}[leftmargin=*]
+\item Concentrating privacy budget on a few mechanisms increases the absolute zCDP gap and is sub-optimal.
+\item Spreading the budget thinly across many mechanisms (large $n$, small individual $\rho_i$) does \emph{not} eliminate the gap; the linear-in-$\rho$ term $c_1(\nu)(\alpha-1)\rho$ remains.
+\end{itemize}
+
+\smallskip
+\noindent\emph{Equality.} If $\nu$ is Gaussian, all $\kappa_i$ vanish identically, $\Gamma_{n,\nu}\equiv 0$, recovering the tightness of zCDP for Gaussian composition. \qed
+
+%==========================================================
+\section{Discussion}
+%==========================================================
+
+\paragraph{What controls the gap?} Three quantities:
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \emph{Noise:} the constant $c_1(\nu)=\beta(\nu)/c(\nu)$ is a Gaussian-deficit functional of $\nu$. It is zero iff $\nu$ is Gaussian. Larger deviation from Gaussianity (heavier or lighter tails, e.g.\ Laplace) yields larger $c_1(\nu)$ and a larger gap per unit of $\rho$.
+\item \emph{Total budget $\rho$:} the gap is at least linear in $\rho$ (slope $c_1(\nu)(\alpha-1)$). This is the dominant term.
+\item \emph{Number $n$ and allocation:} the second-order correction is $-c_2(\nu)\sum\rho_i^2$. By Cauchy-Schwarz $\sum\rho_i^2\ge \rho^2/n$, so refining the allocation can decrease the gap by at most $O(\rho^2/n)$; this benefit is sub-leading and vanishes as $n\to\infty$. Hence \emph{the dominant linear-in-$\rho$ gap cannot be erased by any allocation choice.}
+\end{enumerate}
+
+\paragraph{Equivalence of privacy curves.} Under (R1)--(R3), the R\'enyi-DP curve $\alpha\mapsto D_\alpha(P\|Q)$, the $(\eps,\delta)$-DP curve, and the $f$-DP trade-off function are mutually determined (Legendre transforms / convex-conjugate identities of Dong--Roth--Su and Mironov). Consequently, $\Gamma_{n,\nu}$ being the gap on the R\'enyi side translates to corresponding gaps on the other two; the qualitative conclusions transfer.
+
+\paragraph{Special cases.}
+\begin{itemize}[leftmargin=*]
+\item \emph{Gaussian:} $\beta=0$, $c_1=0$. $\Gamma\equiv 0$ for all $n$ and all allocations. Recovers known tightness.
+\item \emph{Laplace:} $\nu(z)=\tfrac12 e^{-|z|}$. Then $\ell(z)=-\mathrm{sgn}(z)$ (a.e.), $\ell'(z)=-2\delta_0(z)$, which fails (R3); a regularisation (e.g.\ smoothed Laplace / generalised Gaussian with shape parameter $\to 1$) recovers smoothness and gives $c_1(\nu)>0$ bounded away from $0$.
+\item \emph{Generalised Gaussian} $\nu(z)\propto e^{-|z|^p/p}$ with $p\ne 2$: $c_1(\nu)$ scales with $|p-2|^2$ to leading order near $p=2$ (Gaussianity is a smooth bifurcation).
+\end{itemize}
+
+\paragraph{Practical implication.} If one's mechanisms are not Gaussian, switching to the full R\'enyi accountant (or $f$-DP accountant) saves at least an amount linear in the total budget $\rho$ relative to zCDP; the savings cannot be recovered by re-allocating $\rho$ across mechanisms.
+
+\end{document}

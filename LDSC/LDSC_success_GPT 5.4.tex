@@ -1,0 +1,506 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage[margin=1in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\1}{\mathbf{1}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\E}{\mathbb{E}}
+
+\begin{document}
+
+\begin{center}
+    {\Large Exact variance of the centered oracle LDSC estimator}\\[1em]
+\end{center}
+
+\paragraph{Model and estimator.}
+Let \(X\in\R^{n\times p}\) and \(y\in\R^n\) satisfy
+\[
+y=X\alpha+\varepsilon,
+\]
+where \(\alpha=(\alpha_1,\dots,\alpha_p)^\top\in\R^p\) is a fixed, deterministic vector of genetic effects, and
+\[
+\varepsilon=(\varepsilon_1,\dots,\varepsilon_n)^\top,\qquad
+\varepsilon_r\stackrel{\mathrm{i.i.d.}}{\sim}N(0,\sigma_\varepsilon^2).
+\]
+Assume also that the rows \(x_1^\top,\dots,x_n^\top\) of \(X\) are i.i.d.\ Gaussian,
+\[
+x_r\sim N_p(0,\Sigma),
+\]
+independently of \(\varepsilon\), where \(\Sigma\in\R^{p\times p}\) is the population covariance matrix of the genetic variants. The block-diagonal structure of \(\Sigma\) is assumed, but the derivation below only uses \(\Sigma\) itself.
+
+For \(j=1,\dots,p\), define the LD score
+\[
+\ell_j=\sum_{i=1}^p \Sigma_{ji}^2,
+\]
+and the marginal covariance estimator
+\[
+\widehat a_j=\frac{1}{n}X_j^\top y.
+\]
+Let
+\[
+\widehat w=(\widehat a_1^2,\dots,\widehat a_p^2)^\top,\qquad
+\ell=(\ell_1,\dots,\ell_p)^\top,
+\]
+and define
+\[
+\mu_\ell=\frac{1}{p}\1_p^\top \ell,\qquad
+\widehat\mu_w=\frac{1}{p}\1_p^\top \widehat w.
+\]
+The centered oracle LDSC estimator is
+\[
+\widetilde{\sigma}_\alpha^2
+=
+\frac{(\ell-\mu_\ell\1_p)^\top(\widehat w-\widehat\mu_w\1_p)}
+     {(\ell-\mu_\ell\1_p)^\top(\ell-\mu_\ell\1_p)}.
+\]
+
+We shall compute \(\Var(\widetilde{\sigma}_\alpha^2)\) exactly.
+
+\bigskip
+
+\begin{theorem}
+Define
+\[
+c:=\ell-\mu_\ell\1_p,\qquad
+C:=\operatorname{diag}(c),\qquad
+\Delta:=c^\top c=\sum_{j=1}^p(\ell_j-\mu_\ell)^2.
+\]
+Further, let
+\[
+\beta:=\Sigma\alpha,\qquad
+\tau^2:=\alpha^\top\Sigma\alpha+\sigma_\varepsilon^2,
+\qquad
+M:=\Sigma-\frac{\beta\beta^\top}{\tau^2}.
+\]
+Set
+\[
+B:=\beta^\top C\beta,
+\qquad
+S:=\tr(CM),
+\qquad
+R:=\beta^\top CMC\,\beta,
+\qquad
+U:=\tr\!\bigl((CM)^2\bigr).
+\]
+Then
+\[
+\Var(\widetilde{\sigma}_\alpha^2)
+=
+\frac{1}{\Delta^2}
+\left[
+\frac{8(n+2)(n+3)}{n^3}B^2
++\frac{4(n+2)(n+4)}{n^3}\tau^2R
++\frac{8(n+2)}{n^3}\tau^2BS
++\frac{2(n+2)}{n^3}\tau^4U
++\frac{2}{n^3}\tau^4S^2
+\right].
+\]
+Equivalently, in terms of \(\Sigma,\ell,\alpha,\sigma_\varepsilon^2\),
+\[
+B=\alpha^\top\Sigma C\Sigma\alpha,
+\]
+\[
+S=\tr(C\Sigma)-\frac{\alpha^\top\Sigma C\Sigma\alpha}{\tau^2},
+\]
+\[
+R=
+\alpha^\top\Sigma C\Sigma C\Sigma\alpha
+-\frac{(\alpha^\top\Sigma C\Sigma\alpha)^2}{\tau^2},
+\]
+and
+\[
+U=
+\tr\!\bigl((C\Sigma)^2\bigr)
+-\frac{2\,\alpha^\top\Sigma C\Sigma C\Sigma\alpha}{\tau^2}
++\frac{(\alpha^\top\Sigma C\Sigma\alpha)^2}{\tau^4}.
+\]
+Hence \(\Var(\widetilde{\sigma}_\alpha^2)\) is expressed entirely in terms of
+\[
+n,\ \Sigma,\ \ell,\ \alpha,\ \sigma_\varepsilon^2.
+\]
+\end{theorem}
+
+\begin{proof}
+Since \(c^\top\1_p=0\), we have
+\[
+(\ell-\mu_\ell\1_p)^\top(\widehat w-\widehat\mu_w\1_p)
+=
+c^\top\widehat w
+=
+\sum_{j=1}^p c_j\widehat a_j^2
+=
+\widehat a^\top C\,\widehat a,
+\]
+where \(\widehat a=(\widehat a_1,\dots,\widehat a_p)^\top\). Therefore
+\[
+\widetilde{\sigma}_\alpha^2
+=
+\frac{\widehat a^\top C\,\widehat a}{\Delta},
+\qquad
+\Var(\widetilde{\sigma}_\alpha^2)
+=
+\frac{1}{\Delta^2}\Var(\widehat a^\top C\,\widehat a).
+\]
+It remains to compute \(\Var(\widehat a^\top C\,\widehat a)\).
+
+\medskip
+
+For one observation, write
+\[
+\eta:=x^\top\alpha+\varepsilon,
+\]
+where \(x\sim N_p(0,\Sigma)\) and \(\varepsilon\sim N(0,\sigma_\varepsilon^2)\) are independent. Then
+\[
+\E[x\eta]=\E[xx^\top]\alpha=\Sigma\alpha=\beta,
+\]
+and
+\[
+\Var(\eta)=\alpha^\top\Sigma\alpha+\sigma_\varepsilon^2=\tau^2.
+\]
+Since \((x,\eta)\) is jointly Gaussian with covariance
+\[
+\Cov\begin{pmatrix}x\\ \eta\end{pmatrix}
+=
+\begin{pmatrix}
+\Sigma & \beta\\
+\beta^\top & \tau^2
+\end{pmatrix},
+\]
+the Gaussian regression formula gives
+\[
+x=\frac{\beta}{\tau^2}\eta+z,
+\]
+where
+\[
+z\sim N_p(0,M),\qquad
+M=\Sigma-\frac{\beta\beta^\top}{\tau^2},
+\]
+and \(z\) is independent of \(\eta\).
+
+Now define
+\[
+u:=x\eta\in\R^p.
+\]
+Then
+\[
+u=\beta+\xi,
+\qquad
+\xi:=u-\beta
+=\beta\left(\frac{\eta^2}{\tau^2}-1\right)+z\eta.
+\]
+For the sample \(r=1,\dots,n\), let
+\[
+u_r:=x_r y_r,\qquad
+\xi_r:=u_r-\beta.
+\]
+Then the vectors \(\xi_1,\dots,\xi_n\) are i.i.d.\ with mean zero, and
+\[
+\widehat a
+=
+\frac{1}{n}\sum_{r=1}^n u_r
+=
+\beta+\bar\xi,
+\qquad
+\bar\xi:=\frac{1}{n}\sum_{r=1}^n \xi_r.
+\]
+Hence
+\[
+\widehat a^\top C\,\widehat a
+=
+(\beta+\bar\xi)^\top C(\beta+\bar\xi)
+=
+B+2\beta^\top C\bar\xi+\bar\xi^\top C\bar\xi,
+\]
+where
+\[
+B:=\beta^\top C\beta.
+\]
+
+Define the scalar random variables
+\[
+a_r:=\beta^\top C\xi_r,\qquad
+q_r:=\xi_r^\top C\xi_r,\qquad
+b_{rs}:=\xi_r^\top C\xi_s\quad (r\neq s).
+\]
+Then
+\[
+\widehat a^\top C\,\widehat a
+=
+B+\frac{2}{n}\sum_{r=1}^n a_r
++\frac{1}{n^2}\sum_{r=1}^n q_r
++\frac{1}{n^2}\sum_{r\neq s} b_{rs}.
+\]
+By independence and centering, the only non-vanishing covariance among these sums is the covariance between \(\sum_r a_r\) and \(\sum_r q_r\). Therefore
+\begin{equation}\label{eq:master}
+\Var(\widehat a^\top C\,\widehat a)
+=
+\frac{4}{n}\E[a_1^2]
++\frac{4}{n^2}\E[a_1q_1]
++\frac{1}{n^3}\Var(q_1)
++\frac{2(n-1)}{n^3}\E[b_{12}^2].
+\end{equation}
+
+We now compute each term.
+
+\medskip
+
+Introduce
+\[
+\nu:=\frac{\eta^2}{\tau^2}-1,\qquad
+\rho:=\beta^\top Cz,\qquad
+\kappa:=z^\top Cz.
+\]
+Then
+\[
+a_1=B\nu+\eta\rho,
+\qquad
+q_1=B\nu^2+2\nu\eta\rho+\eta^2\kappa.
+\]
+Because \(\eta/\tau\sim N(0,1)\),
+\[
+\E[\nu^2]=2,\qquad
+\E[\nu^3]=8,\qquad
+\E[\nu^4]=60,
+\]
+\[
+\E[\eta^2\nu]=2\tau^2,\qquad
+\E[\eta^2\nu^2]=10\tau^2,\qquad
+\E[\eta^4]=3\tau^4.
+\]
+Since \(z\sim N_p(0,M)\),
+\[
+\E[\rho^2]=\beta^\top CMC\,\beta=R,
+\]
+\[
+\E[\kappa]=\tr(CM)=S,
+\]
+\[
+\E[\kappa^2]=\tr(CM)^2+2\tr\!\bigl((CM)^2\bigr)=S^2+2U,
+\]
+and \(\E[\rho\kappa]=0\) because \(\rho\kappa\) is a centered cubic Gaussian polynomial.
+
+Using the independence of \(z\) and \(\eta\), we obtain
+\[
+\E[a_1^2]
+=
+\E[(B\nu+\eta\rho)^2]
+=
+B^2\E[\nu^2]+\E[\eta^2]\E[\rho^2]
+=
+2B^2+\tau^2R.
+\]
+Next,
+\[
+\E[a_1q_1]
+=
+\E[(B\nu+\eta\rho)(B\nu^2+2\nu\eta\rho+\eta^2\kappa)].
+\]
+All terms with odd total degree in either \(z\) or \(\eta\) vanish, leaving
+\[
+\E[a_1q_1]
+=
+B^2\E[\nu^3]
++
+B\,\E[\eta^2\nu]\E[\kappa]
++
+2\,\E[\eta^2\nu]\E[\rho^2]
+=
+8B^2+2\tau^2BS+4\tau^2R.
+\]
+Also,
+\[
+\E[q_1]
+=
+B\E[\nu^2]+\E[\eta^2]\E[\kappa]
+=
+2B+\tau^2S.
+\]
+Similarly,
+\[
+\E[q_1^2]
+=
+\E[(B\nu^2+2\nu\eta\rho+\eta^2\kappa)^2].
+\]
+Again retaining only the nonzero terms,
+\[
+\E[q_1^2]
+=
+B^2\E[\nu^4]
++
+4\,\E[\eta^2\nu^2]\E[\rho^2]
++
+2B\,\E[\eta^2\nu^2]\E[\kappa]
++
+\E[\eta^4]\E[\kappa^2].
+\]
+Thus
+\[
+\E[q_1^2]
+=
+60B^2+40\tau^2R+20\tau^2BS+3\tau^4(S^2+2U),
+\]
+and therefore
+\[
+\Var(q_1)
+=
+\E[q_1^2]-\E[q_1]^2
+=
+56B^2+16\tau^2BS+40\tau^2R+2\tau^4S^2+6\tau^4U.
+\]
+
+It remains to compute \(\E[b_{12}^2]\). First note that
+\[
+\Cov(\xi)
+=
+\E[\xi\xi^\top]
+=
+\E\!\left[\left(\beta\nu+z\eta\right)\left(\beta\nu+z\eta\right)^\top\right].
+\]
+The cross terms vanish, hence
+\[
+\Cov(\xi)
+=
+\beta\beta^\top \E[\nu^2]+\E[\eta^2]\E[zz^\top]
+=
+2\beta\beta^\top+\tau^2M.
+\]
+Since \(M=\Sigma-\beta\beta^\top/\tau^2\), this simplifies to
+\[
+\Cov(\xi)=\tau^2\Sigma+\beta\beta^\top.
+\]
+Let
+\[
+V:=\tau^2\Sigma+\beta\beta^\top.
+\]
+Because \(\xi_1\) and \(\xi_2\) are independent and centered,
+\[
+\E[b_{12}^2]
+=
+\E[(\xi_1^\top C\xi_2)^2]
+=
+\tr(CVCV).
+\]
+Expanding \(V=\tau^2\Sigma+\beta\beta^\top\) yields
+\[
+\E[b_{12}^2]
+=
+4B^2+4\tau^2R+\tau^4U.
+\]
+
+Substituting all these expressions into \eqref{eq:master}, we obtain
+\[
+\Var(\widehat a^\top C\,\widehat a)
+=
+\frac{4}{n}(2B^2+\tau^2R)
++\frac{4}{n^2}(8B^2+2\tau^2BS+4\tau^2R)
+\]
+\[
+\hspace{3em}
++\frac{1}{n^3}\bigl(56B^2+16\tau^2BS+40\tau^2R+2\tau^4S^2+6\tau^4U\bigr)
++\frac{2(n-1)}{n^3}(4B^2+4\tau^2R+\tau^4U).
+\]
+Collecting coefficients gives
+\[
+\Var(\widehat a^\top C\,\widehat a)
+=
+\frac{8(n+2)(n+3)}{n^3}B^2
++\frac{4(n+2)(n+4)}{n^3}\tau^2R
++\frac{8(n+2)}{n^3}\tau^2BS
++\frac{2(n+2)}{n^3}\tau^4U
++\frac{2}{n^3}\tau^4S^2.
+\]
+Therefore
+\[
+\Var(\widetilde{\sigma}_\alpha^2)
+=
+\frac{1}{\Delta^2}
+\left[
+\frac{8(n+2)(n+3)}{n^3}B^2
++\frac{4(n+2)(n+4)}{n^3}\tau^2R
++\frac{8(n+2)}{n^3}\tau^2BS
++\frac{2(n+2)}{n^3}\tau^4U
++\frac{2}{n^3}\tau^4S^2
+\right].
+\]
+
+Finally, substituting
+\[
+\beta=\Sigma\alpha,\qquad
+\tau^2=\alpha^\top\Sigma\alpha+\sigma_\varepsilon^2,\qquad
+M=\Sigma-\frac{(\Sigma\alpha)(\Sigma\alpha)^\top}{\tau^2}
+\]
+into the definitions of \(B,S,R,U\) yields
+\[
+B=\alpha^\top\Sigma C\Sigma\alpha,
+\]
+\[
+S=\tr(C\Sigma)-\frac{\alpha^\top\Sigma C\Sigma\alpha}{\tau^2},
+\]
+\[
+R=
+\alpha^\top\Sigma C\Sigma C\Sigma\alpha
+-\frac{(\alpha^\top\Sigma C\Sigma\alpha)^2}{\tau^2},
+\]
+\[
+U=
+\tr\!\bigl((C\Sigma)^2\bigr)
+-\frac{2\,\alpha^\top\Sigma C\Sigma C\Sigma\alpha}{\tau^2}
++\frac{(\alpha^\top\Sigma C\Sigma\alpha)^2}{\tau^4}.
+\]
+This completes the proof.
+\end{proof}
+
+\paragraph{Final formula.}
+Let
+\[
+c=\ell-\mu_\ell\1_p,\qquad C=\operatorname{diag}(c),\qquad
+\Delta=\sum_{j=1}^p(\ell_j-\mu_\ell)^2,
+\]
+and
+\[
+\tau^2=\alpha^\top\Sigma\alpha+\sigma_\varepsilon^2.
+\]
+Then
+\[
+\boxed{
+\Var(\widetilde{\sigma}_\alpha^2)
+=
+\frac{1}{\Delta^2}
+\left[
+\frac{8(n+2)(n+3)}{n^3}B^2
++\frac{4(n+2)(n+4)}{n^3}\tau^2R
++\frac{8(n+2)}{n^3}\tau^2BS
++\frac{2(n+2)}{n^3}\tau^4U
++\frac{2}{n^3}\tau^4S^2
+\right],
+}
+\]
+where
+\[
+B=\alpha^\top\Sigma C\Sigma\alpha,
+\]
+\[
+S=\tr(C\Sigma)-\frac{\alpha^\top\Sigma C\Sigma\alpha}{\tau^2},
+\]
+\[
+R=
+\alpha^\top\Sigma C\Sigma C\Sigma\alpha
+-\frac{(\alpha^\top\Sigma C\Sigma\alpha)^2}{\tau^2},
+\]
+\[
+U=
+\tr\!\bigl((C\Sigma)^2\bigr)
+-\frac{2\,\alpha^\top\Sigma C\Sigma C\Sigma\alpha}{\tau^2}
++\frac{(\alpha^\top\Sigma C\Sigma\alpha)^2}{\tau^4}.
+\]
+
+This is the exact finite-sample variance of the centered oracle LDSC estimator under the Gaussian design model with fixed effects \(\alpha\).
+
+\end{document}

@@ -1,0 +1,99 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\begin{document}
+
+The short answer is that the $f$-DP and $(\varepsilon,\delta)$-DP curves always contain exactly the same information, and they both always imply the full exact R\'enyi DP (RDP) curve. However, the reverse implication---that the full exact RDP curve implies the $f$-DP curve---\textbf{only holds under a specific regularity condition} regarding the moment generating function of the privacy loss. If the mechanism has heavy tails such that the RDP curve is strictly infinite for all $\alpha > 1$, the RDP curve fails to uniquely identify the $f$-DP curve.
+
+\section{Setup and Definitions}
+
+Let $P = \mathcal{L}(M(x))$ and $Q = \mathcal{L}(M(x'))$ be the distributions of the mechanism on neighboring datasets. Since the additive noise $Z \sim \nu$ is centered and symmetric, $P$ and $Q$ are symmetric shifts of each other. 
+
+Define the \textbf{privacy loss random variable} under $P$ as:
+\[ L = \log \frac{dP}{dQ} \]
+
+The three exact privacy curves in question are defined as follows:
+\begin{enumerate}
+    \item \textbf{The RDP Curve}: For $\alpha > 1$,
+    \[ D_\alpha(P\|Q) = \frac{1}{\alpha-1} \log \mathbb{E}_P \left[ e^{(\alpha-1)L} \right] \]
+    \item \textbf{The $(\varepsilon, \delta)$-DP Curve}: For $\varepsilon > 0$,
+    \[ \delta(\varepsilon) = \sup_{S} [P(S) - e^\varepsilon Q(S)] \]
+    \item \textbf{The $f$-DP Curve}: The trade-off function $f_{P,Q}: [0,1] \to [0,1]$ represents the optimal hypothesis testing error:
+    \[ f_{P,Q}(x) = \inf_{\phi} \{ \mathbb{E}_Q[1 - \phi] : \mathbb{E}_P[\phi] \le x \} \]
+\end{enumerate}
+
+\section{Equivalence of $f$-DP and $(\varepsilon, \delta)$-DP}
+
+\begin{theorem}
+The full exact $f$-DP curve and the full exact $(\varepsilon, \delta)$-DP curve uniquely determine each other.
+\end{theorem}
+
+\begin{proof}
+By the results of Dong, Roth, and Su (2021), the trade-off function $f_{P,Q}(x)$ is a convex, decreasing function. The relation between $f$-DP and $(\varepsilon, \delta)$-DP is governed by convex duality. 
+
+Given the trade-off function $f_{P,Q}(x)$, the optimal $\delta(\varepsilon)$ for any $\varepsilon \ge 0$ is given by:
+\[ \delta(\varepsilon) = \sup_{x \in [0,1]} \left[ 1 - x e^\varepsilon - f_{P,Q}(x) \right] \]
+Conversely, because $f_{P,Q}$ is convex and bounded below by $0$, it is equal to its biconjugate. We can uniquely recover $f_{P,Q}(x)$ from the $(\varepsilon, \delta)$-DP curve via:
+\[ f_{P,Q}(x) = \sup_{\varepsilon \ge 0} \left[ 1 - x e^\varepsilon - \delta(\varepsilon) \right] \quad \text{for } x \in [0,1] \]
+Thus, $\{f(\alpha) : 0 \le \alpha \le 1\}$ and $\{\delta(\varepsilon) : \varepsilon > 0\}$ contain identical information.
+\end{proof}
+
+\section{The $f$-DP Curve Implies the RDP Curve}
+
+\begin{theorem}
+The full exact $f$-DP curve uniquely determines the exact RDP curve $\{D_\alpha(P\|Q) : \alpha > 1\}$.
+\end{theorem}
+
+\begin{proof}
+By the Neyman-Pearson lemma, the optimal test $\phi$ for testing $P$ vs $Q$ at level $x$ consists of thresholding the likelihood ratio $dP/dQ = e^L$. Therefore, the trade-off function $f_{P,Q}$ is exactly the flipped Receiver Operating Characteristic (ROC) curve of the likelihood ratio test.
+
+The distribution of the privacy loss $L$ is fully encoded in the geometry of $f_{P,Q}$. Specifically, because $f_{P,Q}$ is convex, it has a well-defined right-derivative $f'_{P,Q}(x)$ almost everywhere. The slopes of $f_{P,Q}$ correspond to the negative thresholds of the likelihood ratio:
+\[ -f'_{P,Q}(x) = c = e^\ell \]
+Consequently, the full trade-off curve $f_{P,Q}$ uniquely identifies the cumulative distribution function (CDF) of the likelihood ratio under both $P$ and $Q$. Because $f$-DP uniquely identifies the probability law $\mathcal{L}(L)$, it uniquely determines all moments of $e^L$. 
+
+Since $D_\alpha(P\|Q) = \frac{1}{\alpha-1} \log \mathbb{E}_P [ e^{(\alpha-1)L} ]$, the $f$-DP curve directly evaluates the RDP curve for all $\alpha > 1$.
+\end{proof}
+
+\section{Does the RDP Curve Imply the $f$-DP Curve?}
+
+This requires a vital regularity condition on the tails of the noise distribution $\nu$.
+
+\vspace{0.5em}
+\noindent\textbf{Assumption (Local Finiteness):} \textit{There exists some $\alpha_0 > 1$ such that $D_\alpha(P\|Q) < \infty$ for all $\alpha \in (1, \alpha_0)$.}
+\vspace{0.5em}
+
+\begin{theorem}
+Under the Local Finiteness assumption, the exact RDP curve uniquely determines the $f$-DP curve. If this assumption fails (i.e., $D_\alpha = \infty$ for all $\alpha > 1$), the RDP curve does \emph{not} uniquely determine the $f$-DP curve.
+\end{theorem}
+
+\begin{proof}[Proof (When the condition holds)]
+Let $M_L(t) = \mathbb{E}_P[e^{tL}]$ be the moment generating function (MGF) of $L$. 
+For $t > 0$, we have $M_L(t) = \exp(t \cdot D_{t+1}(P\|Q))$. 
+
+Let us examine $M_L(t)$ for $t \in (-1, 0]$. Using the change of measure, we have:
+\[ M_L(t) = \mathbb{E}_P \left[ \left(\frac{dP}{dQ}\right)^t \right] = \mathbb{E}_Q \left[ \left(\frac{dP}{dQ}\right)^{t+1} \right] \]
+Since $t \in (-1, 0]$, we have $t+1 \in (0, 1]$. Because the function $z \mapsto z^{t+1}$ is concave, Jensen's inequality implies $\mathbb{E}_Q[(dP/dQ)^{t+1}] \le (\mathbb{E}_Q[dP/dQ])^{t+1} = 1$. Thus, $M_L(t) \le 1$ for all $t \in (-1, 0]$.
+
+By the Local Finiteness assumption, $M_L(t) < \infty$ for $t \in (0, \alpha_0 - 1)$. 
+Combining these, $M_L(t)$ is finite on the open interval $(-1, \alpha_0 - 1)$. 
+
+A standard theorem in probability (e.g., properties of the bilateral Laplace transform) states that if the MGF of a random variable is finite on an open interval containing the origin, it uniquely determines the probability distribution. Because $0$ is strictly inside $(-1, \alpha_0 - 1)$, the exact RDP curve uniquely determines $\mathcal{L}(L)$. 
+
+As established in Theorem 2, the probability law of the likelihood ratio uniquely determines the Neyman-Pearson trade-off function $f_{P,Q}(x)$. Therefore, the RDP curve implies the $f$-DP (and $(\varepsilon,\delta)$-DP) curves.
+\end{proof}
+
+\begin{proof}[Proof of the Converse Failure (When the condition is violated)]
+Suppose we choose an additive noise mechanism $Z \sim \nu$ with extremely heavy tails such that the likelihood ratio has no bounded moments strictly greater than 1 (for instance, certain parameterizations of the Cauchy distribution or Log-Cauchy). 
+
+In this case, $D_\alpha(P\|Q) = \infty$ for all $\alpha > 1$. The exact RDP curve is simply the constant infinity. However, there are infinitely many distinct heavy-tailed distributions that yield $D_\alpha = \infty \quad \forall \alpha > 1$, and these distributions will have strictly different optimal hypothesis testing bounds (different $f$-DP curves). Therefore, knowing the RDP curve is $\infty$ provides zero information to reconstruct the specific $f$-DP curve.
+\end{proof}
+
+\end{document}

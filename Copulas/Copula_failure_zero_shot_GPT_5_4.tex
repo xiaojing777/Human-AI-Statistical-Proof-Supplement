@@ -1,0 +1,629 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{remark}[theorem]{Remark}
+
+\DeclareMathOperator{\Pa}{Pa}
+
+\begin{document}
+
+\title{Scaling invariance of the angular lower-tail coefficient and an application to the Pareto-mixture copula}
+\author{}
+\date{}
+\maketitle
+
+\paragraph{Definition.}
+Let $C$ be a copula on $[0,1]^2$. For $\delta\in(0,2)$ and $\gamma>0$, define
+\[
+\kappa_L(\delta,\gamma;C)
+=
+\lim_{u\downarrow 0}
+\frac{\log C\!\bigl(\gamma u^\delta,\gamma^{-1}u^{2-\delta}\bigr)}{\log u},
+\]
+whenever the limit exists.
+
+The purpose of this note is twofold:
+\begin{enumerate}
+    \item to prove that, under a minimal existence assumption, $\kappa_L(\delta,\gamma;C)$ does not depend on the scaling parameter $\gamma$;
+    \item to verify that the Pareto-mixture copula $C_{\rm PM}$ satisfies this property.
+\end{enumerate}
+
+\section*{1. A general scaling-invariance theorem}
+
+For the general statement below, no smoothness assumption on $C$ is needed beyond the defining properties of a copula. The only regularity condition is existence of the limit for one reference scaling.
+
+\begin{theorem}\label{thm:gamma-invariance}
+Fix $\delta\in(0,2)$ and let $C$ be a copula. Assume that there exists some $\tilde\gamma>0$ such that
+\[
+k
+:=
+\lim_{u\downarrow 0}
+\frac{\log C\!\bigl(\tilde\gamma u^\delta,\tilde\gamma^{-1}u^{2-\delta}\bigr)}{\log u}
+\]
+exists as a finite real number. Then, for every $\gamma>0$,
+\[
+\lim_{u\downarrow 0}
+\frac{\log C\!\bigl(\gamma u^\delta,\gamma^{-1}u^{2-\delta}\bigr)}{\log u}
+=
+k.
+\]
+Hence $\kappa_L(\delta,\gamma;C)$ is independent of $\gamma$.
+\end{theorem}
+
+\begin{proof}
+Fix $\delta\in(0,2)$ and $\gamma>0$. Let
+\[
+r:=\frac{\gamma}{\tilde\gamma}>0,
+\qquad
+c_-:=\min\!\left\{r^{1/\delta},\,r^{-1/(2-\delta)}\right\},
+\qquad
+c_+:=\max\!\left\{r^{1/\delta},\,r^{-1/(2-\delta)}\right\}.
+\]
+Then $c_->0$ and $c_+>0$.
+
+For every $u>0$,
+\[
+\frac{\tilde\gamma(c_-u)^\delta}{\gamma u^\delta}
+=
+\frac{\tilde\gamma c_-^\delta}{\gamma}
+=
+\frac{c_-^\delta}{r}
+\le 1,
+\]
+because $c_-\le r^{1/\delta}$. Likewise,
+\[
+\frac{\tilde\gamma^{-1}(c_-u)^{2-\delta}}{\gamma^{-1}u^{2-\delta}}
+=
+\frac{\gamma}{\tilde\gamma}c_-^{2-\delta}
+=
+r\,c_-^{2-\delta}
+\le 1,
+\]
+because $c_-\le r^{-1/(2-\delta)}$. Hence
+\begin{equation}\label{eq:left-coord}
+\tilde\gamma(c_-u)^\delta \le \gamma u^\delta,
+\qquad
+\tilde\gamma^{-1}(c_-u)^{2-\delta}\le \gamma^{-1}u^{2-\delta}.
+\end{equation}
+
+Similarly, since $c_+\ge r^{1/\delta}$ and $c_+\ge r^{-1/(2-\delta)}$,
+\begin{equation}\label{eq:right-coord}
+\tilde\gamma(c_+u)^\delta \ge \gamma u^\delta,
+\qquad
+\tilde\gamma^{-1}(c_+u)^{2-\delta}\ge \gamma^{-1}u^{2-\delta}.
+\end{equation}
+
+A copula is coordinatewise nondecreasing. Therefore \eqref{eq:left-coord} and \eqref{eq:right-coord} imply that, for every $u>0$,
+\begin{equation}\label{eq:sandwich-C}
+C\!\bigl(\tilde\gamma(c_-u)^\delta,\tilde\gamma^{-1}(c_-u)^{2-\delta}\bigr)
+\le
+C\!\bigl(\gamma u^\delta,\gamma^{-1}u^{2-\delta}\bigr)
+\le
+C\!\bigl(\tilde\gamma(c_+u)^\delta,\tilde\gamma^{-1}(c_+u)^{2-\delta}\bigr).
+\end{equation}
+
+Because the reference limit is assumed to exist as a finite real number, there exists $v_0>0$ such that
+\[
+C\!\bigl(\tilde\gamma v^\delta,\tilde\gamma^{-1}v^{2-\delta}\bigr)>0
+\qquad\text{for all }0<v<v_0.
+\]
+Choose $u_0>0$ so small that $c_+u<v_0$ whenever $0<u<u_0$. Then all three terms in \eqref{eq:sandwich-C} are strictly positive for $u\in(0,u_0)$. Since $\log$ is increasing on $(0,\infty)$,
+\[
+\log C\!\bigl(\tilde\gamma(c_-u)^\delta,\tilde\gamma^{-1}(c_-u)^{2-\delta}\bigr)
+\le
+\log C\!\bigl(\gamma u^\delta,\gamma^{-1}u^{2-\delta}\bigr)
+\le
+\log C\!\bigl(\tilde\gamma(c_+u)^\delta,\tilde\gamma^{-1}(c_+u)^{2-\delta}\bigr).
+\]
+For $u$ sufficiently small, $\log u<0$. Dividing by $\log u$ reverses the inequalities:
+\begin{equation}\label{eq:log-sandwich}
+\frac{\log C\!\bigl(\tilde\gamma(c_-u)^\delta,\tilde\gamma^{-1}(c_-u)^{2-\delta}\bigr)}{\log u}
+\ge
+\frac{\log C\!\bigl(\gamma u^\delta,\gamma^{-1}u^{2-\delta}\bigr)}{\log u}
+\ge
+\frac{\log C\!\bigl(\tilde\gamma(c_+u)^\delta,\tilde\gamma^{-1}(c_+u)^{2-\delta}\bigr)}{\log u}.
+\end{equation}
+
+Now fix any $c>0$ and define
+\[
+A_c(u)
+:=
+\frac{\log C\!\bigl(\tilde\gamma(cu)^\delta,\tilde\gamma^{-1}(cu)^{2-\delta}\bigr)}{\log u}.
+\]
+For small $u>0$,
+\[
+A_c(u)
+=
+\frac{\log C\!\bigl(\tilde\gamma(cu)^\delta,\tilde\gamma^{-1}(cu)^{2-\delta}\bigr)}{\log(cu)}
+\cdot
+\frac{\log(cu)}{\log u}.
+\]
+As $u\downarrow 0$, we have $cu\downarrow 0$, so by the definition of $k$,
+\[
+\frac{\log C\!\bigl(\tilde\gamma(cu)^\delta,\tilde\gamma^{-1}(cu)^{2-\delta}\bigr)}{\log(cu)}
+\longrightarrow k.
+\]
+Also,
+\[
+\frac{\log(cu)}{\log u}
+=
+1+\frac{\log c}{\log u}
+\longrightarrow 1
+\qquad(u\downarrow 0),
+\]
+because $\log u\to-\infty$. Therefore
+\begin{equation}\label{eq:Ac-limit}
+A_c(u)\longrightarrow k
+\qquad(u\downarrow 0).
+\end{equation}
+
+Applying \eqref{eq:Ac-limit} with $c=c_-$ and $c=c_+$ shows that both outer terms in \eqref{eq:log-sandwich} converge to $k$. Hence, by the squeeze theorem,
+\[
+\lim_{u\downarrow 0}
+\frac{\log C\!\bigl(\gamma u^\delta,\gamma^{-1}u^{2-\delta}\bigr)}{\log u}
+=
+k.
+\]
+This proves the claim.
+\end{proof}
+
+\begin{remark}
+Theorem \ref{thm:gamma-invariance} is the precise formulation of the desired scaling invariance. For each fixed $\delta\in(0,2)$, it is enough to know that the limit exists for one value of $\gamma$; then it automatically exists for every $\gamma>0$ and has the same value.
+\end{remark}
+
+\section*{2. The Pareto-mixture copula}
+
+We now verify the assumption of Theorem \ref{thm:gamma-invariance} for the proposed Pareto-mixture copula.
+
+\paragraph{Model.}
+Assume throughout that $\Pa(s)$ denotes the standard Pareto law on $[1,\infty)$ with survival function
+\[
+\mathbb P(Z>z)=z^{-s},\qquad z\ge 1.
+\]
+Let
+\[
+X_1=\frac{R}{R^*}\frac{H_1}{H_1^*},
+\qquad
+X_2=\frac{R}{R^*}\frac{H_2}{H_2^*},
+\]
+where
+\[
+R\sim\Pa(\beta),\quad R^*\sim\Pa(\alpha),\quad
+H_1\sim\Pa(b_1),\quad H_1^*\sim\Pa(a_1),\quad
+H_2\sim\Pa(b_2),\quad H_2^*\sim\Pa(a_2),
+\]
+all mutually independent, and all shape parameters are strictly positive.
+
+Since $(X_1,X_2)$ has continuous margins, its copula is well defined; we denote it by $C_{\rm PM}$.
+
+\subsection*{2.1. Logarithmic representation}
+
+Set
+\[
+A:=\log R,\quad A^*:=\log R^*,\quad
+B_i:=\log H_i,\quad B_i^*:=\log H_i^* \qquad (i=1,2).
+\]
+Then
+\[
+A\sim{\rm Exp}(\beta),\qquad A^*\sim{\rm Exp}(\alpha),
+\qquad
+B_i\sim{\rm Exp}(b_i),\qquad B_i^*\sim{\rm Exp}(a_i),
+\]
+independently, and
+\[
+-\log X_i = (A^*-A)+(B_i^*-B_i).
+\]
+Define
+\[
+U_0:=A^*-A,\qquad U_i:=B_i^*-B_i,\qquad i=1,2.
+\]
+Then
+\[
+-\log X_i = U_0+U_i,\qquad i=1,2.
+\]
+
+A direct convolution gives, for $s\in\mathbb R$,
+\[
+f_{U_0}(s)
+=
+\frac{\alpha\beta}{\alpha+\beta}
+\begin{cases}
+e^{-\alpha s}, & s\ge 0,\\[1mm]
+e^{\beta s}, & s<0,
+\end{cases}
+\]
+and for each $i=1,2$,
+\[
+\mathbb P(U_i>t)=\frac{b_i}{a_i+b_i}e^{-a_i t},
+\qquad t\ge 0.
+\]
+Consequently there exist constants $0<k_i\le K_i<\infty$ such that, for all $z\in\mathbb R$,
+\begin{equation}\label{eq:Ui-two-sided-bounds}
+k_i e^{-a_i z_+}
+\le
+\mathbb P(U_i\ge z)
+\le
+K_i e^{-a_i z_+},
+\qquad z_+:=\max\{z,0\}.
+\end{equation}
+
+\subsection*{2.2. Marginal lower-tail exponents}
+
+Let $F_{X_i}$ denote the distribution function of $X_i$, and define
+\[
+m_i:=\min\{\alpha,a_i\},\qquad i=1,2.
+\]
+
+\begin{lemma}\label{lem:marginal-log-tail}
+For each $i=1,2$,
+\[
+-\log F_{X_i}(e^{-t}) = m_i\,t + o(t)
+\qquad (t\to\infty).
+\]
+Equivalently,
+\[
+F_{X_i}(e^{-t}) = \exp\!\bigl(-m_i t + o(t)\bigr).
+\]
+\end{lemma}
+
+\begin{proof}
+Fix $i\in\{1,2\}$. Since $X_i\le e^{-t}$ if and only if $U_0+U_i\ge t$,
+\[
+F_{X_i}(e^{-t})
+=
+\mathbb P(U_0+U_i\ge t)
+=
+\int_{\mathbb R}\mathbb P(U_i\ge t-s)\,f_{U_0}(s)\,ds.
+\]
+Split the integral into three parts:
+\[
+(-\infty,0],\qquad [0,t],\qquad [t,\infty).
+\]
+Using \eqref{eq:Ui-two-sided-bounds} and the formula for $f_{U_0}$, we obtain
+\[
+F_{X_i}(e^{-t})
+\le
+C_1 e^{-a_i t}
++
+C_2 \int_0^t e^{-\alpha s}e^{-a_i(t-s)}\,ds
++
+C_3 e^{-\alpha t},
+\]
+for suitable positive constants $C_1,C_2,C_3$ independent of $t$.
+
+Hence
+\[
+F_{X_i}(e^{-t})
+\le
+C
+\begin{cases}
+e^{-a_i t}, & a_i<\alpha,\\[1mm]
+(1+t)e^{-\alpha t}, & a_i=\alpha,\\[1mm]
+e^{-\alpha t}, & \alpha<a_i,
+\end{cases}
+\]
+for some constant $C>0$.
+
+For the lower bound, we consider three cases.
+
+\smallskip
+
+\noindent
+\emph{Case 1: $a_i<\alpha$.}
+Integrating over $s\in[0,1]$ gives
+\[
+F_{X_i}(e^{-t})
+\ge
+c \int_0^1 e^{-\alpha s} e^{-a_i(t-s)}\,ds
+\ge
+c' e^{-a_i t}.
+\]
+
+\noindent
+\emph{Case 2: $\alpha<a_i$.}
+Integrating over $s\in[t,t+1]$ gives
+\[
+F_{X_i}(e^{-t})
+\ge
+c \int_t^{t+1} e^{-\alpha s}\,ds
+\ge
+c' e^{-\alpha t}.
+\]
+
+\noindent
+\emph{Case 3: $\alpha=a_i$.}
+Integrating over $s\in[0,t]$ gives
+\[
+F_{X_i}(e^{-t})
+\ge
+c \int_0^t e^{-\alpha s}e^{-\alpha(t-s)}\,ds
+=
+c\, t\, e^{-\alpha t}.
+\]
+
+Combining the upper and lower bounds yields
+\[
+F_{X_i}(e^{-t})
+=
+\exp\!\bigl(-m_i t + o(t)\bigr),
+\]
+which is the desired conclusion.
+\end{proof}
+
+\begin{lemma}\label{lem:quantile-log}
+Let $F$ be continuous and strictly increasing near $0$, and suppose that for some $m>0$,
+\[
+-\log F(e^{-t}) = m t + o(t)
+\qquad (t\to\infty).
+\]
+Then
+\[
+-\log F^{-1}(u)
+=
+\frac{1}{m}\log\!\frac{1}{u}
++
+o\!\left(\log\!\frac{1}{u}\right)
+\qquad (u\downarrow 0).
+\]
+\end{lemma}
+
+\begin{proof}
+Let $y(u):=-\log F^{-1}(u)$. Since $F(F^{-1}(u))=u$,
+\[
+-\log u
+=
+-\log F(e^{-y(u)})
+=
+m\,y(u)+o\!\bigl(y(u)\bigr).
+\]
+As $u\downarrow 0$, we have $F^{-1}(u)\downarrow 0$, hence $y(u)\to\infty$. Therefore
+\[
+y(u)
+=
+\frac{1}{m}\log\!\frac{1}{u}
++
+o\!\left(\log\!\frac{1}{u}\right).
+\]
+\end{proof}
+
+Applying Lemmas \ref{lem:marginal-log-tail} and \ref{lem:quantile-log} to $F_{X_1}$ and $F_{X_2}$, we obtain:
+\begin{equation}\label{eq:quantile-asymptotics}
+-\log F_{X_i}^{-1}(u)
+=
+\frac{1}{m_i}\log\!\frac{1}{u}
++
+o\!\left(\log\!\frac{1}{u}\right),
+\qquad i=1,2.
+\end{equation}
+
+\subsection*{2.3. Existence of the angular lower-tail limit for $C_{\rm PM}$}
+
+Define
+\[
+q_1:=\frac{\delta}{m_1},
+\qquad
+q_2:=\frac{2-\delta}{m_2}.
+\]
+
+\begin{proposition}\label{prop:PM-existence}
+For every $\delta\in(0,2)$, the limit
+\[
+\kappa_L(\delta,1;C_{\rm PM})
+=
+\lim_{u\downarrow 0}
+\frac{\log C_{\rm PM}(u^\delta,u^{2-\delta})}{\log u}
+\]
+exists as a finite real number.
+
+More precisely, let
+\[
+J(q_1,q_2)
+:=
+\inf_{s\ge 0}
+\Bigl\{
+\alpha s
++
+a_1(q_1-s)_+
++
+a_2(q_2-s)_+
+\Bigr\}.
+\]
+Then
+\[
+\kappa_L(\delta,1;C_{\rm PM}) = J(q_1,q_2).
+\]
+\end{proposition}
+
+\begin{proof}
+Let
+\[
+u=e^{-t},\qquad t\to\infty.
+\]
+Define
+\[
+y_1(t):=-\log F_{X_1}^{-1}(u^\delta),
+\qquad
+y_2(t):=-\log F_{X_2}^{-1}(u^{2-\delta}).
+\]
+By \eqref{eq:quantile-asymptotics},
+\begin{equation}\label{eq:yit}
+y_1(t)=q_1 t+o(t),
+\qquad
+y_2(t)=q_2 t+o(t).
+\end{equation}
+
+Now
+\[
+C_{\rm PM}(u^\delta,u^{2-\delta})
+=
+\mathbb P\!\bigl(X_1\le F_{X_1}^{-1}(u^\delta),\,X_2\le F_{X_2}^{-1}(u^{2-\delta})\bigr).
+\]
+Since $X_i\le e^{-y_i(t)}$ is equivalent to $U_0+U_i\ge y_i(t)$, we obtain
+\[
+C_{\rm PM}(u^\delta,u^{2-\delta})
+=
+\mathbb P\!\bigl(U_0+U_1\ge y_1(t),\,U_0+U_2\ge y_2(t)\bigr).
+\]
+Conditioning on $U_0$ gives
+\begin{equation}\label{eq:joint-cond}
+C_{\rm PM}(u^\delta,u^{2-\delta})
+=
+\int_{\mathbb R}
+\mathbb P\!\bigl(U_1\ge y_1(t)-s\bigr)\,
+\mathbb P\!\bigl(U_2\ge y_2(t)-s\bigr)\,
+f_{U_0}(s)\,ds.
+\end{equation}
+
+We first treat the case $q_1<q_2$. Then by \eqref{eq:yit}, for all sufficiently large $t$,
+\[
+y_1(t)\le y_2(t).
+\]
+Split the integral in \eqref{eq:joint-cond} into four intervals:
+\[
+(-\infty,0],\qquad [0,y_1(t)],\qquad [y_1(t),y_2(t)],\qquad [y_2(t),\infty).
+\]
+Using \eqref{eq:Ui-two-sided-bounds} and the explicit density of $U_0$, we obtain
+\[
+C_{\rm PM}(u^\delta,u^{2-\delta})
+\le
+C\Bigl(
+e^{-A_t}+e^{-B_t}+e^{-D_t}
+\Bigr),
+\]
+where
+\[
+A_t:=a_1y_1(t)+a_2y_2(t),
+\qquad
+B_t:=\alpha y_1(t)+a_2\bigl(y_2(t)-y_1(t)\bigr),
+\qquad
+D_t:=\alpha y_2(t),
+\]
+and $C>0$ is independent of $t$.
+
+Indeed:
+\begin{align*}
+\int_{-\infty}^0 \cdots\,ds
+&\le C e^{-a_1 y_1(t)-a_2 y_2(t)},\\
+\int_0^{y_1(t)} \cdots\,ds
+&\le C\!\left(e^{-a_1 y_1(t)-a_2 y_2(t)} + e^{-\alpha y_1(t)-a_2(y_2(t)-y_1(t))}\right),\\
+\int_{y_1(t)}^{y_2(t)} \cdots\,ds
+&\le C\!\left(e^{-\alpha y_1(t)-a_2(y_2(t)-y_1(t))} + e^{-\alpha y_2(t)}\right),\\
+\int_{y_2(t)}^\infty \cdots\,ds
+&\le C e^{-\alpha y_2(t)}.
+\end{align*}
+
+For the lower bound, we integrate over the unit intervals $[0,1]$, $[y_1(t),y_1(t)+1]$, and $[y_2(t),y_2(t)+1]$. Since the density $f_{U_0}$ is strictly positive on compact sets and \eqref{eq:Ui-two-sided-bounds} gives strictly positive lower bounds for the relevant tail probabilities, there exists $c>0$ such that
+\[
+C_{\rm PM}(u^\delta,u^{2-\delta})
+\ge
+c\,
+\max\Bigl\{
+e^{-A_t},\,e^{-B_t},\,e^{-D_t}
+\Bigr\}.
+\]
+Combining upper and lower bounds,
+\[
+-\log C_{\rm PM}(u^\delta,u^{2-\delta})
+=
+\min\{A_t,B_t,D_t\}+O(1).
+\]
+Dividing by $t$ and using \eqref{eq:yit},
+\[
+-\frac{1}{t}\log C_{\rm PM}(u^\delta,u^{2-\delta})
+\longrightarrow
+\min\Bigl\{
+a_1q_1+a_2q_2,\,
+\alpha q_1+a_2(q_2-q_1),\,
+\alpha q_2
+\Bigr\}.
+\]
+A direct check shows that this minimum equals
+\[
+\inf_{s\ge 0}\Bigl\{\alpha s+a_1(q_1-s)_+ + a_2(q_2-s)_+\Bigr\}
+=
+J(q_1,q_2).
+\]
+
+If $q_2<q_1$, the same argument with the roles of indices $1$ and $2$ exchanged yields the same conclusion.
+
+Finally, if $q_1=q_2$, then \eqref{eq:yit} implies
+\[
+y_1(t)-y_2(t)=o(t),
+\]
+so the two possible orderings differ only by $o(t)$ in the exponent. Hence the same limit still exists and equals $J(q_1,q_2)$.
+
+Since $\log u=-t$, we conclude that
+\[
+\frac{\log C_{\rm PM}(u^\delta,u^{2-\delta})}{\log u}
+=
+-\frac{1}{t}\log C_{\rm PM}(u^\delta,u^{2-\delta})
+\longrightarrow
+J(q_1,q_2).
+\]
+Therefore
+\[
+\kappa_L(\delta,1;C_{\rm PM})=J(q_1,q_2),
+\]
+and the limit exists as a finite real number.
+\end{proof}
+
+\subsection*{2.4. Independence of the scaling parameter}
+
+We can now combine Proposition \ref{prop:PM-existence} with Theorem \ref{thm:gamma-invariance}.
+
+\begin{theorem}\label{thm:PM-gamma-independence}
+For the Pareto-mixture copula $C_{\rm PM}$ and every $\delta\in(0,2)$,
+\[
+\kappa_L(\delta,\gamma;C_{\rm PM})
+\]
+exists for every $\gamma>0$ and is independent of $\gamma$.
+
+In fact, if
+\[
+m_1=\min\{\alpha,a_1\},
+\qquad
+m_2=\min\{\alpha,a_2\},
+\qquad
+q_1=\frac{\delta}{m_1},
+\qquad
+q_2=\frac{2-\delta}{m_2},
+\]
+then for every $\gamma>0$,
+\[
+\kappa_L(\delta,\gamma;C_{\rm PM})
+=
+\inf_{s\ge 0}
+\Bigl\{
+\alpha s+a_1(q_1-s)_+ + a_2(q_2-s)_+
+\Bigr\}.
+\]
+\end{theorem}
+
+\begin{proof}
+By Proposition \ref{prop:PM-existence}, for each fixed $\delta\in(0,2)$ the limit defining $\kappa_L(\delta,1;C_{\rm PM})$ exists as a finite real number. Therefore the hypothesis of Theorem \ref{thm:gamma-invariance} is satisfied with $\tilde\gamma=1$. Applying Theorem \ref{thm:gamma-invariance} yields
+\[
+\kappa_L(\delta,\gamma;C_{\rm PM})
+=
+\kappa_L(\delta,1;C_{\rm PM})
+\qquad\text{for all }\gamma>0.
+\]
+The explicit formula then follows from Proposition \ref{prop:PM-existence}.
+\end{proof}
+
+\section*{Conclusion}
+
+Under the minimal regularity condition that, for each fixed $\delta\in(0,2)$, the logarithmic limit exists for one reference scaling $\tilde\gamma>0$, the angular lower-tail coefficient
+\[
+\kappa_L(\delta,\gamma;C)
+=
+\lim_{u\downarrow 0}
+\frac{\log C\!\bigl(\gamma u^\delta,\gamma^{-1}u^{2-\delta}\bigr)}{\log u}
+\]
+is independent of $\gamma$.
+
+For the Pareto-mixture copula $C_{\rm PM}$, this condition is satisfied for every $\delta\in(0,2)$; hence $\kappa_L(\delta,\gamma;C_{\rm PM})$ exists for all $\gamma>0$ and is indeed scaling-invariant.
+
+\end{document}

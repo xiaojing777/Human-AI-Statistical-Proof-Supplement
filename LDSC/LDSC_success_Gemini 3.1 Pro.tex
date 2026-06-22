@@ -1,0 +1,132 @@
+\documentclass[11pt]{article}
+
+% Required packages
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage[margin=1in]{geometry}
+
+% Custom macros based on the problem description
+\newcommand{\bbR}{\mathbb{R}}
+\newcommand{\bmSigma}{\boldsymbol{\Sigma}}
+\newcommand{\bmalpha}{\boldsymbol{\alpha}}
+\newcommand{\bmbeta}{\boldsymbol{\beta}}
+\newcommand{\bmeps}{\boldsymbol{\epsilon}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\1}{\mathbf{1}}
+
+\title{Exact Finite-Sample Variance of the Oracle LDSC Estimator}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Setup and Notations}
+
+Let the $p$-dimensional vector of genetic variants for the $i$-th individual be denoted by $\x_i \sim \mathcal{N}(\bm{0}, \bmSigma)$. 
+The outcome for the $i$-th individual is given by
+\[
+    y_i = \x_i^\top \bmalpha + \epsilon_i
+\]
+where $\epsilon_i \sim \mathcal{N}(0, \sigma_{\epsilon}^2)$ is independent of $\x_i$. 
+
+Consequently, $y_i$ is normally distributed with mean zero and variance
+\[
+    \sigma_y^2 = \bmalpha^\top \bmSigma \bmalpha + \sigma_{\epsilon}^2.
+\]
+The covariance vector between the genetic variants $\x_i$ and the outcome $y_i$ is exactly $\bmbeta = \bmSigma \bmalpha$. Let $\beta_j = (\bmSigma\bmalpha)_j$.
+Therefore, the joint distribution of $(\x_i, y_i)$ is multivariate normal with mean zero. 
+
+The sample marginal covariance is given by $\widehat{a}_j = \frac{1}{n} \sum_{i=1}^n x_{ij} y_i$. We can rewrite the LDSC estimator as a linear combination of $\widehat{a}_j^2$. Let the deterministic weight vector $\bm{c} = (c_1, \ldots, c_p)^\top$ be defined by
+\[
+    c_j = \frac{\ell_j - \mu_{\ell}}{\|\ell - \mu_{\ell} \1\|_2^2}
+\]
+where $\mu_{\ell} = \frac{1}{p} \1^\top \ell$. Note that $\sum_{j=1}^p c_j = 0$. 
+The ``oracle'' LDSC estimator simplifies to:
+\[
+    \tilde\sigma_\alpha^2 = \sum_{j=1}^p c_j \widehat{a}_j^2
+\]
+Our goal is to compute $\operatorname{Var}(\tilde\sigma_\alpha^2) = \sum_{j=1}^p \sum_{k=1}^p c_j c_k \operatorname{Cov}(\widehat{a}_j^2, \widehat{a}_k^2)$.
+
+\section{Covariance of the Squared Marginal Associations}
+
+Let $W_{ij} = x_{ij} y_i$. Then $\widehat{a}_j = \frac{1}{n} \sum_{i=1}^n W_{ij}$, where the pairs $(W_{ij}, W_{ik})$ are i.i.d. across sample indices $i = 1, \dots, n$. We need to find $\operatorname{Cov}(\widehat{a}_j^2, \widehat{a}_k^2)$, which is the covariance between the squares of two sample averages.
+
+Dropping the sample index $i$, let $A = x_j y$ and $B = x_k y$. Note that $\mu_A = \mathbb{E}[A] = \beta_j$ and $\mu_B = \mathbb{E}[B] = \beta_k$. Let $a = A - \mu_A$ and $b = B - \mu_B$. By standard expansions for sums of i.i.d. random variables, the exact covariance of their squared averages is given by:
+\[
+    \operatorname{Cov}(\widehat{a}_j^2, \widehat{a}_k^2) = \frac{4}{n} \mu_A \mu_B \operatorname{Cov}(A, B) + \frac{2}{n^2} \Big( \mu_A \mathbb{E}[a b^2] + \mu_B \mathbb{E}[a^2 b] + \operatorname{Cov}(A, B)^2 \Big) + \frac{1}{n^3} \Big( \operatorname{Cov}(a^2, b^2) - 2 \operatorname{Cov}(A, B)^2 \Big)
+\]
+
+To evaluate this, we systematically compute the higher-order moments of the multivariate normal distribution $(x_j, x_k, y)$ using Isserlis' Theorem.
+
+\subsection{Second-order moments}
+Using Isserlis' Theorem, we evaluate $\mathbb{E}[x_j x_k y^2]$ (which consists of $3!! = 3$ pair matchings):
+\[
+    \mathbb{E}[x_j x_k y^2] = \bmSigma_{jk} \sigma_y^2 + 2 \beta_j \beta_k
+\]
+This yields:
+\[
+    \operatorname{Cov}(A, B) = \mathbb{E}[x_j x_k y^2] - \beta_j \beta_k = \bmSigma_{jk} \sigma_y^2 + \beta_j \beta_k
+\]
+
+\subsection{Third-order centered moments}
+We require $\mathbb{E}[a b^2] = \mathbb{E}[(x_j y - \beta_j)(x_k y - \beta_k)^2]$. Expanding and utilizing the $5!! = 15$ matchings for $\mathbb{E}[x_j x_k^2 y^3]$, we get:
+\[
+    \mathbb{E}[x_j x_k^2 y^3] = 6 \bmSigma_{jk} \beta_k \sigma_y^2 + 3 \beta_j \bmSigma_{kk} \sigma_y^2 + 6 \beta_j \beta_k^2
+\]
+After substituting all sub-terms and simplifying, this collapses to:
+\[
+    \mathbb{E}[a b^2] = 4 \bmSigma_{jk} \beta_k \sigma_y^2 + 2 \beta_j \bmSigma_{kk} \sigma_y^2 + 2 \beta_j \beta_k^2
+\]
+By symmetry, $\mathbb{E}[a^2 b] = 4 \bmSigma_{jk} \beta_j \sigma_y^2 + 2 \beta_k \bmSigma_{jj} \sigma_y^2 + 2 \beta_j^2 \beta_k$.
+
+\subsection{Fourth-order centered moments}
+To compute $\operatorname{Cov}(a^2, b^2) = \mathbb{E}[a^2 b^2] - \mathbb{E}[a^2]\mathbb{E}[b^2]$, we use the $7!! = 105$ matchings of $\mathbb{E}[x_j^2 x_k^2 y^4]$:
+\[
+    \mathbb{E}[x_j^2 x_k^2 y^4] = 3 \bmSigma_{jj} \bmSigma_{kk} \sigma_y^4 + 6 \bmSigma_{jk}^2 \sigma_y^4 + 12 \bmSigma_{jj} \beta_k^2 \sigma_y^2 + 12 \bmSigma_{kk} \beta_j^2 \sigma_y^2 + 48 \bmSigma_{jk} \beta_j \beta_k \sigma_y^2 + 24 \beta_j^2 \beta_k^2
+\]
+Expanding $(A - \mu_A)^2 (B - \mu_B)^2$ and collecting the pieces, we arrive at the exact centered cross-moment:
+\[
+    \operatorname{Cov}(a^2, b^2) = 2 \bmSigma_{jj} \bmSigma_{kk} \sigma_y^4 + 6 \bmSigma_{jk}^2 \sigma_y^4 + 6 \bmSigma_{jj} \beta_k^2 \sigma_y^2 + 6 \bmSigma_{kk} \beta_j^2 \sigma_y^2 + 28 \bmSigma_{jk} \beta_j \beta_k \sigma_y^2 + 8 \beta_j^2 \beta_k^2
+\]
+
+\section{Assembling the Covariance Matrix Elements}
+
+Let $C_{jk} = \operatorname{Cov}(\widehat{a}_j^2, \widehat{a}_k^2)$. By substituting the moments back into the finite-sample covariance formula and collecting similar terms, we obtain:
+\[
+    C_{jk} = \frac{1}{n} v_{jk}^{(1)} + \frac{1}{n^2} v_{jk}^{(2)} + \frac{1}{n^3} v_{jk}^{(3)}
+\]
+where the coefficients follow exactly as:
+\begin{align*}
+    v_{jk}^{(1)} &= 4 \bmSigma_{jk} \beta_j \beta_k \sigma_y^2 + 4 \beta_j^2 \beta_k^2 \\
+    v_{jk}^{(2)} &= 2 \bmSigma_{jk}^2 \sigma_y^4 + 4 \bmSigma_{jj} \beta_k^2 \sigma_y^2 + 4 \bmSigma_{kk} \beta_j^2 \sigma_y^2 + 20 \bmSigma_{jk} \beta_j \beta_k \sigma_y^2 + 10 \beta_j^2 \beta_k^2 \\
+    v_{jk}^{(3)} &= 2 \bmSigma_{jj} \bmSigma_{kk} \sigma_y^4 + 4 \bmSigma_{jk}^2 \sigma_y^4 + 6 \bmSigma_{jj} \beta_k^2 \sigma_y^2 + 6 \bmSigma_{kk} \beta_j^2 \sigma_y^2 + 24 \bmSigma_{jk} \beta_j \beta_k \sigma_y^2 + 6 \beta_j^2 \beta_k^2
+\end{align*}
+
+\section{Final Result in Matrix Form}
+
+We sum these entries as $\sum_{j=1}^p \sum_{k=1}^p c_j c_k C_{jk}$ to obtain the final variance. For a concise representation in terms of standard matrix operations, we construct the following vectors and matrices:
+\begin{itemize}
+    \item $\bmbeta = \bmSigma \bmalpha$
+    \item $\bmbeta^{(2)} = (\beta_1^2, \ldots, \beta_p^2)^\top$ 
+    \item $\bm{d} = (\bmSigma_{11}, \ldots, \bmSigma_{pp})^\top$
+    \item $\bmSigma^{(2)}$ is the $p \times p$ matrix with entries $[\bmSigma^{(2)}]_{jk} = \bmSigma_{jk}^2$
+    \item $\odot$ denotes the Hadamard (element-wise) product.
+\end{itemize}
+
+Summing the respective polynomial terms against $c_j c_k$, we deduce the definitive closed-form variance of the oracle estimator:
+
+\begin{align*}
+\operatorname{Var}(\tilde\sigma_\alpha^2) =\; & \left(\frac{4}{n} + \frac{10}{n^2} + \frac{6}{n^3}\right) \left(\bm{c}^\top \bmbeta^{(2)}\right)^2 \\
+&+ \left(\frac{4}{n} + \frac{20}{n^2} + \frac{24}{n^3}\right) \sigma_y^2 \, (\bmbeta \odot \bm{c})^\top \bmSigma (\bmbeta \odot \bm{c}) \\
+&+ 2 \left(\frac{4}{n^2} + \frac{6}{n^3}\right) \sigma_y^2 \left(\bm{c}^\top \bm{d}\right) \left(\bm{c}^\top \bmbeta^{(2)}\right) \\
+&+ \left(\frac{2}{n^2} + \frac{4}{n^3}\right) \sigma_y^4 \left(\bm{c}^\top \bmSigma^{(2)} \bm{c}\right) \\
+&+ \frac{2}{n^3} \sigma_y^4 \left(\bm{c}^\top \bm{d}\right)^2
+\end{align*}
+
+This formulation is expressed strictly in terms of $n$, $\bmSigma$, $\ell$, $\bmalpha$, and $\sigma_{\epsilon}^2$ (since $\bm{c}$, $\bmbeta$, $\bm{d}$, and $\sigma_y^2$ are entirely defined by them), with fixed genetic effects.
+
+\end{document}

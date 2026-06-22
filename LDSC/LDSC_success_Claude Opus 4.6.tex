@@ -1,0 +1,567 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+
+%% ── shortcuts ──────────────────────────────────────────────
+\newcommand{\X}{\mathbf{X}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\bbR}{\mathbb{R}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\bSig}{\boldsymbol{\Sigma}}
+\newcommand{\balpha}{\boldsymbol{\alpha}}
+\newcommand{\beps}{\boldsymbol{\epsilon}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\hbSig}{\widehat{\boldsymbol{\Sigma}}}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Variance of the Centered Oracle LDSC Estimator}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+%% ═══════════════════════════════════════════════════════════
+\section{Setup and Notation}
+%% ═══════════════════════════════════════════════════════════
+
+Let $\X\in\bbR^{n\times p}$ be the genotype matrix whose rows
+$\bx_1,\dots,\bx_n$ are independent and identically distributed
+as
+\[
+    \bx_i \sim N(\mathbf{0},\,\bSig), \qquad i=1,\dots,n,
+\]
+where $\bSig\in\bbR^{p\times p}$ is a known, positive-definite,
+block-diagonal covariance matrix.
+The phenotype vector is
+\[
+    \y = \X\balpha + \beps,
+\]
+where $\balpha=(\alpha_1,\dots,\alpha_p)^\top$ is a \emph{fixed}
+(non-random) vector of genetic effects and
+$\beps=(\epsilon_1,\dots,\epsilon_n)^\top$ consists of independent
+$N(0,\sigma_\epsilon^2)$ errors, independent of $\X$.
+
+\medskip
+\noindent\textbf{Key derived quantities.}
+
+\begin{definition}[Marginal signal and noise]\label{def:beta}
+Define
+\[
+    \beta_j \;=\; (\bSig\balpha)_j \;=\; \sum_{k=1}^{p}\Sigma_{jk}\,\alpha_k,
+    \qquad j=1,\dots,p,
+\]
+and write $\bbeta = \bSig\balpha \in \bbR^p$.
+Define also the marginal phenotypic variance
+\[
+    \sigma_y^2 \;=\; \balpha^\top\bSig\,\balpha + \sigma_\epsilon^2.
+\]
+\end{definition}
+
+\begin{definition}[LD scores and estimator]\label{def:ld}
+For $j=1,\dots,p$,
+\begin{align}
+    \ell_j &= \sum_{i=1}^{p}\Sigma_{ji}^2, &
+    \widehat{a}_j &= n^{-1}\X_j^\top\y, &
+    \widehat{w}_j &= \widehat{a}_j^{\,2}, \label{eq:defs}
+\end{align}
+where $\X_j$ denotes the $j$-th column of $\X$.
+Set $\boldsymbol{\ell}=(\ell_1,\dots,\ell_p)^\top$,
+$\widehat{\mathbf{w}}=(\widehat{w}_1,\dots,\widehat{w}_p)^\top$,
+and
+\[
+    \mu_\ell = \frac{1}{p}\,\one_p^\top\boldsymbol{\ell},
+    \qquad
+    \widetilde{\boldsymbol{\ell}} = \boldsymbol{\ell} - \mu_\ell\,\one_p .
+\]
+The centered oracle LDSC estimator is
+\begin{equation}\label{eq:tildesig}
+    \widetilde\sigma_\alpha^2
+    = \frac{\widetilde{\boldsymbol{\ell}}^{\,\top}
+            (\widehat{\mathbf{w}} - \widehat\mu_w\,\one_p)}
+           {\widetilde{\boldsymbol{\ell}}^{\,\top}\,
+            \widetilde{\boldsymbol{\ell}}} .
+\end{equation}
+\end{definition}
+
+\begin{remark}\label{rem:center}
+Since
+$\widetilde{\boldsymbol{\ell}}^{\,\top}\one_p
+= \one_p^\top\boldsymbol{\ell} - p\,\mu_\ell = 0$,
+the intercept--centering term $\widehat\mu_w\,\one_p$ drops out:
+\begin{equation}\label{eq:reduced}
+    \widetilde\sigma_\alpha^2
+    = \frac{\widetilde{\boldsymbol{\ell}}^{\,\top}\widehat{\mathbf{w}}}
+           {\|\widetilde{\boldsymbol{\ell}}\|^2}
+    = \frac{\displaystyle\sum_{j=1}^{p}\widetilde\ell_j\,\widehat{a}_j^{\,2}}
+           {\displaystyle\sum_{j=1}^{p}\widetilde\ell_j^{\,2}} .
+\end{equation}
+Because $\boldsymbol{\ell}$ depends only on the population covariance
+$\bSig$, the denominator $\|\widetilde{\boldsymbol{\ell}}\|^2$ is
+deterministic.
+\end{remark}
+
+%% ═══════════════════════════════════════════════════════════
+\section{Preliminary Moment Calculations}
+%% ═══════════════════════════════════════════════════════════
+
+Throughout, we write $y_i = \bx_i^\top\balpha + \epsilon_i$ and
+note that $(\bx_i,\epsilon_i)$, $i=1,\dots,n$, are mutually
+independent.
+
+\subsection{Representation as an i.i.d.\ average}
+Define, for each sample $i$ and variant $j$,
+\begin{equation}\label{eq:Tij}
+    T_{ij} = X_{ij}\,y_i
+           = X_{ij}\bigl(\bx_i^\top\balpha + \epsilon_i\bigr).
+\end{equation}
+Then $\widehat{a}_j = n^{-1}\sum_{i=1}^n T_{ij}$,
+and for each fixed $j$ the random variables $T_{1j},\dots,T_{nj}$
+are i.i.d.\ copies of
+\begin{equation}\label{eq:Tj}
+    T_j = X_j\,(\bx^\top\balpha + \epsilon),
+\end{equation}
+where $\bx\sim N(0,\bSig)$ and $\epsilon\sim N(0,\sigma_\epsilon^2)$
+are independent.
+
+\subsection{First and second moments of $T_j$}
+
+\begin{lemma}\label{lem:EandCov}
+For all $j,k\in\{1,\dots,p\}$,
+\begin{align}
+    \E[T_j] &= \beta_j,  \label{eq:ET}\\
+    \gamma_{jk}
+    \;:=\; \Cov(T_j,T_k)
+    &= \Sigma_{jk}\,\sigma_y^2 + \beta_j\,\beta_k . \label{eq:gamma}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+Since $\epsilon$ is independent of $\bx$ with mean zero,
+\[
+    \E[T_j]
+    = \E[X_j\,\bx^\top\balpha]
+    = \sum_m \alpha_m\,\E[X_j X_m]
+    = \sum_m \alpha_m\,\Sigma_{jm}
+    = \beta_j.
+\]
+For the second moment,
+\begin{align*}
+    \E[T_j\,T_k]
+    &= \E\bigl[X_j\,X_k\,(\bx^\top\balpha+\epsilon)^2\bigr]
+    = \E\bigl[X_j X_k\,(\bx^\top\balpha)^2\bigr]
+      + \sigma_\epsilon^2\,\E[X_j X_k].
+\end{align*}
+By Isserlis' theorem (fourth moment of Gaussians),
+\begin{align*}
+    \E\bigl[X_j X_k\,(\bx^\top\balpha)^2\bigr]
+    &= \sum_{m,l}\alpha_m\alpha_l\,\E[X_j X_k X_m X_l]\\
+    &= \sum_{m,l}\alpha_m\alpha_l
+       \bigl(\Sigma_{jk}\Sigma_{ml}
+             +\Sigma_{jm}\Sigma_{kl}
+             +\Sigma_{jl}\Sigma_{km}\bigr)\\
+    &= \Sigma_{jk}\,(\balpha^\top\bSig\balpha)
+       + 2\,\beta_j\,\beta_k.
+\end{align*}
+Hence
+$\E[T_j T_k]
+= \Sigma_{jk}(\balpha^\top\bSig\balpha + \sigma_\epsilon^2) + 2\beta_j\beta_k
+= \Sigma_{jk}\sigma_y^2 + 2\beta_j\beta_k$,
+and $\gamma_{jk} = \E[T_j T_k] - \beta_j\beta_k
+= \Sigma_{jk}\sigma_y^2 + \beta_j\beta_k$.
+\end{proof}
+
+\subsection{Third cross-central moments of $T_j$}
+
+\begin{lemma}\label{lem:third}
+Define $U_j = T_j - \beta_j$. For all $j,k\in\{1,\dots,p\}$,
+\begin{equation}\label{eq:rho}
+    \rho_{jkk}
+    \;:=\; \E[U_j\,U_k^2]
+    = 4\,\sigma_y^2\,\Sigma_{jk}\,\beta_k
+      + 2\,\sigma_y^2\,\Sigma_{kk}\,\beta_j
+      + 2\,\beta_j\,\beta_k^2.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Write $W_j = T_j = X_j\,y$.  Then
+$\rho_{jkk} = \E[W_j W_k^2] - 2\beta_k\,\E[W_j W_k]
++ \beta_k^2\,\beta_j - \beta_j\,\E[W_k^2]
++ 2\beta_j\beta_k^2 - \beta_j\beta_k^2$.
+Simplifying,
+\begin{equation}\label{eq:rho_expand}
+    \rho_{jkk}
+    = \E[W_j W_k^2]
+      - 2\beta_k\,\gamma_{jk}
+      - \beta_j\,\gamma_{kk}
+      - \beta_j\beta_k^2.
+\end{equation}
+Since $W_j W_k^2 = X_j X_k^2\,y^3$ and
+$y^3 = (\bx^\top\balpha + \epsilon)^3$,
+we expand using independence of $\epsilon$
+and the fact that $\E[\epsilon]=\E[\epsilon^3]=0$:
+\[
+    \E[W_j W_k^2]
+    = \E\bigl[X_j X_k^2\,(\bx^\top\balpha)^3\bigr]
+      + 3\,\sigma_\epsilon^2\,\E[X_j X_k^2\,\bx^\top\balpha].
+\]
+
+\noindent\emph{Sixth--moment term.}
+Setting $s = \bx^\top\balpha$, Isserlis' theorem applied to
+$\E[X_j X_k X_k X_{m_1}X_{m_2}X_{m_3}]$
+(summed against $\alpha_{m_1}\alpha_{m_2}\alpha_{m_3}$
+over all 15 complete pairings of six Gaussian factors) yields,
+after collecting terms,
+\[
+    \E[X_j X_k^2\,s^3]
+    = 6\,\Sigma_{jk}\,\beta_k\,(\balpha^\top\bSig\balpha)
+    + 3\,\Sigma_{kk}\,\beta_j\,(\balpha^\top\bSig\balpha)
+    + 6\,\beta_j\,\beta_k^2.
+\]
+
+\noindent\emph{Fourth--moment term.}
+Similarly,
+\[
+    \E[X_j X_k^2\,s]
+    = \sum_m \alpha_m\,\E[X_j X_k^2 X_m]
+    = 2\,\Sigma_{jk}\,\beta_k + \beta_j\,\Sigma_{kk}.
+\]
+
+Combining,
+\[
+    \E[W_j W_k^2]
+    = 6\,\sigma_y^2\,\Sigma_{jk}\,\beta_k
+    + 3\,\sigma_y^2\,\Sigma_{kk}\,\beta_j
+    + 6\,\beta_j\,\beta_k^2.
+\]
+Substituting into \eqref{eq:rho_expand}
+with $\gamma_{jk}=\Sigma_{jk}\sigma_y^2+\beta_j\beta_k$ and
+$\gamma_{kk}=\Sigma_{kk}\sigma_y^2+\beta_k^2$,
+one obtains \eqref{eq:rho} after straightforward cancellation.
+\end{proof}
+
+%% ═══════════════════════════════════════════════════════════
+\section{Main Result}
+%% ═══════════════════════════════════════════════════════════
+
+\begin{theorem}[Variance of the oracle LDSC estimator]\label{thm:main}
+Under the model and notation above, write
+$\widetilde\ell_j = \ell_j - \mu_\ell$ and
+$\|\widetilde{\boldsymbol{\ell}}\|^2
+= \sum_{j=1}^p \widetilde\ell_j^{\,2}$.
+Then
+\begin{equation}\label{eq:var_exact}
+\boxed{
+    \Var(\widetilde\sigma_\alpha^2)
+    = \frac{1}{\|\widetilde{\boldsymbol{\ell}}\|^4}
+      \sum_{j=1}^{p}\sum_{k=1}^{p}
+      \widetilde\ell_j\,\widetilde\ell_k\,
+      \Cov\!\bigl(\widehat{a}_j^{\,2},\,\widehat{a}_k^{\,2}\bigr),
+}
+\end{equation}
+where, with $\beta_j=(\bSig\balpha)_j$, \ 
+$\gamma_{jk}=\Sigma_{jk}\sigma_y^2+\beta_j\beta_k$, \ 
+$\sigma_y^2 = \balpha^\top\bSig\balpha+\sigma_\epsilon^2$, and
+$\rho_{jkk}$ as in \eqref{eq:rho},
+\begin{equation}\label{eq:cov_ajak}
+    \Cov\!\bigl(\widehat{a}_j^{\,2},\,\widehat{a}_k^{\,2}\bigr)
+    = \frac{4\,\beta_j\,\beta_k\,\gamma_{jk}}{n}
+    + \frac{2\,\gamma_{jk}^2
+            + 2\,\beta_j\,\rho_{jkk}
+            + 2\,\beta_k\,\rho_{kjj}}{n^2}
+    + \frac{\kappa_{jk}}{n^3},
+\end{equation}
+where
+\begin{equation}\label{eq:kappa}
+    \kappa_{jk}
+    = \E[U_j^2\,U_k^2] - \gamma_{jj}\,\gamma_{kk} - 2\,\gamma_{jk}^2
+\end{equation}
+is the fourth-order joint cumulant, with $U_j = T_j - \beta_j$.
+\end{theorem}
+
+\begin{proof}
+Because the denominator $\|\widetilde{\boldsymbol{\ell}}\|^2$ is
+deterministic (Remark~\ref{rem:center}), equation \eqref{eq:var_exact}
+is immediate from \eqref{eq:reduced}.
+It remains to establish \eqref{eq:cov_ajak}.
+
+\smallskip
+\noindent\textbf{Step 1: Reduction to i.i.d.\ averages.}
+Define $U_{ij} = T_{ij} - \beta_j$ and
+$\bar U_j = n^{-1}\sum_{i=1}^n U_{ij}$, so that
+$\widehat{a}_j = \beta_j + \bar U_j$.  Hence
+\[
+    \widehat{a}_j^{\,2} - \E[\widehat{a}_j^{\,2}]
+    = 2\beta_j\,\bar U_j + (\bar U_j^2 - n^{-1}\gamma_{jj}).
+\]
+Writing the product
+$(\widehat{a}_j^{\,2}-\E[\widehat{a}_j^{\,2}])
+(\widehat{a}_k^{\,2}-\E[\widehat{a}_k^{\,2}])$
+and taking expectations gives
+\begin{equation}\label{eq:cov_decomp}
+    \Cov(\widehat{a}_j^{\,2},\widehat{a}_k^{\,2})
+    = 4\beta_j\beta_k\,\E[\bar U_j\bar U_k]
+      + 2\beta_j\,\E[\bar U_j\bar U_k^2]
+      + 2\beta_k\,\E[\bar U_j^2\bar U_k]
+      + \bigl(\E[\bar U_j^2\bar U_k^2] - n^{-2}\gamma_{jj}\gamma_{kk}\bigr),
+\end{equation}
+using $\E[\bar U_j]=0$.
+
+\smallskip
+\noindent\textbf{Step 2: Moments of i.i.d.\ averages.}
+Since $U_{1j},\dots,U_{nj}$ are i.i.d.\ centered random variables:
+
+\begin{enumerate}
+\item[(a)] $\E[\bar U_j\bar U_k] = n^{-1}\gamma_{jk}$.
+
+\item[(b)] By expanding $\bar U_j\bar U_k^2 =
+n^{-3}\sum_{i,i',i''}U_{ij}U_{i'k}U_{i''k}$ and using independence
+across samples together with $\E[U_{ij}]=0$, the only nonvanishing
+contributions arise when $i=i'=i''$; hence
+$\E[\bar U_j\bar U_k^2] = n^{-2}\,\rho_{jkk}$.
+
+\item[(c)] Expanding
+$\bar U_j^2\bar U_k^2
+= n^{-4}\sum_{i_1,i_2,i_3,i_4}U_{i_1 j}U_{i_2 j}U_{i_3 k}U_{i_4 k}$
+and partitioning over the three types of
+nonvanishing index configurations gives
+\begin{align*}
+    \E[\bar U_j^2\bar U_k^2]
+    &= \frac{1}{n^3}\,\E[U_j^2 U_k^2]
+     + \frac{n-1}{n^3}
+       \bigl(\gamma_{jj}\gamma_{kk}+2\gamma_{jk}^2\bigr).
+\end{align*}
+The three surviving partitions of $(i_1,i_2,i_3,i_4)$ are:
+all four equal ($n$ tuples, contributing $\E[U_j^2U_k^2]$);
+$\{i_1=i_2\}\neq\{i_3=i_4\}$ ($n(n{-}1)$ tuples, contributing
+$\gamma_{jj}\gamma_{kk}$);
+and $\{i_1=i_3\}\neq\{i_2=i_4\}$ or
+$\{i_1=i_4\}\neq\{i_2=i_3\}$ ($2n(n{-}1)$ tuples, each contributing
+$\gamma_{jk}^2$).
+Therefore
+\[
+    \E[\bar U_j^2\bar U_k^2] - n^{-2}\gamma_{jj}\gamma_{kk}
+    = \frac{\kappa_{jk}}{n^3}
+      + \frac{2\,\gamma_{jk}^2}{n^2},
+\]
+where $\kappa_{jk}=\E[U_j^2U_k^2]-\gamma_{jj}\gamma_{kk}-2\gamma_{jk}^2$.
+\end{enumerate}
+
+\noindent\textbf{Step 3: Assembly.}
+Substituting (a)--(c) into \eqref{eq:cov_decomp}:
+\[
+    \Cov(\widehat{a}_j^{\,2},\widehat{a}_k^{\,2})
+    = \frac{4\beta_j\beta_k\gamma_{jk}}{n}
+    + \frac{2\beta_j\rho_{jkk}+2\beta_k\rho_{kjj}+2\gamma_{jk}^2}{n^2}
+    + \frac{\kappa_{jk}}{n^3}.
+\]
+This is precisely \eqref{eq:cov_ajak}.
+\end{proof}
+
+%% ═══════════════════════════════════════════════════════════
+\section{Explicit Expansion of the Variance}
+%% ═══════════════════════════════════════════════════════════
+
+We now substitute the closed-form expressions from
+Lemmas~\ref{lem:EandCov}--\ref{lem:third} to write each
+coefficient in~\eqref{eq:cov_ajak} purely in terms of the
+allowed quantities $n,\bSig,\boldsymbol{\ell},\balpha,\sigma_\epsilon^2$.
+
+\subsection{The $O(n^{-1})$ coefficient}
+From \eqref{eq:gamma},
+\begin{equation}\label{eq:order1coeff}
+    4\,\beta_j\,\beta_k\,\gamma_{jk}
+    = 4\,\sigma_y^2\,\Sigma_{jk}\,\beta_j\,\beta_k
+      + 4\,\beta_j^2\,\beta_k^2.
+\end{equation}
+
+\subsection{The $O(n^{-2})$ coefficient}
+From \eqref{eq:rho},
+\begin{align}
+    2\beta_j\,\rho_{jkk} + 2\beta_k\,\rho_{kjj}
+    &= 16\,\sigma_y^2\,\Sigma_{jk}\,\beta_j\,\beta_k
+       + 4\,\sigma_y^2\,(\Sigma_{jj}\beta_k^2 + \Sigma_{kk}\beta_j^2)
+       + 8\,\beta_j^2\beta_k^2 . \notag
+\end{align}
+Adding $2\gamma_{jk}^2 = 2\sigma_y^4\Sigma_{jk}^2
++ 4\sigma_y^2\Sigma_{jk}\beta_j\beta_k + 2\beta_j^2\beta_k^2$,
+\begin{equation}\label{eq:order2coeff}
+    2\gamma_{jk}^2 + 2\beta_j\rho_{jkk} + 2\beta_k\rho_{kjj}
+    = 2\,\sigma_y^4\,\Sigma_{jk}^2
+      + 20\,\sigma_y^2\,\Sigma_{jk}\,\beta_j\beta_k
+      + 4\,\sigma_y^2\bigl(\Sigma_{jj}\beta_k^2+\Sigma_{kk}\beta_j^2\bigr)
+      + 10\,\beta_j^2\beta_k^2.
+\end{equation}
+
+\subsection{Combined formula}
+\begin{proposition}[Expanded variance]\label{prop:expanded}
+Define the Hadamard square
+$\mathbf{D}=\bSig\circ\bSig\in\bbR^{p\times p}$, i.e.\
+$D_{jk}=\Sigma_{jk}^2$,
+and write $\bbeta = \bSig\balpha$, 
+$\bbeta^{\circ 2} = (\beta_1^2,\dots,\beta_p^2)^\top$,
+$\mathbf{d} = (\Sigma_{11},\dots,\Sigma_{pp})^\top$.
+Then
+\begin{align}
+    \Var(\widetilde\sigma_\alpha^2)
+    &= \frac{1}{\|\widetilde{\boldsymbol{\ell}}\|^4}
+    \Biggl\{
+    \frac{4\,\sigma_y^2}{n}\;
+        (\widetilde{\boldsymbol{\ell}}\circ\bbeta)^\top
+        \bSig\,
+        (\widetilde{\boldsymbol{\ell}}\circ\bbeta)
+    \;+\;
+    \frac{4}{n}\;
+        \bigl(\widetilde{\boldsymbol{\ell}}^{\,\top}
+              \bbeta^{\circ 2}\bigr)^2
+    \notag\\[6pt]
+    &\qquad\quad
+    +\;\frac{2\,\sigma_y^4}{n^2}\;
+       \widetilde{\boldsymbol{\ell}}^{\,\top}
+       \mathbf{D}\,
+       \widetilde{\boldsymbol{\ell}}
+    \;+\;\frac{20\,\sigma_y^2}{n^2}\;
+       (\widetilde{\boldsymbol{\ell}}\circ\bbeta)^\top
+       \bSig\,
+       (\widetilde{\boldsymbol{\ell}}\circ\bbeta^{\circ 2}/\bbeta)
+    \notag\\[4pt]
+    &\qquad\quad
+    +\;\frac{4\,\sigma_y^2}{n^2}\;
+      \bigl(\widetilde{\boldsymbol{\ell}}^{\,\top}\bbeta^{\circ 2}\bigr)
+      \bigl(\widetilde{\boldsymbol{\ell}}^{\,\top}\mathbf{d}\bigr)
+    \;+\;\frac{4\,\sigma_y^2}{n^2}\;
+      \bigl(\widetilde{\boldsymbol{\ell}}^{\,\top}\mathbf{d}\bigr)
+      \bigl(\widetilde{\boldsymbol{\ell}}^{\,\top}\bbeta^{\circ 2}\bigr)
+    \notag\\[4pt]
+    &\qquad\quad
+    +\;\frac{10}{n^2}\;
+       \bigl(\widetilde{\boldsymbol{\ell}}^{\,\top}
+             \bbeta^{\circ 2}\bigr)^2
+    \;+\;\frac{1}{n^3}\sum_{j,k}
+       \widetilde\ell_j\,\widetilde\ell_k\,\kappa_{jk}
+    \Biggr\}.
+    \label{eq:var_expanded_ugly}
+\end{align}
+Because the middle lines above contain a notational ambiguity when
+$\beta_j=0$, we restate the formula more carefully using index
+summations.  Substituting
+\eqref{eq:order1coeff}--\eqref{eq:order2coeff} into
+\eqref{eq:var_exact}--\eqref{eq:cov_ajak}:
+\begin{align}
+\boxed{
+\begin{aligned}
+    \Var(\widetilde\sigma_\alpha^2)
+    &= \frac{1}{\|\widetilde{\boldsymbol{\ell}}\|^4}
+    \Biggl\{
+    \frac{4\sigma_y^2}{n}
+      \sum_{j,k}\widetilde\ell_j\widetilde\ell_k\,
+        \Sigma_{jk}\beta_j\beta_k
+    \;+\;
+    \frac{4}{n}
+      \Bigl(\sum_j\widetilde\ell_j\beta_j^2\Bigr)^{\!2}
+    \\[6pt]
+    &\qquad
+    +\frac{2\sigma_y^4}{n^2}
+      \sum_{j,k}\widetilde\ell_j\widetilde\ell_k\,\Sigma_{jk}^2
+    \;+\;
+    \frac{20\sigma_y^2}{n^2}
+      \sum_{j,k}\widetilde\ell_j\widetilde\ell_k\,
+        \Sigma_{jk}\beta_j\beta_k
+    \\[4pt]
+    &\qquad
+    +\frac{4\sigma_y^2}{n^2}
+      \sum_{j,k}\widetilde\ell_j\widetilde\ell_k
+        (\Sigma_{jj}\beta_k^2+\Sigma_{kk}\beta_j^2)
+    \;+\;
+    \frac{10}{n^2}
+      \Bigl(\sum_j\widetilde\ell_j\beta_j^2\Bigr)^{\!2}
+    \\[4pt]
+    &\qquad
+    +\;\frac{1}{n^3}
+      \sum_{j,k}\widetilde\ell_j\widetilde\ell_k\,\kappa_{jk}
+    \Biggr\}
+\end{aligned}
+}
+\label{eq:var_final}
+\end{align}
+where $\sigma_y^2=\balpha^\top\bSig\balpha+\sigma_\epsilon^2$, \ 
+$\beta_j=(\bSig\balpha)_j$, and the fourth-order
+cumulant $\kappa_{jk}$ is defined in \eqref{eq:kappa}.
+\end{proposition}
+
+\medskip
+
+Equivalently, using the compact notation
+$\mathbf{D}=\bSig\circ\bSig$ and
+$\mathbf{d}=\mathrm{diag}(\bSig)$,
+the $O(n^{-2})$ factor
+$\sum_{j,k}\widetilde\ell_j\widetilde\ell_k
+(\Sigma_{jj}\beta_k^2+\Sigma_{kk}\beta_j^2)
+= 2(\widetilde{\boldsymbol\ell}^\top\mathbf{d})
+   (\widetilde{\boldsymbol\ell}^\top\bbeta^{\circ 2})$.
+
+\begin{remark}[Interpretation of scale]
+Each line of \eqref{eq:var_final} has a clear statistical origin:
+\begin{itemize}
+\item The $O(n^{-1})$ terms arise from the interaction between
+      the signal $\bbeta=\bSig\balpha$ and both the genetic
+      sampling noise and the environmental noise $\sigma_\epsilon^2$.
+      They vanish when $\balpha=\mathbf{0}$.
+\item The $O(n^{-2})$ terms arise from (i) the purely noise-driven
+      variance $2\sigma_y^4\Sigma_{jk}^2/n^2$, (ii) signal--noise
+      cross-terms involving third moments, and (iii) squared-signal
+      contributions.
+\item The $O(n^{-3})$ term $\kappa_{jk}$ captures residual
+      non-Gaussianity of the quadratic forms in $\widehat{a}_j^2$;
+      it is computable via Isserlis' theorem (eighth moments of
+      the joint Gaussian $(\bx,\epsilon)$) but is typically
+      negligible for moderately large $n$.
+\end{itemize}
+\end{remark}
+
+\begin{remark}[Null case $\balpha=\mathbf{0}$]
+When all genetic effects are zero, $\beta_j=0$ for all $j$ and
+$\sigma_y^2=\sigma_\epsilon^2$.  The variance simplifies to
+\[
+    \Var(\widetilde\sigma_\alpha^2)\Big|_{\balpha=\mathbf{0}}
+    = \frac{2\,\sigma_\epsilon^4}{n^2}\cdot
+      \frac{\widetilde{\boldsymbol\ell}^\top\,\mathbf{D}\,
+            \widetilde{\boldsymbol\ell}}
+           {\|\widetilde{\boldsymbol\ell}\|^4}
+    + O(n^{-3}),
+\]
+recovering the classical variance of a Haseman--Elston--type
+regression under the null.
+\end{remark}
+
+\begin{remark}[Role of the block-diagonal structure]
+The assumption that $\bSig$ is block-diagonal is used in two ways.
+First, it ensures that $\ell_j=\sum_k\Sigma_{jk}^2$ and all
+the sums involving $\Sigma_{jk}$ are effectively finite-range
+(supported within blocks), so that all moments
+$\E[U_j^{a}U_k^{b}]$ for $j,k$ in different blocks factor into
+independent contributions.
+Second, it guarantees that the fourth-order cumulant $\kappa_{jk}$
+in \eqref{eq:kappa} vanishes whenever $j$ and $k$ lie in different
+LD blocks, since in that case $U_j$ and $U_k$ are independent up
+to the shared noise $\epsilon$, and the dependence through $\epsilon$
+alone contributes only through lower-order terms already accounted
+for. Thus the $O(n^{-3})$ sum in \eqref{eq:var_final}
+is a within-block sum.
+\end{remark}
+
+\end{document}

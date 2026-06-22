@@ -1,0 +1,128 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsthm, bm}
+\usepackage[margin=1in]{geometry}
+
+\begin{document}
+
+\section*{Formal Proof: Predictive Risk in High-Dimensional Transfer Learning}
+
+\subsection*{1. Notation and Regularity Conditions}
+
+In addition to the High-Dimensional Assumption and Random Regression Coefficients Assumption, we formally establish the following regularity condition to ensure the existence of limiting spectral distributions.
+
+\textbf{Assumption 1 (Covariance Regularity):} The population covariance matrix $\Sigma \in \mathbb{R}^{p \times p}$ is strictly positive definite. As $p \to \infty$, the spectral norm is uniformly bounded, $c \le \lambda_{\min}(\Sigma) \le \lambda_{\max}(\Sigma) \le C$ for some absolute constants $0 < c < C < \infty$.
+
+\textbf{Notation:} Let $X_{\mathcal{R}(m)}^{(m)} \in \mathbb{R}^{n_m \times p_m}$ be the observed design matrix at site $m$. The true conditional coefficient on the observed subspace is $\omega^{(m)} = \Phi^{(m)} \beta^{(m)}$. The effective noise at site $m$ is $\tilde{\varepsilon}^{(m)} = Y^{(m)} - X_{\mathcal{R}(m)}^{(m)}\omega^{(m)}$, which incorporates both the intrinsic noise $\varepsilon$ and the variation from the unobserved covariates. The variance of this effective noise is $\tilde{\sigma}_m^2 = \sigma^2 + \frac{\alpha_m^2}{p} \mathrm{Tr}(\Sigma_{[\mathcal{R}(m)]^c \mid \mathcal{R}(m)})$.
+
+\subsection*{2. Step 1: Local Ridge Estimation and Deterministic Equivalents}
+
+At each source site $m \in \{1,\dots,M\}$, the local ridge estimator is:
+\[
+\widehat\omega^{(m)}_{\mathrm{Loc}} = \hat{\Sigma}_{m,\lambda}^{-1} \frac{1}{n_m} (X^{(m)}_{\mathcal{R}(m)})^\top Y^{(m)}
+\]
+where $\hat{\Sigma}_{m,\lambda} = \frac{1}{n_m} (X^{(m)}_{\mathcal{R}(m)})^\top X^{(m)}_{\mathcal{R}(m)} + \lambda_\omega^{(m)} I_{p_m}$.
+
+Using the techniques from \textbf{Dobriban \& Wager (2018)}, as $n_m, p_m \to \infty$ with $p_m/n_m \to \eta_m$, the resolvent matrix $\hat{\Sigma}_{m,\lambda}^{-1}$ admits a deterministic equivalent. 
+
+The estimation error at site $m$ can be decomposed as:
+\[
+\Delta^{(m)}_{\mathrm{Loc}} := \widehat\omega^{(m)}_{\mathrm{Loc}} - \omega^{(m)} = - \lambda_\omega^{(m)} \hat{\Sigma}_{m,\lambda}^{-1} \omega^{(m)} + \hat{\Sigma}_{m,\lambda}^{-1} \frac{1}{n_m} (X^{(m)}_{\mathcal{R}(m)})^\top \tilde{\varepsilon}^{(m)}
+\]
+
+Under the random coefficients assumption, $\omega^{(m)} \sim N\left(0, \frac{\alpha_m^2}{p} \Phi^{(m)} (\Phi^{(m)})^\top\right)$. The asymptotic covariance of the local estimation error, conditional on the true parameter but marginalized over the data generation process, converges to a deterministic matrix $\Omega_m$:
+\[
+\Omega_m := \lim_{p \to \infty} \mathbb{E}\left[ \Delta^{(m)}_{\mathrm{Loc}} (\Delta^{(m)}_{\mathrm{Loc}})^\top \right] = B_m + V_m
+\]
+where $B_m$ is the bias covariance and $V_m$ is the variance covariance. By random matrix theory, $B_m$ and $V_m$ are bounded and can be characterized by the limiting Stieltjes transform of the empirical spectral distribution of $\hat{\Sigma}_{m,0}$.
+
+\subsection*{3. Step 2: Aggregation and Optimal Weighting Metrics}
+
+Following \textbf{Cheng, Cheng, \& Duchi (2023)}, the aggregator targets the full-feature vector $\beta^{(t)}$ by solving:
+\[
+\hat\beta^{(s)} = \arg\min_{\beta} \sum_{m=1}^M \bigl\| \Phi^{(m)}\beta - \widehat\omega^{(m)}_{\mathrm{Loc}} \bigr\|_{W_m}^2
+\]
+
+This generalized least squares problem has the closed-form solution:
+\[
+\hat\beta^{(s)} = \left( \sum_{m=1}^M (\Phi^{(m)})^\top W_m \Phi^{(m)} \right)^{-1} \sum_{m=1}^M (\Phi^{(m)})^\top W_m \widehat\omega^{(m)}_{\mathrm{Loc}}
+\]
+
+To determine the optimal $W_m$, we analyze the deviation from the target site's true coefficient $\beta^{(t)}$:
+\[
+\widehat\omega^{(m)}_{\mathrm{Loc}} - \Phi^{(m)}\beta^{(t)} = \Delta^{(m)}_{\mathrm{Loc}} + \Phi^{(m)}(\beta^{(m)} - \beta^{(t)})
+\]
+
+By the Random Regression Coefficients Assumption, the covariance of the distributional shift $\beta^{(m)} - \beta^{(t)}$ is:
+\[
+\mathrm{Cov}(\beta^{(m)} - \beta^{(t)}) = \frac{\alpha_m^2 + \alpha_t^2 - 2\rho_{m,t}\alpha_m\alpha_t}{p} I_p := \frac{\tau_m^2}{p} I_p
+\]
+
+Assuming independence of source data, the total effective variance of the local estimator relative to the target parameter $\beta^{(t)}$ is:
+\[
+\Gamma_m := \Omega_m + \frac{\tau_m^2}{p} \Phi^{(m)}(\Phi^{(m)})^\top
+\]
+
+By the Gauss-Markov theorem in the Loewner ordering, the aggregation error $\Sigma_{\mathrm{agg}} = \mathbb{E}[(\hat\beta^{(s)}-\beta^{(t)})(\hat\beta^{(s)}-\beta^{(t)})^\top]$ is minimized when the weights are chosen as the inverse of the effective variance:
+\[
+W_m^* = \Gamma_m^{-1} = \left( \Omega_m + \frac{\tau_m^2}{p} \Phi^{(m)}(\Phi^{(m)})^\top \right)^{-1}
+\]
+
+With this optimal weighting, the asymptotic error covariance of the aggregated vector is:
+\[
+\Sigma_{\mathrm{agg}} = \left( \sum_{m=1}^M (\Phi^{(m)})^\top (W_m^*) \Phi^{(m)} \right)^{-1}
+\]
+
+\subsection*{4. Step 3: $L_2$ Transfer Learning and Predictive Risk Decomposition}
+
+Let the offset be $\hat\omega^{(t)}_s = \Phi^{(t)}\hat\beta^{(s)}$. The target $L_2$ transfer learning estimator estimates the shift $\delta = \omega^{(t)} - \hat\omega^{(t)}_s$:
+\[
+\hat\delta = \arg\min_{\delta} \left[ \frac{1}{n_t}\|Y^{(t)} - X^{(t)}_{\mathcal{R}(t)}(\hat\omega^{(t)}_s + \delta)\|_2^2 + \lambda_\delta\|\delta\|_2^2 \right]
+\]
+\[
+\hat\omega_{\mathrm{TL}}^{(t)} = \hat\omega^{(t)}_s + \hat\delta
+\]
+
+Following the decomposition strategy from \textbf{Gu, Han, and Duan (2025)}, we express the prediction error on a new sample $\tilde{x}_{\mathcal{R}(t)}$. Let $H_\delta = \frac{1}{n_t}(X^{(t)}_{\mathcal{R}(t)})^\top X^{(t)}_{\mathcal{R}(t)} + \lambda_\delta I_{p_t}$. The shift estimator is:
+\[
+\hat\delta = H_\delta^{-1} \frac{1}{n_t} (X^{(t)}_{\mathcal{R}(t)})^\top (Y^{(t)} - X^{(t)}_{\mathcal{R}(t)}\hat\omega^{(t)}_s)
+\]
+
+Substituting $Y^{(t)} = X^{(t)}_{\mathcal{R}(t)}\omega^{(t)} + \tilde{\varepsilon}^{(t)}$, the gap between the TL estimator and the true conditional coefficient is:
+\[
+\hat\omega_{\mathrm{TL}}^{(t)} - \omega^{(t)} = \lambda_\delta H_\delta^{-1} (\hat\omega^{(t)}_s - \omega^{(t)}) + H_\delta^{-1} \frac{1}{n_t} (X^{(t)}_{\mathcal{R}(t)})^\top \tilde{\varepsilon}^{(t)}
+\]
+
+The predictive risk $r^{\mathrm{pred}}$ evaluates the out-of-sample expected squared error. Taking the expectation over the target site data and the prior aggregation, the risk decomposes into:
+\[
+\mathbb{E}[r^{\mathrm{pred}}(\hat\omega_{\mathrm{TL}}^{(t)})] \simeq \tilde{\sigma}_t^2 + \mathcal{B}_{\mathrm{TL}} + \mathcal{V}_{\mathrm{TL}}
+\]
+
+Where:
+\begin{enumerate}
+    \item \textbf{Irreducible Error:} $\tilde{\sigma}_t^2 = \sigma^2 + \frac{\alpha_t^2}{p}\mathrm{Tr}(\Sigma_{[\mathcal{R}(t)]^c \mid \mathcal{R}(t)})$.
+    \item \textbf{Bias (Transferred Aggregation Error):} 
+    \[
+    \mathcal{B}_{\mathrm{TL}} = \lambda_\delta^2 \, \mathrm{Tr}\left( \Sigma_{\mathcal{R}(t),\mathcal{R}(t)} H_\delta^{-1} \Phi^{(t)} \Sigma_{\mathrm{agg}} (\Phi^{(t)})^\top H_\delta^{-1} \right)
+    \]
+    \item \textbf{Variance (Target Domain Fine-Tuning):}
+    \[
+    \mathcal{V}_{\mathrm{TL}} = \frac{\tilde{\sigma}_t^2}{n_t} \mathrm{Tr}\left( \Sigma_{\mathcal{R}(t),\mathcal{R}(t)} H_\delta^{-1} \hat{\Sigma}_{t,0} H_\delta^{-1} \right)
+    \]
+\end{enumerate}
+
+\subsection*{5. Final Asymptotic Upper Bound}
+
+As $n_t, p \to \infty$ with $p_t/n_t \to \eta_t$, we define the limiting constants via deterministic equivalents:
+\[
+v_t = \lim_{p \to \infty} \frac{1}{p_t} \mathrm{Tr}\left( \Sigma_{\mathcal{R}(t),\mathcal{R}(t)} H_\delta^{-1} \hat{\Sigma}_{t,0} H_\delta^{-1} \right)
+\]
+\[
+b_t(\Sigma_{\mathrm{agg}}) = \lim_{p \to \infty} \frac{1}{p_t} \mathrm{Tr}\left( \Sigma_{\mathcal{R}(t),\mathcal{R}(t)} H_\delta^{-1} \Phi^{(t)} \Sigma_{\mathrm{agg}} (\Phi^{(t)})^\top H_\delta^{-1} \right)
+\]
+
+\textbf{Main Bound:} Under the stated assumptions, as $n_t, p \to \infty$, the predictive risk of the transfer learning estimator converges in probability to the asymptotic upper bound:
+\[
+\limsup_{n_t, p \to \infty} r^{\mathrm{pred}}\bigl(\hat\omega_{\mathrm{TL}}^{(t)}\bigr) = \tilde{\sigma}_t^2 + \lambda_\delta^2 \cdot \eta_t \cdot b_t(\Sigma_{\mathrm{agg}}) + \frac{\tilde{\sigma}_t^2 \cdot \eta_t \cdot v_t}{\lambda_\delta}
+\]
+
+\end{document}

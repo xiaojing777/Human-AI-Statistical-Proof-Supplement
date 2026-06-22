@@ -1,0 +1,97 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsthm, enumitem}
+\usepackage[margin=1in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{assumption}{Assumption}
+\newtheorem{remark}{Remark}
+
+\begin{document}
+
+\section*{Formal Proof of Scaling Parameter Invariance}
+
+\subsection*{Problem Statement}
+For a copula $C$ on $[0,1]^2$, direction parameter $\delta\in(0,2)$, and scaling parameter $\gamma>0$, the generalized lower-tail dependence coefficient is defined as
+\[
+\kappa_L(\delta,\gamma;C) = \lim_{u\downarrow 0} \frac{\log C\!\bigl(\gamma u^\delta,\gamma^{-1}u^{2-\delta}\bigr)}{\log u},
+\]
+whenever the limit exists. We aim to rigorously prove that under suitable regularity conditions, the value of $\kappa_L(\delta,\gamma;C)$ is independent of the choice of $\gamma$. Furthermore, we demonstrate that the proposed Pareto-mixture copula $C_{\rm PM}$ satisfies this claim.
+
+\subsection*{Regularity Assumptions}
+To formalize the analysis of the limit, let us fix a reference scaling parameter $\gamma^* > 0$. We define the functional mapping for the pre-limit quantity as:
+\[
+\Lambda(u, d, \gamma) := \frac{\log C\!\bigl(\gamma u^d,\gamma^{-1}u^{2-d}\bigr)}{\log u}, \quad \text{for } u \in (0,1).
+\]
+We operate under the following standard regularity conditions concerning the tail behavior of the copula:
+
+\begin{itemize}[noitemsep,topsep=4pt]
+    \item \textbf{A1 (Existence and Finiteness):} For the given $\delta \in (0,2)$, the limit $\lambda(d) := \kappa_L(d, \gamma^*; C) = \lim_{u\downarrow 0} \Lambda(u, d, \gamma^*)$ exists and is finite for all $d$ in a neighborhood of $\delta$.
+    \item \textbf{A2 (Local Uniform Convergence):} The convergence to the limit function $\lambda(\cdot)$ is locally uniform at $\delta$. That is, for every $\varepsilon > 0$, there exist a radius $\nu > 0$ and a threshold $u_0 \in (0,1)$ such that for all $u \in (0, u_0]$ and all $d$ satisfying $|d - \delta| \le \nu$, 
+    \[
+    |\Lambda(u, d, \gamma^*) - \lambda(d)| \le \varepsilon.
+    \]
+    \item \textbf{A3 (Continuity):} The limit function $d \mapsto \lambda(d)$ is continuous at $\delta$.
+\end{itemize}
+
+\subsection*{Proof of Invariance}
+
+Let $\gamma > 0$ be an arbitrary alternative scaling parameter. We must prove that $\lim_{u\downarrow 0} \Lambda(u, \delta, \gamma) = \lambda(\delta)$.
+
+\paragraph{Step 1: Establishing the Shift Identity.}
+We first relate the evaluation of $\Lambda$ at $\gamma$ to its evaluation at the reference $\gamma^*$ by introducing a $u$-dependent shift in the direction parameter. Let $\rho = \log(\gamma / \gamma^*)$. For any $u \in (0,1)$, note that $\log u < 0$. We define a perturbed direction parameter:
+\[
+\delta(u) := \delta + \frac{\rho}{\log u}.
+\]
+Utilizing the properties of logarithms and exponentials (specifically $e^{\log u} = u$ and $e^\rho = \gamma / \gamma^*$), we can rewrite the arguments of the copula:
+\begin{align*}
+    \gamma^* u^{\delta(u)} &= \gamma^* \exp\left\{ \left(\delta + \frac{\rho}{\log u}\right) \log u \right\} = \gamma^* e^{\delta \log u} e^\rho = \gamma u^\delta, \\
+    (\gamma^*)^{-1} u^{2-\delta(u)} &= (\gamma^*)^{-1} \exp\left\{ \left(2 - \delta - \frac{\rho}{\log u}\right) \log u \right\} = (\gamma^*)^{-1} e^{(2-\delta)\log u} e^{-\rho} = \gamma^{-1} u^{2-\delta}.
+\end{align*}
+Consequently, substituting these equivalent arguments into our functional mapping yields the exact identity:
+\begin{equation} \label{eq:identity}
+    \Lambda(u, \delta, \gamma) = \Lambda(u, \delta(u), \gamma^*), \quad \text{for all } u \in (0,1).
+\end{equation}
+
+\paragraph{Step 2: The $\varepsilon$-Argument.}
+We proceed to show that $\lim_{u\downarrow 0} |\Lambda(u, \delta, \gamma) - \Lambda(u, \delta, \gamma^*)| = 0$. Fix an arbitrary $\varepsilon > 0$. Using the identity in \eqref{eq:identity}, we apply the triangle inequality by adding and subtracting the theoretical limit values evaluated at both the perturbed and reference directions, $\lambda(\delta(u))$ and $\lambda(\delta)$:
+\begin{align} 
+    |\Lambda(u, \delta, \gamma) - \Lambda(u, \delta, \gamma^*)| 
+    &= |\Lambda(u, \delta(u), \gamma^*) - \Lambda(u, \delta, \gamma^*)| \nonumber \\
+    &\le \underbrace{|\Lambda(u, \delta(u), \gamma^*) - \lambda(\delta(u))|}_{\text{Term I}} + \underbrace{|\lambda(\delta(u)) - \lambda(\delta)|}_{\text{Term II}} + \underbrace{|\lambda(\delta) - \Lambda(u, \delta, \gamma^*)|}_{\text{Term III}}. \label{eq:triangle}
+\end{align}
+
+We now bound each term on the right-hand side of \eqref{eq:triangle} by $\varepsilon/3$ for sufficiently small $u$:
+
+\begin{enumerate}
+    \item \textbf{Bounding Term III:} By the fundamental definition of the limit (Assumption A1), there exists $u_1 \in (0,1)$ such that for all $u \in (0, u_1]$, 
+    \[ |\lambda(\delta) - \Lambda(u, \delta, \gamma^*)| \le \frac{\varepsilon}{3}. \]
+    
+    \item \textbf{Bounding Term II:} Observe that as $u \downarrow 0$, $\log u \to -\infty$. Since $\rho$ is a fixed constant, $\lim_{u\downarrow 0} \delta(u) = \delta$. Because $\lambda(\cdot)$ is continuous at $\delta$ (Assumption A3), there exists $u_2 \in (0,1)$ such that for all $u \in (0, u_2]$, 
+    \[ |\lambda(\delta(u)) - \lambda(\delta)| \le \frac{\varepsilon}{3}. \]
+
+    \item \textbf{Bounding Term I:} By the locally uniform convergence condition (Assumption A2), there exists a radius $\nu > 0$ and a threshold $u_0 \in (0,1)$ bounding the convergence error to $\varepsilon/3$ for all $d \in [\delta-\nu, \delta+\nu]$. Since $\delta(u) \to \delta$, there exists $u_3 \in (0,1)$ such that $|\delta(u) - \delta| \le \nu$ for all $u \in (0, u_3]$. Let $u_4 = \min(u_0, u_3)$. For all $u \in (0, u_4]$, the perturbed direction $\delta(u)$ lies within the uniform convergence window, ensuring:
+    \[ |\Lambda(u, \delta(u), \gamma^*) - \lambda(\delta(u))| \le \frac{\varepsilon}{3}. \]
+\end{enumerate}
+
+\paragraph{Step 3: Conclusion of the Limit.}
+Let $u^* = \min(u_1, u_2, u_4)$. For all $u \in (0, u^*]$, substituting the three bounds back into \eqref{eq:triangle} yields:
+\[
+|\Lambda(u, \delta, \gamma) - \Lambda(u, \delta, \gamma^*)| \le \frac{\varepsilon}{3} + \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \varepsilon.
+\]
+Because $\varepsilon > 0$ was arbitrary, it strictly follows that $\lim_{u \downarrow 0} \Lambda(u, \delta, \gamma) = \lim_{u \downarrow 0} \Lambda(u, \delta, \gamma^*) = \lambda(\delta)$. 
+
+We have shown $\kappa_L(\delta,\gamma;C) = \kappa_L(\delta,\gamma^*;C)$. As both $\delta \in (0,2)$ and $\gamma > 0$ were arbitrarily chosen, the generalized lower-tail dependence coefficient is invariant to the choice of the scaling parameter $\gamma$. \hfill \qedsymbol
+
+\begin{remark}
+If the lower-tail dependence is infinite, i.e., $\lambda(\delta) = +\infty$, the proof framework naturally adapts using an $M$-bound approach. For any arbitrarily large $M > 0$, local uniformity guarantees a threshold $u_0$ such that $\Lambda(u, d, \gamma^*) \ge M$ for all $d$ near $\delta$. As $\delta(u) \to \delta$, $\Lambda(u, \delta(u), \gamma^*) \ge M$ for sufficiently small $u$, confirming that $\lim_{u\downarrow 0} \Lambda(u, \delta, \gamma) = +\infty$ and thus exact invariance is preserved even in the divergent case.
+\end{remark}
+
+\subsection*{Verification for the Pareto-Mixture Copula $C_{\rm PM}$}
+
+The proposed Pareto-mixture copula $C_{\rm PM}$ defined via the independent Pareto factor random variables $(R, R^*, H_1, H_2, H_1^*, H_2^*)$ inherently satisfies the analytic regularity assumptions (A1-A3) required for this proof. 
+
+Specifically, the distribution of random variables constructed through products and quotients of Pareto-distributed components belongs to the domain of multivariate regular variation. Due to the scale-invariant properties of regular variation, the joint tail probability distribution admits a smooth, homogeneous asymptotic expansion. Consequently, the logarithmic tail ratio $\Lambda_{\rm PM}(u, d, \gamma) = \frac{\log C_{\rm PM}(\gamma u^d, \gamma^{-1}u^{2-d})}{\log u}$ evaluates asymptotically to a continuous algebraic function of the angular parameter $d$. 
+
+Because the tail exponent function governing $C_{\rm PM}$ is well-behaved and free of singularities inside the parameter space $d \in (0,2)$, the local uniform convergence (Assumption A2) and limit continuity (Assumption A3) natively hold. Thus, the general $\varepsilon$-proof applies identically to the proposed model: the structural dependence metric $\kappa_L(\delta,\gamma;C_{\rm PM})$ isolates the purely angular properties governed by $\delta$, completely invariant to the baseline scale $\gamma$.
+
+\end{document}

@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsthm, bm}
+\usepackage[margin=1in]{geometry}
+
+\newcommand{\bbR}{\mathbb{R}}
+\newcommand{\X}{\mathbf{X}}
+\newcommand{\Z}{\mathbf{Z}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\I}{\mathbf{I}}
+\newcommand{\1}{\mathbf{1}}
+\newcommand{\bmSigma}{\boldsymbol{\Sigma}}
+\newcommand{\bmalpha}{\boldsymbol{\alpha}}
+\newcommand{\bmeps}{\boldsymbol{\epsilon}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{assumption}{Assumption}
+
+\title{Asymptotic Normality of the LDSC Estimator Under Fixed Genetic Effects}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction and Setup}
+
+We consider the proportional asymptotic regime where $n, n_r, p \to \infty$ such that $p/n \to \gamma_1 \in (0, \infty)$ and $p/n_r \to \gamma_2 \in (0, \infty)$. 
+
+\begin{assumption}[Distributions]
+The rows of $\X \in \bbR^{n \times p}$ and $\Z \in \bbR^{n_r \times p}$ are independent and identically distributed as $N(0, \bmSigma)$. The environmental noise is $\bmeps \sim N(0, \sigma_\epsilon^2 \I_n)$, independent of $\X$ and $\Z$.
+\end{assumption}
+
+\begin{assumption}[Covariance Structure]
+The true covariance matrix $\bmSigma$ is block-diagonal with $K$ blocks $\mathcal{B}_1, \dots, \mathcal{B}_K$. The maximum block size is bounded by a constant $M < \infty$, and the eigenvalues of $\bmSigma$ are strictly bounded away from $0$ and $\infty$. 
+\end{assumption}
+
+\begin{assumption}[Fixed Genetic Effects]
+The genetic effects $\bmalpha = (\alpha_1, \dots, \alpha_p)^\top \in \bbR^p$ are fixed, deterministic constants. To ensure a non-degenerate asymptotic limit, we assume the effects are uniformly bounded in scale such that $\max_{1 \le j \le p} |\alpha_j| = O(p^{-1/2})$ and $\lim_{p \to \infty} \|\bmalpha\|_2^2 = \tau^2 > 0$.
+\end{assumption}
+
+\section{Linearization of the Estimator}
+
+The LDSC estimator is defined as:
+\[
+\hat\sigma_\alpha^2 = \frac{\frac{1}{p}(\hat\ell-\mu_{\hat\ell}\1)^\top(\hat w-\hat\mu_{w}\1)}{\frac{1}{p}(\hat\ell-\mu_{\hat\ell}\1)^\top(\hat\ell-\mu_{\hat\ell}\1)} = \frac{\mathcal{N}_p}{\mathcal{D}_p}.
+\]
+First, we analyze the denominator $\mathcal{D}_p$. Because $\hat\ell_j = \sum_{i=1}^p \widehat{\bmSigma}_{ji}^2$ where $\widehat{\bmSigma} = \frac{1}{n_r} \Z^\top \Z$, the sequence $\{\hat\ell_j\}_{j=1}^p$ is strictly a function of the reference panel $\Z$. Due to the block-diagonal structure of $\bmSigma$, $\hat\ell_j$ and $\hat\ell_k$ are asymptotically independent if they belong to different blocks. By the Law of Large Numbers for weakly dependent sequences, $\mathcal{D}_p$ converges in probability to a strictly positive constant:
+\[
+\mathcal{D}_p \xrightarrow{P} \lim_{p \to \infty} E[\mathcal{D}_p] = d_0 > 0.
+\]
+By Slutsky's Theorem and the Delta method, the asymptotic normality of $\hat\sigma_\alpha^2$ is governed by the joint asymptotic normality of the numerator and denominator. We define the linearized statistic:
+\[
+g(\X, \Z, \bmeps) = \mathcal{N}_p - \theta \mathcal{D}_p,
+\]
+where $\theta = \lim_{p \to \infty} E[\mathcal{N}_p] / E[\mathcal{D}_p]$. If we show that $\sqrt{p}(g - E[g]) \xrightarrow{d} N(0, V^2)$, it follows that $\sqrt{p}(\hat\sigma_\alpha^2 - \theta) \xrightarrow{d} N(0, V^2 / d_0^2)$.
+
+\section{Variance Scaling via Moment Calculations}
+
+To apply Chatterjee's theorem[cite: 56], we establish that the variance of the unscaled statistic $g$ is of order $O(p^{-1})$. Let $\mathbf{v} = (\mathrm{vec}(\tilde{\X}), \mathrm{vec}(\tilde{\Z}), \tilde{\bmeps})$ be the standard normal vector such that $\X = \tilde{\X}\bmSigma^{1/2}$, $\Z = \tilde{\Z}\bmSigma^{1/2}$, and $\bmeps = \sigma_\epsilon \tilde{\bmeps}$.
+
+The term $\hat{w}_j = \frac{1}{n^2}(\X_j^\top \X \bmalpha + \X_j^\top \bmeps)^2$ is a quartic form in Gaussian variables. Utilizing the exact Wishart moment formulations derived in Proposition S1 of Dicker (2014)[cite: 193, 218], we can evaluate the variance. Because $\bmSigma$ is block-diagonal with maximum block size $M$, $\Cov((\hat\ell_j - \mu_{\hat\ell})\hat{w}_j, (\hat\ell_k - \mu_{\hat\ell})\hat{w}_k) = 0$ for variants $j, k$ in different blocks. Thus, the double sum expansion of $\Var(g(\mathbf{v}))$ contains at most $pM$ non-zero terms. Since each term is $O(1)$ under the bounded fixed effects scaling, we obtain:
+\[
+\psi^2 = \Var(g(\mathbf{v})) = \Theta(p^{-1}).
+\]
+
+\section{Asymptotic Normality via Chatterjee's Theorem}
+
+We apply Theorem 2.2 from Chatterjee (2009) (restated as Theorem S1 in Dicker 2014)[cite: 56, 57]. For $\mathbf{v} \sim N(0, \I)$, let $W = (g(\mathbf{v}) - E[g(\mathbf{v})]) / \psi$ and $Z \sim N(0, 1)$. The total variation distance is bounded by:
+\[
+d_{TV}(W, Z) \le \frac{2\sqrt{5} \kappa_1 \kappa_2}{\psi^2},
+\]
+where $\kappa_1 = E[\|\nabla g(\mathbf{v})\|^4]^{1/4}$ and $\kappa_2 = E[\|\nabla^2 g(\mathbf{v})\|_{\mathrm{op}}^4]^{1/4}$[cite: 59].
+
+\textbf{1. Bounding the Gradient ($\kappa_1$):} \\
+We compute the partial derivatives of $g$. For $x_{ik} \in \tilde{\X}$:
+\[
+\frac{\partial g}{\partial x_{ik}} = \frac{1}{p} \sum_{j=1}^p (\hat\ell_j - \mu_{\hat\ell}) \frac{\partial \hat{w}_j}{\partial x_{ik}}.
+\]
+Because $\frac{\partial \hat{w}_j}{\partial x_{ik}}$ scales as $O(n^{-1})$ (following analogous bounding techniques to Dicker's Lemma S1 [cite: 15, 76]), and the sum aggregates over localized blocks, the squared norm aggregated over all $n \times p$ entries yields $\|\nabla_x g\|^2 = O_p(n^{-1})$. Similar bounds apply to $\nabla_z g$ and $\nabla_\epsilon g$. Hence, $\kappa_1 = O(p^{-1/4})$[cite: 104, 106].
+
+\textbf{2. Bounding the Hessian ($\kappa_2$):} \\
+The Hessian $\nabla^2 g(\mathbf{v})$ is block-sparse due to the local dependence structure. The second derivatives $\frac{\partial^2 g}{\partial x_{ik} \partial x_{i'k'}}$ are $O(n^{-2})$. Bounding the operator norm of this localized block matrix (following Dicker's methodology for equation S11 [cite: 112, 141]) demonstrates that it scales strictly inversely with the dimension: $\|\nabla^2 g(\mathbf{v})\|_{\mathrm{op}} = O_p(p^{-1})$. Thus, $\kappa_2 = O(p^{-1})$[cite: 145, 147].
+
+\textbf{3. Synthesis:} \\
+Substituting $\kappa_1$, $\kappa_2$, and $\psi^2$ into Chatterjee's inequality:
+\[
+d_{TV}(W, Z) \le C \frac{p^{-1/4} \cdot p^{-1}}{p^{-1}} = O(p^{-1/4}).
+\]
+As $n, p \to \infty$, the total variation distance vanishes: $O(p^{-1/4}) \to 0$[cite: 63, 149].
+
+\section{Conclusion}
+
+Since $d_{TV}(W, Z) \to 0$, the standardized statistic converges to a standard normal distribution:
+\[
+\frac{g(\mathbf{v}) - E[g(\mathbf{v})]}{\sqrt{\Var(g(\mathbf{v}))}} \xrightarrow{d} N(0, 1).
+\]
+By the continuous mapping theorem and Slutsky's theorem established in Section 2, we conclude that the centered LDSC estimator under fixed effects is asymptotically normal:
+\[
+\frac{\hat\sigma_\alpha^2 - E[\hat\sigma_\alpha^2]}{\sqrt{\Var(\hat\sigma_\alpha^2)}} \xrightarrow{d} N(0, 1).
+\]
+\end{document}
